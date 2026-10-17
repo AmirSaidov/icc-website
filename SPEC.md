@@ -234,6 +234,7 @@ backend/
 | Контактная информация | Да | Не видит |
 | Системные настройки (SiteSettings) | Да | Не видит |
 | Пользователи и группы | Да | Не видит |
+| Журналы входа (django-axes) | Просмотр + снятие блокировки (удаление записи о блокировке) | Не видит |
 
 Ограничение по обращениям делается через `get_readonly_fields` и `has_delete_permission` в зависимости от группы — одних стандартных прав Django для этого недостаточно.
 
@@ -247,7 +248,7 @@ backend/
 
 | Поле | Тип | Обязательно | Валидация |
 |---|---|---|---|
-| `type` | `contact` / `cooperation` | Да | из списка |
+| `type` | `contact` / `cooperation` | Да | из списка (`contact` — «Общий вопрос», `cooperation` — «Сотрудничество») |
 | `full_name` | string | Да | 2–150 символов |
 | `company` | string | Да | до 200 |
 | `country` | string | Да | до 100 |
@@ -344,6 +345,7 @@ python manage.py seed && python manage.py runserver
 Плюс: ссылки на Swagger и админку, описание ролей, как запустить тесты.
 
 **После MVP (сейчас не делать):** VPS, nginx + gunicorn, HTTPS (Let's Encrypt), ежедневная копия `db.sqlite3` через `sqlite3 .backup` + копия `media/` с хранением 14 дней.
+Решить при выборе домена и настройке nginx (сейчас — осознанные предупреждения `check --deploy`): `SECURE_HSTS_INCLUDE_SUBDOMAINS` (W005), `SECURE_HSTS_PRELOAD` (W021), редирект на HTTPS — в nginx или `SECURE_SSL_REDIRECT` (W008).
 
 ---
 

@@ -5,7 +5,7 @@ class Feedback(models.Model):
     """Обращение из формы на сайте."""
 
     class Type(models.TextChoices):
-        CONTACT = "contact", "Контакты"
+        CONTACT = "contact", "Общий вопрос"
         COOPERATION = "cooperation", "Сотрудничество"
 
     class Lang(models.TextChoices):

@@ -125,3 +125,12 @@ def test_csv_export(request, client_fixture, feedback):
     # защита от CSV-инъекций: формулы из формы не исполняются в Excel
     assert record["Сообщение"].startswith("'=")
     assert record["Телефон"] == "'+996 555 000 000"
+
+
+def test_csv_uses_general_question_label(admin_role_client, feedback):
+    feedback.type = Feedback.Type.CONTACT
+    feedback.save()
+    content = admin_role_client.post(
+        CHANGELIST, {"action": "export_csv", "_selected_action": [feedback.pk]}
+    ).content.decode("utf-8")
+    assert ";Общий вопрос;" in content

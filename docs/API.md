@@ -205,7 +205,7 @@ const response = await fetch(`${API}/feedback/`, {
 
 | Поле | Тип | Обязательно | Правила |
 |---|---|---|---|
-| `type` | `contact` / `cooperation` | да | из списка |
+| `type` | `contact` / `cooperation` | да | `contact` — общий вопрос (форма «Контакты»), `cooperation` — сотрудничество |
 | `full_name` | string | да | 2–150 символов |
 | `company` | string | да | до 200 |
 | `country` | string | да | до 100 |

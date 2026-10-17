@@ -272,3 +272,10 @@ def test_cors_denied_for_unknown_origin(api):
 
 def test_get_not_allowed(api):
     assert api.get(URL).status_code == 405
+
+
+def test_contact_type_label_in_email_subject(api, recipients, mailoutbox, django_capture_on_commit_callbacks):
+    with django_capture_on_commit_callbacks(execute=True):
+        post(api, payload(type="contact", subject="Вопрос"))
+    assert mailoutbox[0].subject == "[ЦПК] Новое обращение: Общий вопрос — Вопрос"
+    assert "Тип: Общий вопрос" in mailoutbox[0].body
