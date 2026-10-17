@@ -489,6 +489,76 @@ paths:
               schema:
                 $ref: '#/components/schemas/DetailError'
           description: Запись не найдена или не опубликована
+  /api/v1/feedback/:
+    post:
+      operationId: feedback_create
+      description: 'Форма «Контакты» / «Сотрудничество». Без авторизации и CSRF. Лимит
+        — 5 запросов в час с одного IP (считаются все POST, включая невалидные), 6-й
+        → 429. Поле `website` — honeypot: если заполнено, ответ тоже 201, но обращение
+        не сохраняется.'
+      summary: Отправить обращение
+      tags:
+      - Формы
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequest'
+            examples:
+              Обращение:
+                value:
+                  type: cooperation
+                  full_name: Асель Токтогулова
+                  company: ОсОО «Ала-Тоо Текстиль»
+                  country: Кыргызстан
+                  email: asel@example.kg
+                  phone: +996 555 123 456
+                  subject: Поиск партнёра в Китае
+                  message: Ищем производителя оборудования для швейного цеха.
+                  consent: true
+                  lang: ru
+                  website: ''
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedbackCreated'
+              examples:
+                Успех:
+                  value:
+                    ok: true
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldErrors'
+              examples:
+                ОшибкиВалидации:
+                  value:
+                    email:
+                    - Обязательное поле.
+                    message:
+                    - Убедитесь, что это значение содержит не менее 10 символов.
+                    consent:
+                    - Необходимо согласие на обработку персональных данных.
+                  summary: Ошибки валидации
+          description: 'Ошибки по полям: {"<поле>": ["ошибка"]}'
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+              examples:
+                Лимит:
+                  value:
+                    detail: Слишком много обращений с вашего адреса. Попробуйте снова
+                      через 3599 с.
+          description: Превышен лимит запросов
   /api/v1/home/:
     get:
       operationId: home_retrieve
@@ -1503,6 +1573,13 @@ components:
       required:
       - code
       - name
+    Detail:
+      type: object
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
     DetailError:
       type: object
       properties:
@@ -1769,6 +1846,87 @@ components:
       required:
       - code
       - label
+    FeedbackCreated:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          default: true
+    FeedbackRequest:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/FeedbackTypeEnum'
+        full_name:
+          type: string
+          minLength: 2
+          maxLength: 150
+        company:
+          type: string
+          minLength: 1
+          maxLength: 200
+        country:
+          type: string
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          minLength: 1
+        phone:
+          nullable: true
+          oneOf:
+          - type: string
+            pattern: ^[\d\s+\-()]*$
+            maxLength: 30
+          - type: string
+            maxLength: 0
+        subject:
+          type: string
+          minLength: 1
+          maxLength: 200
+        message:
+          type: string
+          minLength: 10
+          maxLength: 5000
+        consent:
+          type: boolean
+          description: Только true
+        lang:
+          $ref: '#/components/schemas/LangEnum'
+        website:
+          type: string
+          writeOnly: true
+          description: 'Honeypot: скрытое поле, человек его не заполняет. Должно быть
+            пустым.'
+      required:
+      - company
+      - consent
+      - country
+      - email
+      - full_name
+      - lang
+      - message
+      - subject
+      - type
+    FeedbackTypeEnum:
+      enum:
+      - contact
+      - cooperation
+      type: string
+      description: |-
+        * `contact` - Контакты
+        * `cooperation` - Сотрудничество
+    FieldErrors:
+      type: object
+      properties:
+        field:
+          type: array
+          items:
+            type: string
+          description: Ключ — имя поля с ошибкой, значение — список сообщений
+      required:
+      - field
     GalleryImage:
       type: object
       properties:
@@ -1836,7 +1994,7 @@ components:
           readOnly: true
         type:
           allOf:
-          - $ref: '#/components/schemas/TypeEnum'
+          - $ref: '#/components/schemas/HomeBlockTypeEnum'
           title: Тип блока
         title:
           type: string
@@ -1879,6 +2037,20 @@ components:
       - text
       - title
       - type
+    HomeBlockTypeEnum:
+      enum:
+      - hero
+      - about
+      - advantages
+      - kg_china
+      - cta
+      type: string
+      description: |-
+        * `hero` - Hero (первый экран)
+        * `about` - О Центре
+        * `advantages` - Преимущества
+        * `kg_china` - Кыргызстан — Китай
+        * `cta` - Призыв к действию (CTA)
     IconEnum:
       enum:
       - cooperation
@@ -1913,6 +2085,16 @@ components:
       required:
       - large
       - small
+    LangEnum:
+      enum:
+      - ru
+      - en
+      - zh
+      type: string
+      description: |-
+        * `ru` - Русский
+        * `en` - English
+        * `zh` - 中文
     NewsCategory:
       type: object
       properties:
@@ -2486,20 +2668,6 @@ components:
       required:
       - type
       - url
-    TypeEnum:
-      enum:
-      - hero
-      - about
-      - advantages
-      - kg_china
-      - cta
-      type: string
-      description: |-
-        * `hero` - Hero (первый экран)
-        * `about` - О Центре
-        * `advantages` - Преимущества
-        * `kg_china` - Кыргызстан — Китай
-        * `cta` - Призыв к действию (CTA)
     ValidationError:
       type: object
       properties:

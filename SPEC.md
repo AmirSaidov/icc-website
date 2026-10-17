@@ -262,11 +262,13 @@ backend/
 - Успех → `201 {"ok": true}`. Ошибка валидации → `400` с ошибками по полям.
 - IP сохраняется с учётом прокси (см. `NUM_PROXIES`).
 - После сохранения (`transaction.on_commit`) — письмо на адреса из `SiteSettings.feedback_emails` (если пусто — из `FEEDBACK_EMAIL` в `.env`). Тема письма: `[ЦПК] Новое обращение: <тип> — <subject>`. В dev используется console email backend.
-- Если письмо не ушло — обращение всё равно сохранено, ошибка пишется в лог.
+- Тело письма — простой текст со всеми полями, языком, датой и ссылкой на обращение в админке (`BACKEND_URL`); `reply_to` — email отправителя. Если получателей нет (ни `feedback_emails`, ни `FEEDBACK_EMAIL`) — письмо не шлём, warning в лог.
+- Если письмо не ушло — обращение всё равно сохранено, ответ `201`, ошибка пишется в лог.
+- В `subject` и `full_name` переводы строк заменяются пробелом (защита от инъекции в заголовки письма).
 
 ### 5.2 Безопасность
 
-- **Rate limit** на `/feedback/`: 5 запросов в час с одного IP (DRF `ScopedRateThrottle`) → `429`.
+- **Rate limit** на `/feedback/`: 5 запросов в час с одного IP (DRF `ScopedRateThrottle`) → `429`. Считаются все POST, включая невалидные и honeypot.
   - Кэш для throttling — **общий для всех воркеров**: `DatabaseCache` (`python manage.py createcachetable`), не `LocMemCache`.
   - `NUM_PROXIES` из `.env` (dev — 0, прод за nginx — 1). Иначе за nginx все запросы придут с 127.0.0.1 и лимит станет общим на весь сайт.
 - **Админка:** путь из `ADMIN_URL` (на проде нестандартный), `django-axes` (блокировка после 5 неудачных входов на 30 минут), валидаторы паролей с минимальной длиной 10.
@@ -305,6 +307,7 @@ CORS_ALLOWED_ORIGINS=http://localhost:3000
 CSRF_TRUSTED_ORIGINS=http://localhost:8000
 ADMIN_URL=admin/
 FRONTEND_URL=http://localhost:3000
+BACKEND_URL=http://localhost:8000
 NUM_PROXIES=0
 EMAIL_HOST=
 EMAIL_PORT=587
@@ -314,7 +317,7 @@ EMAIL_USE_TLS=True
 DEFAULT_FROM_EMAIL=noreply@example.kg
 FEEDBACK_EMAIL=
 ```
-Если `EMAIL_HOST` пустой — используется console email backend.
+Если `EMAIL_HOST` пустой — используется console email backend. `BACKEND_URL` — публичный адрес бэкенда для ссылки на обращение в админке в письме.
 
 **SQLite:**
 - `OPTIONS: {"init_command": "PRAGMA journal_mode=WAL;", "transaction_mode": "IMMEDIATE"}` — чтение не блокируется записью из админки, меньше ошибок `database is locked`.

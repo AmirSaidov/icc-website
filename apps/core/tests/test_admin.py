@@ -3,6 +3,7 @@ import io
 import zipfile
 
 import pytest
+from axes.models import AccessAttempt, AccessFailureLog, AccessLog
 from django.contrib import admin
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ValidationError
@@ -19,7 +20,10 @@ from apps.pages.models import Direction, HomeBlock, Page, Service
 
 pytestmark = pytest.mark.django_db
 
-HIDDEN_FOR_EDITOR = {User, Group, ContactInfo, SiteSettings}
+AXES_MODELS = {AccessAttempt, AccessLog, AccessFailureLog}
+HIDDEN_FOR_EDITOR = {User, Group, ContactInfo, SiteSettings, *AXES_MODELS}
+# записи создаются только системой (формой на сайте, миграцией, axes)
+NO_ADD = {ContactInfo, SiteSettings, Feedback, *AXES_MODELS}
 
 
 def make_objects():
@@ -49,6 +53,14 @@ def make_objects():
         ),
         User: User.objects.create_user("someone"),
         Group: Group.objects.get(name="Редактор"),
+        AccessAttempt: AccessAttempt.objects.create(
+            username="x", ip_address="10.0.0.1", user_agent="", get_data="", post_data="", http_accept="",
+            path_info="/admin/login/", failures_since_start=1,
+        ),
+        AccessLog: AccessLog.objects.create(username="x", ip_address="10.0.0.1", user_agent="", http_accept="", path_info="/"),
+        AccessFailureLog: AccessFailureLog.objects.create(
+            username="x", ip_address="10.0.0.1", user_agent="", http_accept="", path_info="/"
+        ),
     }
 
 
@@ -81,7 +93,7 @@ def test_all_admin_pages_open(request, role):
             assert changelist.status_code == 200, model
         assert change.status_code == 200, model
         add = client.get(url(model, "add"))
-        if model in (ContactInfo, SiteSettings, Feedback):
+        if model in NO_ADD:
             assert add.status_code == 403, model  # добавлять нельзя никому
         else:
             assert add.status_code == 200, model
@@ -232,3 +244,13 @@ def test_ckeditor_upload_requires_csrf(editor_user):
     client = Client(enforce_csrf_checks=True)
     client.force_login(editor_user)
     assert client.post(reverse("ckeditor-upload"), {"upload": upload("a.jpg", jpeg_bytes())}).status_code == 403
+
+
+def test_admin_role_can_unlock_blocked_login(admin_role_client):
+    attempt = AccessAttempt.objects.create(
+        username="manager", ip_address="10.0.0.1", user_agent="", get_data="", post_data="",
+        http_accept="", path_info="/admin/login/", failures_since_start=5,
+    )
+    response = admin_role_client.post(url(AccessAttempt, "delete", attempt.pk), {"post": "yes"})
+    assert response.status_code == 302
+    assert not AccessAttempt.objects.exists()

@@ -14,6 +14,7 @@ py -3.12 -m venv .venv
 pip install -r requirements.txt
 copy .env.example .env        (затем задать SECRET_KEY)
 python manage.py migrate
+python manage.py createcachetable    (кэш для rate limit — DatabaseCache)
 python manage.py seed            (тестовые данные; --flush — пересоздать)
 python manage.py runserver
 ```
@@ -38,6 +39,8 @@ Swagger: http://localhost:8000/api/docs/ · документация для фр
 - Файлы: только `ImageUploadField` / `DocumentUploadField` (`apps/core/fields.py`) — проверка расширения, содержимого, размера.
 - Slug: в `save()` моделей со slug вызывать `fill_translated_slugs` (пустой slug_X ← title_X, конфликт → -2, -3).
 - Отложенная публикация: публичные выборки — только через `published()` (`apps/core/api.py`).
+- IP клиента — только `apps.core.net.get_client_ip` (учитывает NUM_PROXIES; та же логика у throttling и axes).
+- Логи — `logs/app.log` (не в git). Тесты в файл не пишут (conftest).
 - Тесты — `apps/<app>/tests/`, данные через `apps/core/tests/factories.py`, без новых зависимостей.
 - Секреты только в `.env` (не в git). `db.sqlite3`, `media/`, `logs/` не коммитятся.
 - Команды в документации — для Windows (`.venv\Scripts\activate`, `copy`).

@@ -15,6 +15,7 @@ api_v1 = [
     path("", include("apps.news.urls")),
     path("", include("apps.cooperation.urls")),
     path("", include("apps.core.urls")),
+    path("", include("apps.feedback.urls")),
 ]
 
 urlpatterns = [

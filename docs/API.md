@@ -7,7 +7,7 @@
 - **OpenAPI-схема:** http://localhost:8000/api/schema/ или файл [`openapi.yaml`](openapi.yaml) (для генерации типов, например `openapi-typescript docs/openapi.yaml -o api.d.ts`)
 - **Админка:** http://localhost:8000/admin/
 
-Все эндпоинты — `GET` без авторизации. `POST /feedback/` (форма обращения) появится на этапе 4.
+Все эндпоинты — `GET` без авторизации, кроме `POST /feedback/` (форма обращения, см. раздел «Форма обращения»).
 
 ---
 
@@ -22,6 +22,7 @@ py -3.12 -m venv .venv
 pip install -r requirements.txt
 copy .env.example .env
 python manage.py migrate
+python manage.py createcachetable
 python manage.py seed
 python manage.py runserver
 ```
@@ -31,7 +32,8 @@ python manage.py runserver
 python3.12 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
-python manage.py migrate && python manage.py seed && python manage.py runserver
+python manage.py migrate && python manage.py createcachetable
+python manage.py seed && python manage.py runserver
 ```
 
 `seed` заполняет базу тестовыми данными на трёх языках и создаёт пользователей `admin` и `editor`, пароли выводит в консоль. Повторный запуск дублей не создаёт. Чтобы пересоздать тестовые данные, используйте `python manage.py seed --flush`.
@@ -164,7 +166,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 |---|---|---|
 | 400 | `{"lang": ["..."]}`, `{"when": ["..."]}` | Невалидный параметр |
 | 404 | `{"detail": "Страница не найдена."}` | Запись не найдена или не опубликована (черновики не видны) |
-| 429 | `{"detail": "..."}` | Превышен лимит запросов (только `POST /feedback/`, этап 4) |
+| 429 | `{"detail": "..."}` | Превышен лимит запросов (только `POST /feedback/`) |
 | 500 | — | Ошибка сервера |
 
 ---
@@ -188,6 +190,55 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 | `GET /contacts/` | Контакты. `phones` — `[{"label", "number"}]`, подпись на языке запроса (может быть `null`); `socials` — `[{"type", "url"}]`, `type` — ключ иконки (не переводится) |
 | `GET /settings/` | `analytics_id`, `default_og_image` |
 | `GET /documents/` | Документы для раздела «Документы» |
+
+## Форма обращения: `POST /feedback/`
+
+Одна форма для «Контактов» и «Сотрудничества». Тело запроса — JSON, авторизация и CSRF-токен не нужны:
+
+```ts
+const response = await fetch(`${API}/feedback/`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(form),
+});
+```
+
+| Поле | Тип | Обязательно | Правила |
+|---|---|---|---|
+| `type` | `contact` / `cooperation` | да | из списка |
+| `full_name` | string | да | 2–150 символов |
+| `company` | string | да | до 200 |
+| `country` | string | да | до 100 |
+| `email` | string | да | корректный email |
+| `phone` | string / null | нет | цифры, `+`, пробелы, `-`, `()`, до 30 |
+| `subject` | string | да | до 200 |
+| `message` | string | да | 10–5000 символов |
+| `consent` | bool | да | только `true` (согласие на обработку данных) |
+| `lang` | `ru` / `en` / `zh` | да | язык страницы, с которой отправлено |
+| `website` | string | — | **honeypot**, всегда пустая строка (см. ниже) |
+
+**Ответы:**
+
+| Код | Тело | Что делать фронту |
+|---|---|---|
+| `201` | `{"ok": true}` | Показать «Спасибо, мы свяжемся с вами» |
+| `400` | `{"email": ["Обязательное поле."], "message": ["Убедитесь, что это значение содержит не менее 10 символов."]}` | Подсветить поля по ключам. Тексты ошибок приходят на русском — для en/zh лучше показывать свои подписи по имени поля |
+| `429` | `{"detail": "Слишком много обращений с вашего адреса. Попробуйте снова через 3599 с."}` + заголовок `Retry-After` (секунды) | «Слишком много запросов, попробуйте позже» |
+
+**Лимит:** 5 запросов в час с одного IP. Считаются все POST, включая отклонённые с ошибкой `400`, поэтому стоит проверять поля на фронте до отправки. Шестой запрос получит `429`.
+
+**Honeypot.** Это ловушка для ботов: поле `website`, которое человек не видит, а бот заполняет. Если оно не пустое, бэк отвечает `201`, как при успехе, но ничего не сохраняет и письмо не шлёт. Как сделать на фронте:
+
+```tsx
+{/* не display:none и не type="hidden" — некоторые боты их пропускают; прячем за экраном */}
+<div aria-hidden="true" style={{ position: "absolute", left: "-10000px", width: 1, height: 1, overflow: "hidden" }}>
+  <label htmlFor="website">Website</label>
+  <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off"
+         value={form.website} onChange={...} />
+</div>
+```
+
+В JSON поле `website` отправляется всегда, обычно как пустая строка.
 
 ## Примеры ответов
 

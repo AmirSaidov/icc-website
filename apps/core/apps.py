@@ -12,3 +12,5 @@ class CoreConfig(AppConfig):
         # Python 3.12 на Windows не знает .webp → runserver отдаёт превью как
         # application/octet-stream, и браузер с nosniff может их не показать.
         mimetypes.add_type("image/webp", ".webp")
+
+        from . import security  # noqa: F401 — подключает обработчики сигналов
