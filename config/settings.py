@@ -1,0 +1,172 @@
+"""
+Настройки проекта. Все секреты и параметры окружения — из .env (django-environ).
+См. SPEC.md, раздел 5.4.
+"""
+from pathlib import Path
+
+import environ
+from django.conf.locale import LANG_INFO
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+env = environ.Env(
+    DEBUG=(bool, False),
+    ALLOWED_HOSTS=(list, []),
+    CORS_ALLOWED_ORIGINS=(list, ["http://localhost:3000"]),
+    CSRF_TRUSTED_ORIGINS=(list, []),
+    ADMIN_URL=(str, "admin/"),
+    FRONTEND_URL=(str, "http://localhost:3000"),
+    NUM_PROXIES=(int, 0),
+    EMAIL_HOST=(str, ""),
+    EMAIL_PORT=(int, 587),
+    EMAIL_HOST_USER=(str, ""),
+    EMAIL_HOST_PASSWORD=(str, ""),
+    EMAIL_USE_TLS=(bool, True),
+    DEFAULT_FROM_EMAIL=(str, "noreply@example.kg"),
+    FEEDBACK_EMAIL=(str, ""),
+)
+environ.Env.read_env(BASE_DIR / ".env")
+
+SECRET_KEY = env("SECRET_KEY")
+DEBUG = env("DEBUG")
+ALLOWED_HOSTS = env("ALLOWED_HOSTS")
+CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS")
+
+ADMIN_URL = env("ADMIN_URL")
+FRONTEND_URL = env("FRONTEND_URL").rstrip("/")
+NUM_PROXIES = env("NUM_PROXIES")
+
+# --- Приложения ---------------------------------------------------------------
+
+INSTALLED_APPS = [
+    # modeltranslation должен стоять раньше django.contrib.admin
+    "modeltranslation",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    # сторонние
+    "corsheaders",
+    "imagekit",
+    # проект
+    "apps.core",
+    "apps.pages",
+    "apps.news",
+    "apps.cooperation",
+    "apps.feedback",
+]
+
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+ROOT_URLCONF = "config.urls"
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = "config.wsgi.application"
+
+# --- База данных --------------------------------------------------------------
+# Только переносимые возможности ORM: переезд на PostgreSQL = смена DATABASES.
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+        "OPTIONS": {
+            "init_command": "PRAGMA journal_mode=WAL;",
+            "transaction_mode": "IMMEDIATE",
+        },
+    }
+}
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# --- Пароли -------------------------------------------------------------------
+
+AUTH_PASSWORD_VALIDATORS = [
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {"min_length": 10},
+    },
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+]
+
+# --- Язык и время -------------------------------------------------------------
+
+LANGUAGE_CODE = "ru"
+LANGUAGES = [
+    ("ru", "Русский"),
+    ("en", "English"),
+    ("zh", "中文"),
+]
+# Django знает только zh-hans / zh-hant, а по ТЗ код языка — "zh" (поля *_zh, ?lang=zh).
+# Без этой записи админка modeltranslation падает с "Unknown language code zh".
+LANG_INFO.setdefault(
+    "zh",
+    {"bidi": False, "code": "zh", "name": "Chinese", "name_local": "中文"},
+)
+
+TIME_ZONE = "Asia/Bishkek"
+USE_I18N = True
+USE_TZ = True
+
+# django-modeltranslation
+MODELTRANSLATION_DEFAULT_LANGUAGE = "ru"
+MODELTRANSLATION_LANGUAGES = ("ru", "en", "zh")
+# Обязательные поля модели обязательны только в русской версии, en/zh — опциональны.
+MODELTRANSLATION_REQUIRED_LANGUAGES = ("ru",)
+# Fallback-и выключены: нет перевода — API отдаёт null, а не русский текст.
+MODELTRANSLATION_ENABLE_FALLBACKS = False
+MODELTRANSLATION_FALLBACK_LANGUAGES = ()
+
+# --- Статика и медиа ----------------------------------------------------------
+
+STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+# --- CORS ---------------------------------------------------------------------
+
+CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS")
+
+# --- Почта --------------------------------------------------------------------
+# Если EMAIL_HOST пустой — console backend (письма печатаются в консоль).
+
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_PORT = env("EMAIL_PORT")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+EMAIL_USE_TLS = env("EMAIL_USE_TLS")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
+FEEDBACK_EMAIL = env("FEEDBACK_EMAIL")
+
+if EMAIL_HOST:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
