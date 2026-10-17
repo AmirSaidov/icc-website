@@ -31,7 +31,7 @@ pytest apps/news/tests/test_api.py::test_news_with_three_translations_photo_and_
 
 | # | Критерий | Как проверено | Результат |
 |---|---|---|---|
-| 1 | Проект поднимается по README на чистой машине | Клон ветки `backend-mvp` с GitHub во временную папку, новый venv, команды из `README.md` дословно (cmd), затем `check`, `pytest`, запросы к API и админке на `runserver` | см. ниже |
+| 1 | Проект поднимается по README на чистой машине | Клон ветки `backend-mvp` с GitHub во временную папку, новый venv, команды из `README.md` дословно (cmd), затем `check`, `pytest`, запросы к API и админке на `runserver` | ✅ (подробности ниже) |
 | 2 | Редактор создаёт новость на трёх языках с фото и PDF, и она сразу есть в `/api/v1/news/?lang=zh` | Автотест через форму админки под Редактором (тест 1). Вручную на этапе 3: вход под `editor` через форму логина, создание новости с фото и PDF через админку, проверка `/api/v1/news/?lang=zh` на живом `runserver` (галерея WebP и PDF отдаются) | ✅ |
 | 3 | Редактор не видит пользователей, контактную информацию и системные настройки | Автотесты (тест 2): разделов нет на главной админки, прямые адреса — 403. Вручную — скриншот админки под `editor` (этап 3) | ✅ |
 | 4 | Запись без китайского перевода не ломает API: детальный ответ отдаёт `is_translated: false` | Автотест (тест 3). В seed-данных — 2 записи без zh; реальный пример ответа — в `docs/API.md` («Новость без перевода на zh») | ✅ |
@@ -40,4 +40,19 @@ pytest apps/news/tests/test_api.py::test_news_with_three_translations_photo_and_
 
 ### Критерий 1: проверка с чистой машины
 
-Заполняется после клона ветки `backend-mvp`.
+17.10.2026, Windows 11, Python 3.12.10:
+
+1. `git clone -b backend-mvp https://github.com/AmirSaidov/icc-website.git` — во временную папку вне рабочей копии.
+2. Команды из `README.md` (вариант cmd) — дословно, по порядку. `pip` без кэша (`PIP_NO_CACHE_DIR=1`), все пакеты скачаны заново. Время — около 2 мин 40 с.
+   - `pip install` — все версии из `requirements.txt`;
+   - `migrate` — 44 миграции без ошибок; `createcachetable` — без ошибок;
+   - `seed` — созданы все данные раздела 5.4 и пользователи `admin` / `editor`, пароли выведены в консоль;
+   - `python` в PATH — из нового `.venv`.
+3. `runserver`:
+   - `/api/v1/home/?lang=zh`, `/api/v1/news/?lang=en`, `/api/v1/contacts/?lang=zh`, `/api/docs/`, `/api/schema/`, `/admin/login/`, `/sitemap.xml`, `/robots.txt` — 200;
+   - превью обложки — 200, `image/webp`;
+   - вход в админку под `admin` с паролем из `seed` — успешно, главная админки — 200;
+   - `POST /api/v1/feedback/` — 201.
+4. В клоне: `python manage.py check` — без ошибок, `pytest` — 163 passed; `git status` после всех команд пуст (`db.sqlite3`, `.env`, `media/`, `logs/`, `.venv/` в git не попадают).
+
+Результат: проект поднимается по README без правок.
