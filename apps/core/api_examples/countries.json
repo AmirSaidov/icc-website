@@ -1,0 +1,24 @@
+[
+  {
+    "id": 3,
+    "code": "CN",
+    "name": "Китай",
+    "description": "Ключевой партнёр Кыргызстана в промышленной кооперации.",
+    "flag": {
+      "small": "http://localhost:8000/media/CACHE/images/flags/cn/016c0dbcea457959ba6bb508ac5f537f.webp",
+      "large": "http://localhost:8000/media/CACHE/images/flags/cn/662eb7c33a66ec0595b18575d17bb2ac.webp"
+    },
+    "is_translated": true
+  },
+  {
+    "id": 4,
+    "code": "KZ",
+    "name": "Казахстан",
+    "description": "Партнёр по Евразийскому экономическому союзу.",
+    "flag": {
+      "small": "http://localhost:8000/media/CACHE/images/flags/kz/68283f27fc4876187533fbdb098e3efc.webp",
+      "large": "http://localhost:8000/media/CACHE/images/flags/kz/6ce26751f5da7ff7c92989d8afe12e5b.webp"
+    },
+    "is_translated": true
+  }
+]

@@ -1,0 +1,39 @@
+{
+  "count": 12,
+  "next": "http://localhost:8000/api/v1/news/?lang=ru&page=2&page_size=2",
+  "previous": null,
+  "results": [
+    {
+      "id": 13,
+      "slug": "delovaia-missiia-v-urumchi",
+      "title": "Деловая миссия в Урумчи",
+      "excerpt": "Предприниматели Кыргызстана провели переговоры с компаниями Синьцзяна.",
+      "cover": {
+        "small": "http://localhost:8000/media/CACHE/images/news/2026/10/news-1/180f0002dfa5cacc94a2a51ef9efc6a6.webp",
+        "large": "http://localhost:8000/media/CACHE/images/news/2026/10/news-1/8d061b86952d98a3aab9a4c50f4b83c2.webp"
+      },
+      "category": {
+        "slug": "missions",
+        "name": "Деловые миссии"
+      },
+      "published_at": "2026-10-15T10:00:00+06:00",
+      "is_translated": true
+    },
+    {
+      "id": 14,
+      "slug": "tsentr-podpisal-memorandum-s-torgovoi-palatoi-sintsziana",
+      "title": "Центр подписал меморандум с торговой палатой Синьцзяна",
+      "excerpt": "Стороны договорились о совместной работе по поиску партнёров.",
+      "cover": {
+        "small": "http://localhost:8000/media/CACHE/images/news/2026/10/news-2/6a636923db5281d95aa52c724a0461cd.webp",
+        "large": "http://localhost:8000/media/CACHE/images/news/2026/10/news-2/7642e9d4216d1ccb43996ec0f78b7d12.webp"
+      },
+      "category": {
+        "slug": "partnership",
+        "name": "Партнёрство"
+      },
+      "published_at": "2026-10-11T10:00:00+06:00",
+      "is_translated": true
+    }
+  ]
+}

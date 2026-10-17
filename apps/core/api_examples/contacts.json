@@ -1,0 +1,28 @@
+{
+  "official_name": "Центр промышленной кооперации при Торгово-промышленной палате Кыргызской Республики",
+  "address": "720000, г. Бишкек, ул. Примерная, 1 (тестовый адрес)",
+  "phones": [
+    {
+      "label": "Приёмная",
+      "number": "+996 312 000 000"
+    },
+    {
+      "label": "Отдел кооперации",
+      "number": "+996 312 000 001"
+    }
+  ],
+  "email": "info@example.kg",
+  "work_hours": "Пн–Пт, 9:00–18:00",
+  "map_lat": 42.8746,
+  "map_lng": 74.6122,
+  "socials": [
+    {
+      "type": "telegram",
+      "url": "https://t.me/example"
+    },
+    {
+      "type": "facebook",
+      "url": "https://facebook.com/example"
+    }
+  ]
+}

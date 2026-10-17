@@ -61,6 +61,7 @@ backend/
 - **Slug** — свой для каждого языка (`slug_ru`, `slug_en`, `slug_zh`). Уникален в пределах языка. Пустой slug хранится как `NULL`, а не пустая строка, чтобы уникальность не ломалась на незаполненных переводах.
 - **Fallback-языки modeltranslation отключены** (`MODELTRANSLATION_ENABLE_FALLBACKS = False`). Если перевода нет — API должен честно отдать `null`, а не подставить русский текст.
 - **«Запись переведена на язык X»** = заполнены `title_X` (или `name_X`) и, если у модели есть slug, `slug_X`.
+- **Исключение — системные страницы** (Page с непустым `key`): адресуются по `key`, slug им не нужен. Для них «переведено на язык X» = заполнен `title_X`.
 
 ### 2.2 Миксины (`apps/core`)
 
@@ -76,7 +77,7 @@ backend/
 |---|---|---|
 | **Page** — страницы сайта | TimeStamped, Publishable, Seo | `key` (уникальный, nullable; системные страницы: `home`, `about`, `cooperation`), `title` [T], `slug` [T], `content` [T] (rich text), `show_in_menu` (bool), `order` |
 | **HomeBlock** — блоки главной | TimeStamped, Publishable | `type`: `hero` / `about` / `advantages` / `kg_china` / `cta`, `title` [T], `text` [T], `image`, `button_text` [T], `button_link` (путь **без** языкового префикса, например `/services`; префикс добавляет фронт), `order` |
-| **Direction** — направления деятельности | TimeStamped, Publishable, Seo | `title` [T], `slug` [T], `short_text` [T], `content` [T], `icon` (CharField с choices — ключ иконки из набора фронта, например `factory`, `handshake`; список согласовать с фронтом, SVG не загружаем), `order` |
+| **Direction** — направления деятельности | TimeStamped, Publishable, Seo | `title` [T], `slug` [T], `short_text` [T], `content` [T], `icon` (CharField с choices — смысловой ключ: `cooperation`, `partnership`, `joint-production`, `localization`, `subcontracting`, `consulting`, `b2b-meetings`, `export`; фронт сам сопоставляет ключ с иконкой, SVG не загружаем), `order` |
 | **Service** — услуги | TimeStamped, Publishable, Seo | `title` [T], `slug` [T], `short_text` [T], `content` [T], `how_to_apply` [T], `contact_person` [T], `contact_email`, `contact_phone`, `order` |
 | **NewsCategory** | TimeStamped | `name` [T], `slug` [T], `order` |
 | **News** | TimeStamped, Publishable, Seo | `title` [T], `slug` [T], `excerpt` [T], `content` [T], `cover`, `category` (FK → NewsCategory, `SET_NULL`, nullable), `published_at` (по умолчанию now) |
@@ -97,7 +98,7 @@ backend/
 - Партнёры попадают в API, только если `consent_to_publish = True`.
 - Картинки (`cover`, `image`, `logo`, `og_image`): превью через django-imagekit — WebP, ширина 400 и 1200 px.
 - Singleton-модели (ContactInfo, SiteSettings): ровно одна запись, создаётся миграцией, удалить нельзя.
-- Системные страницы (с непустым `key`) создаются миграцией, удалить нельзя, `key` в админке только для чтения.
+- Системные страницы (с непустым `key`) создаются миграцией (статус `draft`), удалить нельзя, `key` в админке только для чтения. Адресуются по `key`, slug не нужен (см. 2.1). Команда `seed` заполняет их на трёх языках и публикует.
 - Rich text (`content`) санитайзится через `nh3` **при сохранении**. Разрешены: заголовки h2–h4, p, br, strong, em, u, s, ul, ol, li, a (href, target, rel), img (src, alt, width, height), blockquote, table/thead/tbody/tr/th/td, figure, figcaption.
 
 ---
@@ -279,8 +280,9 @@ backend/
 
   | Сущность | URL на фронте |
   |---|---|
-  | Главная | `/{lang}` |
-  | Page | `/{lang}/{slug}` |
+  | Главная (Page `key=home`) | `/{lang}` |
+  | Системная страница (Page с `key`, кроме `home`) | `/{lang}/{key}` |
+  | Page (без `key`) | `/{lang}/{slug}` |
   | Direction | `/{lang}/directions/{slug}` |
   | Service | `/{lang}/services/{slug}` |
   | News | `/{lang}/news/{slug}` |
@@ -321,6 +323,7 @@ FEEDBACK_EMAIL=
 
 **Команда `python manage.py seed`:**
 - Тестовые данные на трёх языках: 5 блоков главной, 8 направлений, 7 услуг, 3 категории, 12 новостей, 8 мероприятий (половина прошедшие, половина предстоящие, все типы), Китай + ещё 1 страна, 4 партнёра (1 без согласия на публикацию), 3 проекта, контакты, «Положение о Центре» (PDF-заглушка) в документах.
+- Системные страницы (`home`, `about`, `cooperation`) заполняются на трёх языках и публикуются.
 - Минимум 2 записи **без китайского перевода** — чтобы проверить поведение `is_translated: false`.
 - Картинки-заглушки генерируются через Pillow (без скачивания из интернета).
 - Флаг `--flush` удаляет старые seed-данные перед созданием. Повторный запуск без флага не плодит дубли.
@@ -388,5 +391,5 @@ python manage.py seed && python manage.py runserver
 
 - На какой email приходят заявки и есть ли SMTP у заказчика? (Пока — console backend.)
 - Кто даёт VPS и домен?
-- Схема URL на фронте (раздел 5.3) и список ключей иконок направлений — согласовать с Амиром и Ариетом.
+- Схема URL на фронте (раздел 5.3) — согласовать с Амиром и Ариетом. (Ключи иконок направлений и URL системных страниц — решено, см. 2.3 и 5.3.)
 - Где отдавать sitemap/robots: с бэка (как сейчас) или фронт проксирует — согласовать.

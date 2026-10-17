@@ -1,0 +1,14 @@
+[
+  {
+    "key": "about",
+    "slug": null,
+    "title": "О Центре",
+    "order": 1
+  },
+  {
+    "key": "cooperation",
+    "slug": null,
+    "title": "Сотрудничество",
+    "order": 2
+  }
+]

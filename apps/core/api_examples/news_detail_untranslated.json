@@ -1,0 +1,29 @@
+{
+  "id": 23,
+  "slug": null,
+  "title": null,
+  "excerpt": null,
+  "content": null,
+  "cover": {
+    "small": "http://localhost:8000/media/CACHE/images/news/2026/10/news-11/227783ae5c441677d1ff66dc67bef39e.webp",
+    "large": "http://localhost:8000/media/CACHE/images/news/2026/10/news-11/9510921bb2c8029ebe63babeddbae2e8.webp"
+  },
+  "category": {
+    "slug": "center",
+    "name": "中心新闻"
+  },
+  "published_at": "2026-08-08T10:00:00+06:00",
+  "gallery": [],
+  "attachments": [],
+  "is_translated": false,
+  "seo": {
+    "meta_title": null,
+    "meta_description": null,
+    "og_image": "http://localhost:8000/media/CACHE/images/news/2026/10/news-11/9510921bb2c8029ebe63babeddbae2e8.webp",
+    "alternates": {
+      "ru": "vstrecha-s-predprinimateliami-osha",
+      "en": "meeting-with-osh-entrepreneurs",
+      "zh": null
+    }
+  }
+}

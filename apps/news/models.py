@@ -1,5 +1,6 @@
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 
 from apps.core.fields import NullableSlugField, unique_slug_constraints
@@ -65,6 +66,15 @@ class Event(TimeStampedModel, PublishableModel, SeoModel):
         B2B = "b2b", "B2B-встреча"
         OTHER = "other", "Другое"
 
+    # Подписи типов для API (/event-types/, поле type.label) на языке запроса.
+    TYPE_LABELS = {
+        "mission": {"ru": "Деловая миссия", "en": "Business mission", "zh": "商务考察团"},
+        "forum": {"ru": "Форум", "en": "Forum", "zh": "论坛"},
+        "exhibition": {"ru": "Выставка", "en": "Exhibition", "zh": "展览会"},
+        "b2b": {"ru": "B2B-встреча", "en": "B2B meeting", "zh": "B2B洽谈会"},
+        "other": {"ru": "Другое", "en": "Other", "zh": "其他"},
+    }
+
     title = models.CharField("заголовок", max_length=255)
     slug = NullableSlugField("slug")
     type = models.CharField("тип", max_length=20, choices=Type.choices)
@@ -90,3 +100,17 @@ class Event(TimeStampedModel, PublishableModel, SeoModel):
     def save(self, *args, **kwargs):
         sanitize_translated_fields(self, "content")
         super().save(*args, **kwargs)
+
+    # «Предстоящее / прошедшее» не хранится: по end_at, а если пусто — по start_at.
+    @staticmethod
+    def upcoming_q(now=None):
+        now = now or timezone.now()
+        return Q(end_at__gte=now) | Q(end_at__isnull=True, start_at__gte=now)
+
+    @property
+    def is_upcoming(self):
+        return (self.end_at or self.start_at) >= timezone.now()
+
+    @classmethod
+    def type_label(cls, code, lang):
+        return cls.TYPE_LABELS.get(code, {}).get(lang)

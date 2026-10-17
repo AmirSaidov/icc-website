@@ -39,7 +39,3 @@ class NullableSlugField(models.SlugField):
             value = None
             setattr(model_instance, self.attname, None)
         return value
-
-    def to_python(self, value):
-        value = super().to_python(value)
-        return value or None

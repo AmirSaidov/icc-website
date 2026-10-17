@@ -1,0 +1,20 @@
+{
+  "id": 9,
+  "slug": "promyshlennaia-kooperatsiia",
+  "title": "Промышленная кооперация",
+  "short_text": "Связываем производителей для совместной работы.",
+  "content": "<p>Связываем производителей для совместной работы.</p><p>Центр промышленной кооперации помогает предприятиям Кыргызстана находить партнёров, выходить на новые рынки и развивать совместные производства.</p>",
+  "icon": "cooperation",
+  "order": 0,
+  "is_translated": true,
+  "seo": {
+    "meta_title": "Промышленная кооперация",
+    "meta_description": "Связываем производителей для совместной работы.",
+    "og_image": "http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp",
+    "alternates": {
+      "ru": "promyshlennaia-kooperatsiia",
+      "en": "industrial-cooperation",
+      "zh": "gong-ye-he-zuo"
+    }
+  }
+}

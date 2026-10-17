@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     # сторонние
     "corsheaders",
     "imagekit",
+    "rest_framework",
+    "drf_spectacular",
     # проект
     "apps.core",
     "apps.pages",
@@ -170,3 +172,29 @@ if EMAIL_HOST:
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# --- API (DRF + drf-spectacular) ----------------------------------------------
+# Публичный API: только GET без авторизации (POST /feedback/ — этап 4).
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
+    "DEFAULT_PARSER_CLASSES": ["rest_framework.parsers.JSONParser"],
+    "DEFAULT_AUTHENTICATION_CLASSES": [],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
+    "UNAUTHENTICATED_USER": None,
+    "COERCE_DECIMAL_TO_STRING": False,
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "API сайта ЦПК при ТПП КР",
+    "DESCRIPTION": (
+        "Публичное API сайта Центра промышленной кооперации. Все эндпоинты — GET без "
+        "авторизации. Язык — параметр `?lang=ru|en|zh` (по умолчанию ru). "
+        "Подробности для фронтенда — docs/API.md."
+    ),
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SCHEMA_PATH_PREFIX": r"/api/v1",
+    "COMPONENT_SPLIT_REQUEST": True,
+}

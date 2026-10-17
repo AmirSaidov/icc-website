@@ -1,0 +1,39 @@
+{
+  "count": 3,
+  "next": "http://localhost:8000/api/v1/projects/?lang=ru&page=2&page_size=2",
+  "previous": null,
+  "results": [
+    {
+      "id": 4,
+      "slug": "sovmestnoe-proizvodstvo-stroimaterialov-v-chuiskoi-oblasti",
+      "title": "Совместное производство стройматериалов в Чуйской области",
+      "excerpt": "Запуск завода мощностью 100 тыс. тонн в год.",
+      "cover": {
+        "small": "http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/a78f6a3c567a5b27884697aa88571959.webp",
+        "large": "http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/666e36e067f2ac51c7aed23fb837aa7d.webp"
+      },
+      "country": {
+        "code": "CN",
+        "name": "Китай"
+      },
+      "published_at": "2026-10-07T10:00:00+06:00",
+      "is_translated": true
+    },
+    {
+      "id": 5,
+      "slug": "lokalizatsiia-sborki-selkhoztekhniki",
+      "title": "Локализация сборки сельхозтехники",
+      "excerpt": "Сборка тракторов из машинокомплектов.",
+      "cover": {
+        "small": "http://localhost:8000/media/CACHE/images/projects/2026/10/project-2/b6d3c524062c951d457356f24aca2141.webp",
+        "large": "http://localhost:8000/media/CACHE/images/projects/2026/10/project-2/933fa97af6e8edb7ef3830ff18feb5f5.webp"
+      },
+      "country": {
+        "code": "CN",
+        "name": "Китай"
+      },
+      "published_at": "2026-09-07T10:00:00+06:00",
+      "is_translated": true
+    }
+  ]
+}

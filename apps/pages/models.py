@@ -10,6 +10,8 @@ class Page(TimeStampedModel, PublishableModel, SeoModel):
     """Страница сайта. Системные страницы (с непустым key) создаются миграцией."""
 
     SYSTEM_KEYS = ("home", "about", "cooperation")
+    # Системные страницы адресуются по key, slug им не нужен (SPEC.md, 2.1).
+    system_key_field = "key"
 
     key = models.CharField(
         "системный ключ",
@@ -82,10 +84,15 @@ class HomeBlock(TimeStampedModel, PublishableModel):
 
 class Direction(TimeStampedModel, PublishableModel, SeoModel):
     class Icon(models.TextChoices):
-        # Список ключей иконок нужно согласовать с фронтом (SPEC.md, раздел 9).
-        # Пока только примеры из ТЗ.
-        FACTORY = "factory", "Завод (factory)"
-        HANDSHAKE = "handshake", "Рукопожатие (handshake)"
+        # Смысловые ключи (SPEC.md, 2.3): фронт сам сопоставляет их с иконками.
+        COOPERATION = "cooperation", "Кооперация"
+        PARTNERSHIP = "partnership", "Партнёрство"
+        JOINT_PRODUCTION = "joint-production", "Совместное производство"
+        LOCALIZATION = "localization", "Локализация"
+        SUBCONTRACTING = "subcontracting", "Субконтрактация"
+        CONSULTING = "consulting", "Консалтинг"
+        B2B_MEETINGS = "b2b-meetings", "B2B-встречи"
+        EXPORT = "export", "Экспорт"
 
     title = models.CharField("заголовок", max_length=255)
     slug = NullableSlugField("slug")
