@@ -1,0 +1,93 @@
+{
+  "Meta": {
+    "siteName": "吉尔吉斯共和国工商会工业合作中心",
+    "siteDescription": "吉尔吉斯共和国工商会工业合作中心：寻找合作伙伴、组织谈判、支持合资生产。"
+  },
+  "Nav": {
+    "home": "首页",
+    "about": "关于中心",
+    "directions": "业务方向",
+    "services": "服务",
+    "news": "新闻与活动",
+    "cooperation": "国际合作",
+    "contacts": "联系我们"
+  },
+  "Header": {
+    "logoMark": "ICC",
+    "logoTitle": "工业合作中心",
+    "logoSubtitle": "吉尔吉斯共和国工商会",
+    "contactUs": "联系我们",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单",
+    "mainNav": "主菜单",
+    "skipToContent": "跳至正文"
+  },
+  "LanguageSwitcher": {
+    "label": "网站语言"
+  },
+  "Footer": {
+    "contacts": "联系方式",
+    "menu": "栏目",
+    "socials": "关注我们",
+    "rights": "© {year} 吉尔吉斯共和国工商会工业合作中心"
+  },
+  "Common": {
+    "readMore": "了解更多",
+    "allNews": "全部新闻",
+    "allEvents": "全部活动",
+    "allDirections": "全部业务方向",
+    "services": "服务",
+    "breadcrumbs": "导航路径",
+    "openInNewTab": "在新标签页中打开"
+  },
+  "Cta": {
+    "title": "有项目或问题？",
+    "text": "提交申请，中心专员将在两个工作日内与您联系。",
+    "apply": "提交申请",
+    "contact": "联系我们"
+  },
+  "Home": {
+    "heroServices": "中心服务",
+    "heroContact": "联系我们",
+    "aboutLink": "进一步了解中心",
+    "cooperationLink": "了解合作",
+    "directionsTitle": "业务方向",
+    "advantagesTitle": "为什么选择我们",
+    "newsTitle": "最新新闻",
+    "eventsTitle": "近期活动",
+    "noEvents": "暂无近期活动"
+  },
+  "About": {
+    "leadershipTitle": "领导层",
+    "documentsTitle": "文件",
+    "downloadRegulation": "下载条例（PDF）",
+    "viewRegulation": "在新标签页中打开"
+  },
+  "EventTypes": {
+    "mission": "商务考察",
+    "forum": "论坛",
+    "exhibition": "展览",
+    "b2b": "B2B会谈"
+  },
+  "EventCard": {
+    "date": "日期",
+    "location": "地点"
+  },
+  "Gallery": {
+    "title": "图片集",
+    "open": "打开第{index}张，共{total}张",
+    "close": "关闭",
+    "prev": "上一张",
+    "next": "下一张",
+    "counter": "{index} / {total}"
+  },
+  "Attachments": {
+    "title": "文件",
+    "download": "下载",
+    "units": {
+      "b": "B",
+      "kb": "KB",
+      "mb": "MB"
+    }
+  }
+}

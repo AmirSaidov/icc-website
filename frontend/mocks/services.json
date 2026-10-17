@@ -1,0 +1,101 @@
+[
+  {
+    "id": 1,
+    "icon": "search",
+    "slug": {"ru": "poisk-partnerov", "en": "partner-search", "zh": "partner-search"},
+    "title": {"ru": "Поиск партнёров", "en": "Partner search", "zh": "寻找合作伙伴"},
+    "summary": {
+      "ru": "Подбор производителей, поставщиков и инвесторов под ваш проект.",
+      "en": "Finding manufacturers, suppliers and investors for your project.",
+      "zh": "为您的项目寻找生产商、供应商和投资者。"
+    },
+    "content": {
+      "ru": "<p>Подбираем партнёров в Кыргызстане и Китае, проверяем их и организуем первый контакт.</p>",
+      "en": "<p>We find partners in Kyrgyzstan and China, vet them and arrange the first contact.</p>",
+      "zh": "<p>我们在吉尔吉斯斯坦和中国寻找合作伙伴，进行核实并安排初次联系。</p>"
+    },
+    "steps": [
+      {"title": {"ru": "Заявка", "en": "Request", "zh": "提交申请"}, "text": {"ru": "Опишите проект и требования к партнёру в форме на сайте.", "en": "Describe the project and partner requirements in the form.", "zh": "在网站表格中描述项目和对合作伙伴的要求。"}},
+      {"title": {"ru": "Подбор", "en": "Shortlist", "zh": "筛选"}, "text": {"ru": "В течение 10 рабочих дней готовим список компаний.", "en": "Within 10 working days we prepare a shortlist.", "zh": "10个工作日内提供企业名单。"}},
+      {"title": {"ru": "Встреча", "en": "Meeting", "zh": "会谈"}, "text": {"ru": "Организуем переговоры онлайн или очно.", "en": "We arrange online or in-person negotiations.", "zh": "安排线上或线下谈判。"}}
+    ],
+    "contact_person": {
+      "name": {"ru": "Контактное лицо (уточняется)", "en": "Contact person (TBC)", "zh": "联系人（待定）"},
+      "position": {"ru": "Специалист Центра", "en": "Center specialist", "zh": "中心专员"},
+      "phone": "+996 312 000 000",
+      "email": "info@example.kg"
+    }
+  },
+  {
+    "id": 2,
+    "icon": "handshake",
+    "slug": {"ru": "organizaciya-peregovorov", "en": "negotiations", "zh": "negotiations"},
+    "title": {"ru": "Организация переговоров", "en": "Organising negotiations", "zh": "组织谈判"},
+    "summary": {
+      "ru": "Переговоры и B2B-встречи с переводом и сопровождением.",
+      "en": "Negotiations and B2B meetings with interpreting and support.",
+      "zh": "提供翻译和陪同的谈判及B2B会谈。"
+    },
+    "content": {
+      "ru": "<p>Готовим повестку, площадку и перевод, фиксируем договорённости.</p>",
+      "en": "<p>We prepare the agenda, venue and interpreting, and record agreements.</p>",
+      "zh": "<p>准备议程、场地和翻译，并记录达成的协议。</p>"
+    },
+    "steps": [],
+    "contact_person": null
+  },
+  {
+    "id": 3,
+    "icon": "factory",
+    "slug": {"ru": "soprovozhdenie-proizvodstv", "en": "production-support", "zh": "production-support"},
+    "title": {"ru": "Сопровождение совместных производств", "en": "Joint production support", "zh": "合资生产全程服务"},
+    "summary": {
+      "ru": "Помощь на всех этапах: от площадки и документов до запуска.",
+      "en": "Help at every stage, from site and paperwork to launch.",
+      "zh": "从选址、文件到投产的全阶段协助。"
+    },
+    "content": {
+      "ru": "<p>Сопровождаем проект совместного предприятия до выхода на проектную мощность.</p>",
+      "en": "<p>We support a joint venture project until it reaches design capacity.</p>",
+      "zh": "<p>为合资项目提供支持，直至达到设计产能。</p>"
+    },
+    "steps": [],
+    "contact_person": null
+  },
+  {
+    "id": 4,
+    "icon": "messages",
+    "slug": {"ru": "konsultacii", "en": "consulting", "zh": "consulting"},
+    "title": {"ru": "Консультации", "en": "Consulting", "zh": "咨询服务"},
+    "summary": {
+      "ru": "Таможня, сертификация, налоги, законодательство КР и ЕАЭС.",
+      "en": "Customs, certification, taxes, Kyrgyz and EAEU law.",
+      "zh": "海关、认证、税务、吉尔吉斯斯坦及欧亚经济联盟法规。"
+    },
+    "content": {
+      "ru": "<p>Консультации для иностранных и кыргызстанских компаний.</p>",
+      "en": "<p>Consulting for foreign and Kyrgyz companies.</p>",
+      "zh": "<p>为外国和吉尔吉斯斯坦企业提供咨询。</p>"
+    },
+    "steps": [],
+    "contact_person": null
+  },
+  {
+    "id": 5,
+    "icon": "plane",
+    "slug": {"ru": "delovye-missii", "en": "business-missions", "zh": "business-missions"},
+    "title": {"ru": "Деловые миссии", "en": "Business missions", "zh": "商务考察"},
+    "summary": {
+      "ru": "Визиты делегаций в Китай и приём китайских делегаций в Кыргызстане.",
+      "en": "Delegation visits to China and hosting Chinese delegations in Kyrgyzstan.",
+      "zh": "赴华代表团访问及在吉尔吉斯斯坦接待中国代表团。"
+    },
+    "content": {
+      "ru": "<p>Программа визита, встречи с предприятиями, посещение производств.</p>",
+      "en": "<p>Visit programme, meetings with enterprises, factory tours.</p>",
+      "zh": "<p>访问日程、企业会谈、参观工厂。</p>"
+    },
+    "steps": [],
+    "contact_person": null
+  }
+]

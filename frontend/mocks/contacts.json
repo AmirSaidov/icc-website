@@ -1,0 +1,22 @@
+{
+  "name": {
+    "ru": "Центр промышленной кооперации при Торгово-промышленной палате Кыргызской Республики",
+    "en": "Industrial Cooperation Center under the Chamber of Commerce and Industry of the Kyrgyz Republic",
+    "zh": "吉尔吉斯共和国工商会工业合作中心"
+  },
+  "address": {
+    "ru": "Кыргызская Республика, г. Бишкек (адрес уточняется)",
+    "en": "Bishkek, Kyrgyz Republic (address to be confirmed)",
+    "zh": "吉尔吉斯共和国比什凯克（地址待定）"
+  },
+  "phones": ["+996 312 000 000"],
+  "emails": ["info@example.kg"],
+  "schedule": {"ru": "Пн–Пт, 9:00–18:00", "en": "Mon–Fri, 9:00–18:00", "zh": "周一至周五 9:00–18:00"},
+  "map_lat": 42.8746,
+  "map_lng": 74.6122,
+  "socials": [
+    {"type": "telegram", "url": "https://t.me/"},
+    {"type": "facebook", "url": "https://facebook.com/"},
+    {"type": "instagram", "url": "https://instagram.com/"}
+  ]
+}
