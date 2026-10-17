@@ -1,0 +1,93 @@
+{
+  "Meta": {
+    "siteName": "Industrial Cooperation Center, CCI KR",
+    "siteDescription": "Industrial Cooperation Center under the Chamber of Commerce and Industry of the Kyrgyz Republic: partner search, negotiations and joint production support."
+  },
+  "Nav": {
+    "home": "Home",
+    "about": "About",
+    "directions": "Areas of work",
+    "services": "Services",
+    "news": "News & events",
+    "cooperation": "Cooperation",
+    "contacts": "Contacts"
+  },
+  "Header": {
+    "logoMark": "ICC",
+    "logoTitle": "Industrial Cooperation Center",
+    "logoSubtitle": "under the CCI KR",
+    "contactUs": "Contact us",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "mainNav": "Main navigation",
+    "skipToContent": "Skip to content"
+  },
+  "LanguageSwitcher": {
+    "label": "Site language"
+  },
+  "Footer": {
+    "contacts": "Contacts",
+    "menu": "Sections",
+    "socials": "Follow us",
+    "rights": "© {year} Industrial Cooperation Center, CCI KR"
+  },
+  "Common": {
+    "readMore": "Learn more",
+    "allNews": "All news",
+    "allEvents": "All events",
+    "allDirections": "All areas of work",
+    "services": "Services",
+    "breadcrumbs": "Breadcrumbs",
+    "openInNewTab": "opens in a new tab"
+  },
+  "Cta": {
+    "title": "Have a project or a question?",
+    "text": "Submit a request and a Center specialist will contact you within two working days.",
+    "apply": "Submit a request",
+    "contact": "Contact us"
+  },
+  "Home": {
+    "heroServices": "Our services",
+    "heroContact": "Contact us",
+    "aboutLink": "More about the Center",
+    "cooperationLink": "About cooperation",
+    "directionsTitle": "Areas of work",
+    "advantagesTitle": "Why work with us",
+    "newsTitle": "Latest news",
+    "eventsTitle": "Upcoming events",
+    "noEvents": "No upcoming events yet"
+  },
+  "About": {
+    "leadershipTitle": "Leadership",
+    "documentsTitle": "Documents",
+    "downloadRegulation": "Download the Regulation (PDF)",
+    "viewRegulation": "Open in a new tab"
+  },
+  "EventTypes": {
+    "mission": "Business mission",
+    "forum": "Forum",
+    "exhibition": "Exhibition",
+    "b2b": "B2B meetings"
+  },
+  "EventCard": {
+    "date": "Date",
+    "location": "Venue"
+  },
+  "Gallery": {
+    "title": "Photo gallery",
+    "open": "Open photo {index} of {total}",
+    "close": "Close",
+    "prev": "Previous photo",
+    "next": "Next photo",
+    "counter": "{index} of {total}"
+  },
+  "Attachments": {
+    "title": "Documents",
+    "download": "Download",
+    "units": {
+      "b": "B",
+      "kb": "KB",
+      "mb": "MB"
+    }
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "categories": [
+    {"slug": "center", "title": {"ru": "Новости Центра", "en": "Center news", "zh": "中心动态"}},
+    {"slug": "missions", "title": {"ru": "Деловые миссии", "en": "Business missions", "zh": "商务考察"}},
+    {"slug": "forums", "title": {"ru": "Форумы и выставки", "en": "Forums and exhibitions", "zh": "论坛与展览"}}
+  ],
+  "items": [
+    {
+      "id": 1,
+      "category": "missions",
+      "published_at": "2026-10-15T10:00:00+06:00",
+      "cover": "meeting",
+      "gallery": ["meeting", "presentation", "conference"],
+      "attachments": [{"id": 1, "title": {"ru": "Программа миссии", "en": "Mission programme", "zh": "考察日程"}, "url": "/mocks/document.pdf", "size": 57726, "ext": "pdf"}],
+      "slug": {"ru": "delovaya-missiya", "en": "business-mission", "zh": "business-mission"},
+      "title": {
+        "ru": "Деловая миссия кыргызстанских предприятий в Урумчи: подписаны соглашения о совместном производстве строительных материалов",
+        "en": "Kyrgyz business mission to Urumqi: agreements signed on joint production of building materials",
+        "zh": "吉尔吉斯斯坦企业赴乌鲁木齐商务考察：签署建材联合生产协议"
+      },
+      "summary": {
+        "ru": "Делегация из 15 компаний провела более 40 B2B-встреч с производителями Синьцзяна.",
+        "en": "A delegation of 15 companies held more than 40 B2B meetings with Xinjiang manufacturers.",
+        "zh": "由15家企业组成的代表团与新疆生产商举行了40多场B2B会谈。"
+      },
+      "content": {
+        "ru": "<p>Делегация из 15 кыргызстанских компаний провела более 40 B2B-встреч с производителями Синьцзяна.</p><h2>Итоги миссии</h2><ul><li>подписаны 3 соглашения о намерениях;</li><li>определены площадки для двух производств;</li><li>согласован график следующих встреч.</li></ul><table><thead><tr><th>Отрасль</th><th>Встреч</th></tr></thead><tbody><tr><td>Стройматериалы</td><td>18</td></tr><tr><td>Пищевая промышленность</td><td>12</td></tr><tr><td>Лёгкая промышленность</td><td>10</td></tr></tbody></table>",
+        "en": "<p>A delegation of 15 Kyrgyz companies held more than 40 B2B meetings with Xinjiang manufacturers.</p><h2>Results</h2><ul><li>3 letters of intent signed;</li><li>sites identified for two plants;</li><li>schedule of follow-up meetings agreed.</li></ul><table><thead><tr><th>Industry</th><th>Meetings</th></tr></thead><tbody><tr><td>Building materials</td><td>18</td></tr><tr><td>Food industry</td><td>12</td></tr><tr><td>Light industry</td><td>10</td></tr></tbody></table>",
+        "zh": "<p>由15家吉尔吉斯斯坦企业组成的代表团与新疆生产商举行了40多场B2B会谈。</p><h2>考察成果</h2><ul><li>签署3份意向书；</li><li>确定两个生产项目的选址；</li><li>商定后续会谈日程。</li></ul><table><thead><tr><th>行业</th><th>会谈</th></tr></thead><tbody><tr><td>建材</td><td>18</td></tr><tr><td>食品工业</td><td>12</td></tr><tr><td>轻工业</td><td>10</td></tr></tbody></table>"
+      }
+    },
+    {
+      "id": 2,
+      "category": "center",
+      "published_at": "2026-10-10T09:00:00+06:00",
+      "cover": "engineer-lab",
+      "slug": {"ru": "centr-nachal-rabotu", "en": "center-launched", "zh": "center-launched"},
+      "title": {"ru": "Центр промышленной кооперации начал работу", "en": "Industrial Cooperation Center starts operations", "zh": "工业合作中心正式运营"},
+      "summary": {"ru": "Центр принимает обращения от кыргызстанских и иностранных предприятий.", "en": "The Center now accepts requests from Kyrgyz and foreign companies.", "zh": "中心开始受理吉尔吉斯斯坦和外国企业的申请。"},
+      "content": {"ru": "<p>Центр создан при Торгово-промышленной палате Кыргызской Республики.</p>", "en": "<p>The Center was established under the Chamber of Commerce and Industry of the Kyrgyz Republic.</p>", "zh": "<p>中心设立于吉尔吉斯共和国工商会。</p>"}
+    },
+    {
+      "id": 3,
+      "category": "forums",
+      "published_at": "2026-10-03T12:00:00+06:00",
+      "cover": "conference",
+      "slug": {"ru": "itogi-investforuma", "en": "investment-forum-results", "zh": "investment-forum-results"},
+      "title": {"ru": "Итоги кыргызско-китайского инвестиционного форума", "en": "Results of the Kyrgyz-Chinese investment forum", "zh": "吉中投资论坛成果"},
+      "summary": {"ru": "На форуме прозвучала инициатива о создании Центра.", "en": "The initiative to create the Center was announced at the forum.", "zh": "论坛上提出了设立中心的倡议。"},
+      "content": {"ru": "<p>Модель Центра — «не 100 меморандумов, а 100 работающих предприятий».</p>", "en": "<p>The Center's model is “not 100 memoranda, but 100 working enterprises”.</p>", "zh": "<p>中心的理念是“不是100份备忘录，而是100家运营中的企业”。</p>"}
+    },
+    {
+      "id": 4,
+      "category": "center",
+      "published_at": "2026-09-28T09:00:00+06:00",
+      "cover": "drawings",
+      "slug": {"ru": "priem-zayavok", "en": "applications-open", "zh": "applications-open"},
+      "title": {"ru": "Открыт приём заявок на подбор партнёров", "en": "Applications for partner search are open", "zh": "开始受理合作伙伴匹配申请"},
+      "summary": {"ru": "Заявку можно подать через форму на сайте.", "en": "Apply via the form on the website.", "zh": "可通过网站表格提交申请。"},
+      "content": {"ru": "<p>Заполните форму на странице «Контакты».</p>", "en": "<p>Fill in the form on the Contacts page.</p>", "zh": "<p>请填写“联系我们”页面的表格。</p>"}
+    },
+    {
+      "id": 5,
+      "category": "missions",
+      "published_at": "2026-09-22T09:00:00+06:00",
+      "cover": "port",
+      "slug": {"ru": "logistika-kashgar", "en": "kashgar-logistics", "zh": "kashgar-logistics"},
+      "title": {"ru": "Логистика через Кашгар: встреча с операторами", "en": "Logistics via Kashgar: meeting with operators", "zh": "经喀什物流：与运营商会谈"},
+      "summary": {"ru": "Обсудили сроки и стоимость доставки комплектующих.", "en": "Delivery times and costs for components were discussed.", "zh": "讨论了零部件的运输时间和成本。"},
+      "content": {"ru": "<p>Операторы представили маршруты доставки.</p>", "en": "<p>Operators presented delivery routes.</p>", "zh": "<p>运营商介绍了运输路线。</p>"}
+    },
+    {
+      "id": 6,
+      "category": "forums",
+      "published_at": "2026-09-18T09:00:00+06:00",
+      "cover": "microphone",
+      "slug": {"ru": "vystavka-v-bishkeke", "en": "bishkek-expo", "zh": "bishkek-expo"},
+      "title": {"ru": "Промышленная выставка в Бишкеке", "en": "Industrial exhibition in Bishkek", "zh": "比什凯克工业展览会"},
+      "summary": {"ru": "Центр представил стенд и провёл консультации.", "en": "The Center had a stand and held consultations.", "zh": "中心设立展位并提供咨询。"},
+      "content": {"ru": "<p>На стенде прошло более 60 консультаций.</p>", "en": "<p>More than 60 consultations were held at the stand.</p>", "zh": "<p>展位共接待咨询60余次。</p>"}
+    },
+    {
+      "id": 7,
+      "category": "center",
+      "published_at": "2026-09-15T09:00:00+06:00",
+      "cover": "warehouse",
+      "slug": {"ru": "baza-predpriyatiy", "en": "enterprise-database", "zh": "enterprise-database"},
+      "title": {"ru": "Центр формирует базу предприятий", "en": "The Center is building an enterprise database", "zh": "中心正在建立企业数据库"},
+      "summary": {"ru": "Компании могут заявить о себе как о потенциальных партнёрах.", "en": "Companies can register as potential partners.", "zh": "企业可登记成为潜在合作伙伴。"},
+      "content": {"ru": "<p>База поможет быстрее подбирать партнёров.</p>", "en": "<p>The database will speed up partner matching.</p>", "zh": "<p>数据库将加快合作伙伴匹配。</p>"}
+    },
+    {
+      "id": 8,
+      "category": "missions",
+      "published_at": "2026-09-10T09:00:00+06:00",
+      "cover": "welding",
+      "slug": {"ru": "metalloobrabotka", "en": "metalworking", "zh": "metalworking"},
+      "title": {"ru": "Металлообработка: переговоры о локализации", "en": "Metalworking: talks on localization", "zh": "金属加工：本地化谈判"},
+      "summary": {"ru": "Китайский производитель рассматривает площадку в Чуйской области.", "en": "A Chinese manufacturer is considering a site in Chui region.", "zh": "一家中国制造商正在考虑楚河州的场地。"},
+      "content": {"ru": "<p>Стороны договорились о визите на площадку.</p>", "en": "<p>The parties agreed on a site visit.</p>", "zh": "<p>双方商定实地考察。</p>"}
+    },
+    {
+      "id": 9,
+      "category": "center",
+      "published_at": "2026-09-05T09:00:00+06:00",
+      "cover": "pipes",
+      "slug": {"ru": "pishchevaya-promyshlennost", "en": "food-industry", "zh": "food-industry"},
+      "title": {"ru": "Пищевая промышленность: обзор возможностей", "en": "Food industry: opportunities review", "zh": "食品工业：机会概览"},
+      "summary": {"ru": "Опубликован первый отраслевой обзор Центра.", "en": "The Center's first industry review is published.", "zh": "中心发布首份行业报告。"},
+      "content": {"ru": "<p>Обзор доступен по запросу.</p>", "en": "<p>The review is available on request.</p>", "zh": "<p>报告可按需索取。</p>"}
+    },
+    {
+      "id": 10,
+      "category": "forums",
+      "published_at": "2026-09-02T09:00:00+06:00",
+      "cover": "presentation",
+      "slug": {"ru": "seminar-eaes", "en": "eaeu-seminar"},
+      "title": {"ru": "Семинар о работе на рынке ЕАЭС", "en": "Seminar on doing business in the EAEU"},
+      "summary": {"ru": "Эксперты рассказали о сертификации и таможне.", "en": "Experts spoke about certification and customs."},
+      "content": {"ru": "<p>Материалы семинара доступны участникам.</p>", "en": "<p>Seminar materials are available to participants.</p>"}
+    },
+    {
+      "id": 11,
+      "category": "center",
+      "published_at": "2026-08-30T09:00:00+06:00",
+      "cover": "shelves",
+      "slug": {"ru": "iniciativa-sozdaniya-centra"},
+      "title": {"ru": "Президент ТПП КР выступил с инициативой создания Центра промышленной кооперации"},
+      "summary": {"ru": "Новость есть только на русском — для проверки состояния «нет перевода»."},
+      "content": {"ru": "<p>Инициатива прозвучала 28 августа 2026 года на кыргызско-китайском инвестиционном форуме.</p>"}
+    }
+  ]
+}

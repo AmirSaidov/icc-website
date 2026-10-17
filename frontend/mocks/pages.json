@@ -1,0 +1,30 @@
+{
+  "about": {
+    "title": {"ru": "О Центре", "en": "About the Center", "zh": "关于中心"},
+    "lead": {
+      "ru": "Центр промышленной кооперации при Торгово-промышленной палате Кыргызской Республики — площадка для совместных производств Кыргызстана и иностранных партнёров.",
+      "en": "The Industrial Cooperation Center under the Chamber of Commerce and Industry of the Kyrgyz Republic is a platform for joint production between Kyrgyzstan and foreign partners.",
+      "zh": "吉尔吉斯共和国工商会工业合作中心是吉尔吉斯斯坦与外国伙伴开展联合生产的平台。"
+    },
+    "content": {
+      "ru": "<h2>Общая информация</h2><p>Центр создан при Торгово-промышленной палате Кыргызской Республики. Он представляет интересы кыргызстанских предприятий и помогает иностранным, в первую очередь китайским, компаниям найти партнёров в Кыргызстане.</p><h2>История</h2><p>Инициативу создания Центра выдвинул президент ТПП КР 28 августа 2026 года на кыргызско-китайском инвестиционном форуме.</p><h2>Цели и задачи</h2><ul><li>перейти от торговли к совместному производству;</li><li>привлечь инвестиции в промышленность Кыргызстана;</li><li>создать площадку для встреч бизнеса и инвесторов.</li></ul><h2>Функции</h2><ul><li>поиск партнёров и инвесторов;</li><li>организация переговоров и деловых миссий;</li><li>сопровождение совместных производств;</li><li>консультации по внешнеэкономической деятельности.</li></ul>",
+      "en": "<h2>Overview</h2><p>The Center was established under the Chamber of Commerce and Industry of the Kyrgyz Republic. It represents Kyrgyz enterprises and helps foreign companies, primarily Chinese ones, find partners in Kyrgyzstan.</p><h2>History</h2><p>The initiative was put forward by the President of the CCI KR on 28 August 2026 at the Kyrgyz-Chinese Investment Forum.</p><h2>Goals and objectives</h2><ul><li>move from trade to joint production;</li><li>attract investment into Kyrgyz industry;</li><li>create a meeting platform for business and investors.</li></ul><h2>Functions</h2><ul><li>partner and investor search;</li><li>negotiations and business missions;</li><li>support for joint production;</li><li>foreign trade consulting.</li></ul>",
+      "zh": "<h2>概况</h2><p>中心设立于吉尔吉斯共和国工商会，代表吉尔吉斯斯坦企业的利益，并帮助外国企业（首先是中国企业）在吉尔吉斯斯坦寻找合作伙伴。</p><h2>历史</h2><p>2026年8月28日，吉尔吉斯共和国工商会会长在吉中投资论坛上提出设立中心的倡议。</p><h2>目标与任务</h2><ul><li>从贸易走向联合生产；</li><li>吸引对吉尔吉斯斯坦工业的投资；</li><li>为企业和投资者搭建对接平台。</li></ul><h2>职能</h2><ul><li>寻找合作伙伴和投资者；</li><li>组织谈判和商务考察；</li><li>为合资生产提供支持；</li><li>对外经济活动咨询。</li></ul>"
+    },
+    "leadership": []
+  },
+  "cooperation": {
+    "title": {"ru": "Международное сотрудничество", "en": "International cooperation", "zh": "国际合作"},
+    "lead": {
+      "ru": "Центр развивает промышленную кооперацию Кыргызстана с зарубежными странами. Сейчас основной фокус — Китай.",
+      "en": "The Center develops Kyrgyzstan's industrial cooperation with foreign countries. The current focus is China.",
+      "zh": "中心推动吉尔吉斯斯坦与外国的工业合作，目前重点是中国。"
+    },
+    "content": {
+      "ru": "<p>Мы помогаем компаниям из стран-партнёров найти площадки, поставщиков и рынки сбыта в Кыргызстане и ЕАЭС.</p>",
+      "en": "<p>We help companies from partner countries find sites, suppliers and markets in Kyrgyzstan and the EAEU.</p>",
+      "zh": "<p>我们帮助伙伴国家的企业在吉尔吉斯斯坦和欧亚经济联盟寻找场地、供应商和市场。</p>"
+    },
+    "leadership": []
+  }
+}

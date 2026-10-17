@@ -1,0 +1,10 @@
+[
+  {
+    "id": 1,
+    "kind": "regulation",
+    "title": {"ru": "Положение о Центре (проект)", "en": "Regulation on the Center (draft)", "zh": "中心条例（草案）"},
+    "url": "/mocks/document.pdf",
+    "size": 57726,
+    "ext": "pdf"
+  }
+]
