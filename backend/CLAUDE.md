@@ -3,12 +3,16 @@
 ## Главное
 - Единственный источник правды — [SPEC.md](SPEC.md). Работать строго по нему.
 - Неясно или противоречиво в ТЗ — **спросить**, не придумывать.
-- Эта папка = `backend/` из SPEC.md (manage.py, config/, apps/ лежат прямо здесь).
+- Репозиторий `icc-website` общий с фронтендом: бэк — только папка `backend/` (здесь), фронт — `frontend/`.
+  **Все команды запускаются из `backend/`.** Файлы вне `backend/` (frontend/, корневые .gitattributes и т.п.) не трогать.
+- Ветка бэка — `backend-mvp`; `main` не трогать, force push не использовать.
 - Работаем по этапам из раздела 7 SPEC.md, **строго по одному**. Не забегать вперёд.
 - После каждого этапа: `check` без ошибок, `makemigrations --check` чист, миграции применяются на чистой базе, тесты зелёные → git commit.
 
-## Запуск (Windows, Python 3.12)
+## Запуск (Windows, Python 3.12, из папки backend/)
+Подробно и с вариантом для PowerShell — [README.md](README.md).
 ```
+cd backend
 py -3.12 -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
@@ -19,7 +23,7 @@ python manage.py seed            (тестовые данные; --flush — п�
 python manage.py runserver
 ```
 Проверки: `python manage.py check`, `python manage.py makemigrations --check --dry-run`, `pytest`.
-Swagger: http://localhost:8000/api/docs/ · документация для фронта: [docs/API.md](docs/API.md).
+Swagger: http://localhost:8000/api/docs/ · документация для фронта: [docs/API.md](docs/API.md) · для сотрудников: [docs/ADMIN_GUIDE.md](docs/ADMIN_GUIDE.md) · сервер: [docs/DEPLOY.md](docs/DEPLOY.md).
 
 ## Правила проекта
 - Только переносимые возможности ORM (SQLite → PostgreSQL сменой `DATABASES`). Без `django.contrib.postgres`.
@@ -38,7 +42,8 @@ Swagger: http://localhost:8000/api/docs/ · документация для фр
   Права по ролям — `apps/core/roles.py` (`is_admin_role`). Без django-unfold. Без CDN: jQuery UI лежит в `static/vendor/`.
 - Файлы: только `ImageUploadField` / `DocumentUploadField` (`apps/core/fields.py`) — проверка расширения, содержимого, размера.
 - Slug: в `save()` моделей со slug вызывать `fill_translated_slugs` (пустой slug_X ← title_X, конфликт → -2, -3).
-- Отложенная публикация: публичные выборки — только через `published()` (`apps/core/api.py`).
+- Отложенная публикация: публичные выборки (API, sitemap) — только через `published()` (`apps/core/api.py`).
+- Схема URL фронта для sitemap — один словарь `FRONTEND_URL_SCHEME` в `apps/core/sitemap.py`.
 - IP клиента — только `apps.core.net.get_client_ip` (учитывает NUM_PROXIES; та же логика у throttling и axes).
 - Логи — `logs/app.log` (не в git). Тесты в файл не пишут (conftest).
 - Тесты — `apps/<app>/tests/`, данные через `apps/core/tests/factories.py`, без новых зависимостей.

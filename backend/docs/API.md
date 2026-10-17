@@ -11,11 +11,26 @@
 
 ---
 
+## Важно для интеграции
+
+Сверено с `frontend/` в `main` (коммит `06caa08`). Чтобы данные с бэка пришли правильно:
+
+| Где во фронте | Сейчас | Что ждёт бэк |
+|---|---|---|
+| `lib/api.ts` — язык запроса | заголовок `Accept-Language` (`zh-hans`) | параметр **`?lang=ru\|en\|zh`**. Заголовок бэк не читает: без `lang` всё придёт на русском |
+| `lib/api-types.ts` — `FeedbackPayload` | поля `name`, `locale` | поля **`full_name`**, **`lang`** (`ru` / `en` / `zh`). Иначе каждый `POST /feedback/` получит `400` |
+| `app/api/feedback/route.ts` | прокси через Next.js с `X-Forwarded-For` | так и задумано; от схемы прокси зависит `NUM_PROXIES` на сервере — см. [DEPLOY.md](DEPLOY.md), раздел 6 |
+
 ## Как запустить бэкенд локально
 
-Нужен Python 3.12.
+Нужны Python 3.12 и Git. Бэкенд — папка `backend/` общего репозитория, **все команды выполняются из неё**. Подробнее, в том числе вариант для PowerShell, — в [README бэкенда](../README.md).
 
-**Windows (PowerShell или cmd):**
+```
+git clone https://github.com/AmirSaidov/icc-website.git
+cd icc-website/backend
+```
+
+**Windows (cmd):**
 ```
 py -3.12 -m venv .venv
 .venv\Scripts\activate
@@ -239,6 +254,15 @@ const response = await fetch(`${API}/feedback/`, {
 ```
 
 В JSON поле `website` отправляется всегда, обычно как пустая строка.
+
+## sitemap.xml и robots.txt
+
+Бэк отдаёт `/sitemap.xml` и `/robots.txt` (вне `/api/v1/`):
+
+- в sitemap — все опубликованные материалы, каждый только на тех языках, где он переведён; URL ведут на фронт (`FRONTEND_URL`) по схеме из раздела «Схема URL на фронте»; у каждого URL есть `xhtml:link hreflang` на все переводы и `x-default` на русскую версию;
+- в robots — `Disallow` для админки и `/api/` и строка `Sitemap:`.
+
+Отдавать ли их с домена фронта (проксировать с бэка или генерировать в Next.js) — открытый вопрос (SPEC.md, раздел 9).
 
 ## Примеры ответов
 

@@ -1915,7 +1915,7 @@ components:
       - cooperation
       type: string
       description: |-
-        * `contact` - Контакты
+        * `contact` - Общий вопрос
         * `cooperation` - Сотрудничество
     FieldErrors:
       type: object

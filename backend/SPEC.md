@@ -33,13 +33,14 @@
 ### Структура проекта
 
 ```
-backend/
+backend/                # репозиторий icc-website общий с фронтом (frontend/); все команды — из backend/
   manage.py
   requirements.txt
   .env.example
-  .gitignore            # db.sqlite3, media/, .env, __pycache__, .venv
+  .gitignore            # db.sqlite3, media/, .env, __pycache__, .venv, logs/
   README.md
   pytest.ini
+  conftest.py           # общие фикстуры pytest
   config/               # settings.py, urls.py, wsgi.py, asgi.py
   apps/
     core/               # миксины, ContactInfo, SiteSettings, GalleryImage, Attachment,
@@ -47,8 +48,12 @@ backend/
     pages/              # Page, HomeBlock, Direction, Service
     news/               # NewsCategory, News, Event
     cooperation/        # Country, Partner, Project
-    feedback/           # Feedback
+    feedback/           # Feedback, POST /feedback/, письма
+  templates/            # страница блокировки входа (axes)
+  static/               # jQuery UI (локально, без CDN), скрипты и стили админки
+  docs/                 # API.md, openapi.yaml, ADMIN_GUIDE.md, DEPLOY.md, ACCEPTANCE.md
   media/                # не в git
+  logs/                 # не в git
 ```
 
 ---
@@ -280,7 +285,7 @@ backend/
 
 ### 5.3 SEO
 
-- **`/sitemap.xml`** — все опубликованные и переведённые страницы, направления, услуги, новости, мероприятия, проекты на трёх языках, с `xhtml:link rel="alternate" hreflang` (ru, en, zh, плюс `x-default` → ru). URL ведут на **фронт** (`FRONTEND_URL`) по схеме:
+- **`/sitemap.xml`** — все опубликованные (тот же фильтр, что у API, включая отложенную публикацию) страницы, направления, услуги, новости, мероприятия, проекты; каждая запись — только на тех языках, на которые переведена (правило 2.1). У каждого URL — `xhtml:link rel="alternate" hreflang` на все её языковые варианты плюс `x-default` → ru (если русской версии нет — первый доступный язык). `lastmod` — из `updated_at`. URL ведут на **фронт** (`FRONTEND_URL`) по схеме:
 
   | Сущность | URL на фронте |
   |---|---|
@@ -294,7 +299,7 @@ backend/
   | Project | `/{lang}/cooperation/projects/{slug}` |
 
   Схема задаётся **в одном месте** (словарь в `apps/core/sitemap.py`), потому что её ещё надо согласовать с фронтом.
-- **`/robots.txt`** — `Disallow: /admin/` (и путь из `ADMIN_URL`), `Disallow: /api/`, строка `Sitemap:`.
+- **`/robots.txt`** — `Disallow:` путь из `ADMIN_URL`, `Disallow: /api/`, строка `Sitemap: <BACKEND_URL>/sitemap.xml`.
 - В каждом детальном ответе API есть объект `seo` (раздел 3.1).
 
 ### 5.4 Инфраструктура и `.env`
@@ -334,15 +339,15 @@ FEEDBACK_EMAIL=
 - Флаг `--flush` удаляет старые seed-данные перед созданием. Повторный запуск без флага не плодит дубли.
 - Создаёт пользователей `admin` (группа «Администратор» + superuser) и `editor` (группа «Редактор»), пароли выводит в консоль.
 
-**README** — запуск на чистой машине за 5 команд:
+**README** (`backend/README.md`) — запуск на чистой машине Windows за 5 команд из папки `backend/` (cmd; для PowerShell — `;` вместо `&&` и `Activate.ps1`):
 ```
-python -m venv .venv && source .venv/bin/activate
+py -3.12 -m venv .venv && .venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env
+copy .env.example .env
 python manage.py migrate && python manage.py createcachetable
 python manage.py seed && python manage.py runserver
 ```
-Плюс: ссылки на Swagger и админку, описание ролей, как запустить тесты.
+Плюс: ссылки на Swagger и админку, описание ролей, как запустить тесты. Инструкция для сотрудников — `docs/ADMIN_GUIDE.md`, развёртывание — `docs/DEPLOY.md`.
 
 **После MVP (сейчас не делать):** VPS, nginx + gunicorn, HTTPS (Let's Encrypt), ежедневная копия `db.sqlite3` через `sqlite3 .backup` + копия `media/` с хранением 14 дней.
 Решить при выборе домена и настройке nginx (сейчас — осознанные предупреждения `check --deploy`): `SECURE_HSTS_INCLUDE_SUBDOMAINS` (W005), `SECURE_HSTS_PRELOAD` (W021), редирект на HTTPS — в nginx или `SECURE_SSL_REDIRECT` (W008).
@@ -400,3 +405,38 @@ python manage.py seed && python manage.py runserver
 - Подписи типов мероприятий на en/zh (`/event-types/`) — проверить переводы носителем языка.
 - Схема URL на фронте (раздел 5.3) — согласовать с Амиром и Ариетом. (Ключи иконок направлений и URL системных страниц — решено, см. 2.3 и 5.3.)
 - Где отдавать sitemap/robots: с бэка (как сейчас) или фронт проксирует — согласовать.
+- `robots.txt` публикует путь из `ADMIN_URL` (по 5.3) — это раскрывает нестандартный адрес админки. Решить: оставить, или убрать строку и закрывать админку от индексации заголовком `X-Robots-Tag: noindex`.
+- Интеграция с фронтом (`frontend/` в `main`): язык должен передаваться параметром `?lang=` (фронт сейчас шлёт `Accept-Language`), форма — поля `full_name` и `lang` (фронт шлёт `name`, `locale`). См. `docs/API.md`, «Важно для интеграции».
+- Схема прокси для формы (браузер → Next.js → Django) и значение `NUM_PROXIES` на сервере — согласовать с фронтом (`docs/DEPLOY.md`, раздел 6).
+
+## 10. Уточнения, принятые по ходу разработки
+
+Решения, которые не были явно описаны выше и приняты (согласованы) на этапах 1–5.
+
+**Модели и данные**
+- Обязательна только русская версия переводимых полей; en/zh — опциональны. Пустой `slug` хранится как NULL; уникальность — отдельными ограничениями на `slug_ru` / `slug_en` / `slug_zh`.
+- `Partner.country`, `Project.country` — `on_delete=PROTECT`; `Project.published_at` по умолчанию «сейчас».
+- Подписи `Feedback.type`: `contact` — «Общий вопрос», `cooperation` — «Сотрудничество».
+- Санитайзер перед nh3 заменяет `<i>` на `<em>` (CKEditor 5 выводит курсив как `<i>`); список разрешённых тегов (2.4) не меняется.
+
+**API**
+- Элементы списков содержат `id` и `is_translated` (кроме `/pages/`, `/news-categories/`, `/event-types/` — у них поля по 3.2). Пустые строки во всех полях → `null`. Картинки — `{"small", "large"}`, в т.ч. `default_og_image` в `/settings/`.
+- Вложенные данные: категория без перевода на язык запроса → `null`; вложения (`attachments`) — только переведённые; галерея — вся (подпись может быть `null`); партнёры проекта — только с согласием и с переводом. Детальный ответ проекта содержит и `attachments`.
+- `seo.alternates` у системных страниц содержит `key`, а не slug.
+- Невалидные `when` / `type` → 400; неизвестные `category` / `country` → пустой список. При совпадении slug у разных записей в разных языках приоритет у языка запроса, затем ru → en → zh.
+- Ссылки на загруженные через редактор файлы (`/media/...`) в `content` отдаются абсолютными URL.
+- Тексты ошибок валидации — на русском; фронт показывает свои тексты по имени поля.
+
+**Админка**
+- Автозаполнение slug — на сервере при сохранении (пустой `slug_X` ← `title_X`/`name_X`; конфликт → `-2`, `-3`; введённый вручную не перезаписывается; системным страницам не генерируется).
+- CKEditor 5: тулбар только из тегов 2.4, без объединения ячеек таблиц; загрузка картинок в редактор — только `is_staff`, с той же проверкой, что у полей картинок.
+- `key` страниц всегда только для чтения. Обращения не создаются через админку никем; Администратор правит все поля обращения, кроме `ip` и `created_at`.
+- CSV обращений: UTF-8 с BOM, разделитель `;` (русский Excel), значения, начинающиеся с `= + - @`, экранируются (защита от CSV-инъекций).
+- Телефоны и соцсети в ContactInfo вводятся таблицей строк, а не сырым JSON.
+
+**Формы и безопасность**
+- Honeypot проверяется до валидации (бот получает 201 даже с невалидными полями). Сообщение 429 — на русском, с заголовком `Retry-After`.
+- IP клиента — одна функция для throttling, axes и `Feedback.ip` (логика DRF `NUM_PROXIES`: N-й адрес с конца `X-Forwarded-For`).
+- django-axes: 5 неудачных входов по связке username + IP → блокировка на 30 минут; успешный вход сбрасывает счётчик.
+- Кэш imagekit (отметка «превью сгенерировано») — отдельный локальный кэш, а не `DatabaseCache`: иначе по несколько SQL-запросов на каждую картинку.
+- CORS включён только для путей `/api/`.
