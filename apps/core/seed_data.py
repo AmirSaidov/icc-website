@@ -64,8 +64,13 @@ CONTACTS = {
     ),
     "work_hours": ("Пн–Пт, 9:00–18:00", "Mon–Fri, 9:00–18:00", "周一至周五 9:00–18:00"),
     "phones": [
-        {"label": "Приёмная", "number": "+996 312 000 000"},
-        {"label": "Отдел кооперации", "number": "+996 312 000 001"},
+        {"label_ru": "Приёмная", "label_en": "Reception", "label_zh": "接待处", "number": "+996 312 000 000"},
+        {
+            "label_ru": "Отдел кооперации",
+            "label_en": "Cooperation department",
+            "label_zh": "合作部",
+            "number": "+996 312 000 001",
+        },
     ],
     "email": "info@example.kg",
     "map_lat": "42.874600",

@@ -49,8 +49,9 @@ CORS по умолчанию открыт для `http://localhost:3000`. Дру
 | URL файлов и картинок | Всегда абсолютные (`http://localhost:8000/media/...`) |
 | Картинки | Объект `{"small": "...400px.webp", "large": "...1200px.webp"}` или `null`, если картинки нет |
 | Пустые значения | Пустая строка и отсутствующий перевод отдаются как `null`, а не `""` |
-| `content` | Готовый безопасный HTML: при сохранении в нём оставляются только разрешённые теги (h2–h4, p, списки, ссылки, картинки, таблицы, blockquote, figure). Можно вставлять через `dangerouslySetInnerHTML` |
+| `content` | Готовый безопасный HTML: при сохранении в нём оставляются только разрешённые теги (h2–h4, p, strong, em, u, s, списки, ссылки, картинки, таблицы, blockquote, figure/figcaption). Классов и стилей нет — оформление задаёт фронт. Картинки из редактора приходят с абсолютными URL. Можно вставлять через `dangerouslySetInnerHTML` |
 | Порядок | Списки уже отсортированы, порядок пересортировывать не нужно |
+| Отложенная публикация | Новости и проекты с `published_at` в будущем не видны нигде (списки, детальные ответы → 404, `/home/`) до наступления этой даты |
 
 ### Параметр `lang`
 
@@ -184,7 +185,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 | `GET /countries/` | Активные страны |
 | `GET /partners/` | Партнёры с согласием на публикацию |
 | `GET /projects/`, `/projects/{slug}/` | Международные проекты; в детальном ответе есть `partners`, `gallery` и `attachments` |
-| `GET /contacts/` | Контакты |
+| `GET /contacts/` | Контакты. `phones` — `[{"label", "number"}]`, подпись на языке запроса (может быть `null`); `socials` — `[{"type", "url"}]`, `type` — ключ иконки (не переводится) |
 | `GET /settings/` | `analytics_id`, `default_og_image` |
 | `GET /documents/` | Документы для раздела «Документы» |
 
@@ -202,7 +203,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 {
   "blocks": [
     {
-      "id": 6,
+      "id": 11,
       "type": "hero",
       "title": "Центр промышленной кооперации",
       "text": "Помогаем предприятиям Кыргызстана находить партнёров за рубежом",
@@ -216,7 +217,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
       "is_translated": true
     },
     {
-      "id": 7,
+      "id": 12,
       "type": "about",
       "title": "О Центре",
       "text": "Центр создан при Торгово-промышленной палате для развития промышленной кооперации.",
@@ -232,7 +233,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
   ],
   "directions": [
     {
-      "id": 9,
+      "id": 17,
       "slug": "promyshlennaia-kooperatsiia",
       "title": "Промышленная кооперация",
       "short_text": "Связываем производителей для совместной работы.",
@@ -241,7 +242,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
       "is_translated": true
     },
     {
-      "id": 10,
+      "id": 18,
       "slug": "poisk-partnerov",
       "title": "Поиск партнёров",
       "short_text": "Подбираем надёжных партнёров за рубежом.",
@@ -252,7 +253,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
   ],
   "news": [
     {
-      "id": 13,
+      "id": 25,
       "slug": "delovaia-missiia-v-urumchi",
       "title": "Деловая миссия в Урумчи",
       "excerpt": "Предприниматели Кыргызстана провели переговоры с компаниями Синьцзяна.",
@@ -268,7 +269,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
       "is_translated": true
     },
     {
-      "id": 14,
+      "id": 26,
       "slug": "tsentr-podpisal-memorandum-s-torgovoi-palatoi-sintsziana",
       "title": "Центр подписал меморандум с торговой палатой Синьцзяна",
       "excerpt": "Стороны договорились о совместной работе по поиску партнёров.",
@@ -286,7 +287,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
   ],
   "events": [
     {
-      "id": 13,
+      "id": 21,
       "slug": "vebinar-po-eksportnym-protseduram",
       "title": "Вебинар по экспортным процедурам",
       "type": {
@@ -305,7 +306,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
       "is_translated": true
     },
     {
-      "id": 14,
+      "id": 22,
       "slug": "biznes-missiia-v-guanchzhou",
       "title": "Бизнес-миссия в Гуанчжоу",
       "type": {
@@ -390,7 +391,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 ```json
 [
   {
-    "id": 9,
+    "id": 17,
     "slug": "promyshlennaia-kooperatsiia",
     "title": "Промышленная кооперация",
     "short_text": "Связываем производителей для совместной работы.",
@@ -399,7 +400,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
     "is_translated": true
   },
   {
-    "id": 10,
+    "id": 18,
     "slug": "poisk-partnerov",
     "title": "Поиск партнёров",
     "short_text": "Подбираем надёжных партнёров за рубежом.",
@@ -416,7 +417,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 
 ```json
 {
-  "id": 9,
+  "id": 17,
   "slug": "promyshlennaia-kooperatsiia",
   "title": "Промышленная кооперация",
   "short_text": "Связываем производителей для совместной работы.",
@@ -444,7 +445,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 ```json
 [
   {
-    "id": 8,
+    "id": 15,
     "slug": "podbor-partnerov-v-kitae",
     "title": "Подбор партнёров в Китае",
     "short_text": "Поиск и проверка производителей и поставщиков.",
@@ -452,7 +453,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
     "is_translated": true
   },
   {
-    "id": 9,
+    "id": 16,
     "slug": "organizatsiia-delovykh-missii",
     "title": "Организация деловых миссий",
     "short_text": "Программа визитов, встречи, сопровождение.",
@@ -468,7 +469,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 
 ```json
 {
-  "id": 8,
+  "id": 15,
   "slug": "podbor-partnerov-v-kitae",
   "title": "Подбор партнёров в Китае",
   "short_text": "Поиск и проверка производителей и поставщиков.",
@@ -520,7 +521,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
   "previous": null,
   "results": [
     {
-      "id": 13,
+      "id": 25,
       "slug": "delovaia-missiia-v-urumchi",
       "title": "Деловая миссия в Урумчи",
       "excerpt": "Предприниматели Кыргызстана провели переговоры с компаниями Синьцзяна.",
@@ -536,7 +537,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
       "is_translated": true
     },
     {
-      "id": 14,
+      "id": 26,
       "slug": "tsentr-podpisal-memorandum-s-torgovoi-palatoi-sintsziana",
       "title": "Центр подписал меморандум с торговой палатой Синьцзяна",
       "excerpt": "Стороны договорились о совместной работе по поиску партнёров.",
@@ -561,7 +562,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 
 ```json
 {
-  "id": 13,
+  "id": 25,
   "slug": "delovaia-missiia-v-urumchi",
   "title": "Деловая миссия в Урумчи",
   "excerpt": "Предприниматели Кыргызстана провели переговоры с компаниями Синьцзяна.",
@@ -615,7 +616,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 
 ```json
 {
-  "id": 23,
+  "id": 35,
   "slug": null,
   "title": null,
   "excerpt": null,
@@ -656,7 +657,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
   "previous": null,
   "results": [
     {
-      "id": 13,
+      "id": 21,
       "slug": "vebinar-po-eksportnym-protseduram",
       "title": "Вебинар по экспортным процедурам",
       "type": {
@@ -675,7 +676,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
       "is_translated": true
     },
     {
-      "id": 14,
+      "id": 22,
       "slug": "biznes-missiia-v-guanchzhou",
       "title": "Бизнес-миссия в Гуанчжоу",
       "type": {
@@ -720,7 +721,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 
 ```json
 {
-  "id": 9,
+  "id": 17,
   "slug": "business-mission-to-xinjiang",
   "title": "Business mission to Xinjiang",
   "type": {
@@ -739,13 +740,13 @@ function switchLanguage(target: "ru" | "en" | "zh") {
   "is_upcoming": false,
   "gallery": [
     {
-      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_QyjLtd7/d0886c13acdb867659b01530f8c97630.webp",
-      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_QyjLtd7/eb267217504a8a9324cf8865a730922f.webp",
+      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_36J5oXL/1052edca0ef98ab40469df6750c4015f.webp",
+      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_36J5oXL/37275bf6f80a26d1fc57a4440653a0a4.webp",
       "caption": "Opening of the meeting"
     },
     {
-      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_wT6ABsp/eb98b4a967d9494f73c816f5237fc0af.webp",
-      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_wT6ABsp/10cf73d448be2ca5f149cee173395f87.webp",
+      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_qlX79ne/376505789d67531cd0df75fdda210bd2.webp",
+      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_qlX79ne/c76ee863dfd4b1ca7f1ead3ade1e72f4.webp",
       "caption": "Negotiations"
     }
   ],
@@ -771,7 +772,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 ```json
 [
   {
-    "id": 3,
+    "id": 5,
     "code": "CN",
     "name": "Китай",
     "description": "Ключевой партнёр Кыргызстана в промышленной кооперации.",
@@ -782,7 +783,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
     "is_translated": true
   },
   {
-    "id": 4,
+    "id": 6,
     "code": "KZ",
     "name": "Казахстан",
     "description": "Партнёр по Евразийскому экономическому союзу.",
@@ -802,7 +803,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 ```json
 [
   {
-    "id": 5,
+    "id": 9,
     "name": "Торговая компания «Шёлковый путь» (демо)",
     "logo": {
       "small": "http://localhost:8000/media/CACHE/images/partners/logo-1/4102341f8ee4cfc88052f5d4bba63378.webp",
@@ -817,7 +818,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
     "is_translated": true
   },
   {
-    "id": 6,
+    "id": 10,
     "name": "«Тяньшань Машинери» (демо)",
     "logo": {
       "small": "http://localhost:8000/media/CACHE/images/partners/logo-2/c63583e8b06cfcfc91d4176deae1956f.webp",
@@ -845,7 +846,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
   "previous": null,
   "results": [
     {
-      "id": 4,
+      "id": 7,
       "slug": "sovmestnoe-proizvodstvo-stroimaterialov-v-chuiskoi-oblasti",
       "title": "Совместное производство стройматериалов в Чуйской области",
       "excerpt": "Запуск завода мощностью 100 тыс. тонн в год.",
@@ -861,7 +862,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
       "is_translated": true
     },
     {
-      "id": 5,
+      "id": 8,
       "slug": "lokalizatsiia-sborki-selkhoztekhniki",
       "title": "Локализация сборки сельхозтехники",
       "excerpt": "Сборка тракторов из машинокомплектов.",
@@ -886,7 +887,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 
 ```json
 {
-  "id": 4,
+  "id": 7,
   "slug": "chu-he-zhou-jian-cai-he-zi-sheng-chan",
   "title": "楚河州建材合资生产",
   "excerpt": "建设年产10万吨的工厂。",
@@ -902,7 +903,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
   "published_at": "2026-10-07T10:00:00+06:00",
   "partners": [
     {
-      "id": 5,
+      "id": 9,
       "name": "丝路贸易有限公司（演示）",
       "logo": {
         "small": "http://localhost:8000/media/CACHE/images/partners/logo-1/4102341f8ee4cfc88052f5d4bba63378.webp",
@@ -917,7 +918,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
       "is_translated": true
     },
     {
-      "id": 6,
+      "id": 10,
       "name": "天山机械（演示）",
       "logo": {
         "small": "http://localhost:8000/media/CACHE/images/partners/logo-2/c63583e8b06cfcfc91d4176deae1956f.webp",
@@ -934,13 +935,13 @@ function switchLanguage(target: "ru" | "en" | "zh") {
   ],
   "gallery": [
     {
-      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_MQUBJki/9097fccb4966934eead24dffbb1ea385.webp",
-      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_MQUBJki/b9161e74f563145f3b12f6654fa7eee2.webp",
+      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_N6u0BWb/2a4e605e95a58aff12eb0e593b05e969.webp",
+      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_N6u0BWb/3c9b3ec861991b8c3611abdc6c6f463b.webp",
       "caption": "会议开幕"
     },
     {
-      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_FpowTct/3a55f85fd1d2cee2a7d30d8b0a00d168.webp",
-      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_FpowTct/756773f3ab8671decb9d32a1fdbf296e.webp",
+      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_UjcmiyV/fc5ffca5e52128889b64a8b2337d97f1.webp",
+      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_UjcmiyV/82c90ed5354eee7d179243f03df98ad8.webp",
       "caption": "洽谈"
     }
   ],

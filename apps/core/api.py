@@ -1,5 +1,6 @@
 """Общие классы публичного API: язык, публикация, переводы, пагинация, поиск по slug."""
 from django.db.models import Prefetch
+from django.utils import timezone
 from rest_framework import generics
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.pagination import PageNumberPagination
@@ -17,7 +18,14 @@ class StandardPagination(PageNumberPagination):
 
 
 def published(queryset):
-    return queryset.filter(status=PublishableModel.Status.PUBLISHED)
+    """
+    Опубликованные записи. У моделей с published_at (News, Project) ещё и отложенная
+    публикация: запись с датой в будущем скрыта до её наступления (SPEC.md, 2.4).
+    """
+    queryset = queryset.filter(status=PublishableModel.Status.PUBLISHED)
+    if has_field(queryset.model, "published_at"):
+        queryset = queryset.filter(published_at__lte=timezone.now())
+    return queryset
 
 
 def gallery_and_attachments_prefetch(lang):

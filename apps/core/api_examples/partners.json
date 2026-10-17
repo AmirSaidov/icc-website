@@ -1,6 +1,6 @@
 [
   {
-    "id": 5,
+    "id": 9,
     "name": "Торговая компания «Шёлковый путь» (демо)",
     "logo": {
       "small": "http://localhost:8000/media/CACHE/images/partners/logo-1/4102341f8ee4cfc88052f5d4bba63378.webp",
@@ -15,7 +15,7 @@
     "is_translated": true
   },
   {
-    "id": 6,
+    "id": 10,
     "name": "«Тяньшань Машинери» (демо)",
     "logo": {
       "small": "http://localhost:8000/media/CACHE/images/partners/logo-2/c63583e8b06cfcfc91d4176deae1956f.webp",

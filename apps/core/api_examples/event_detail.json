@@ -1,5 +1,5 @@
 {
-  "id": 9,
+  "id": 17,
   "slug": "business-mission-to-xinjiang",
   "title": "Business mission to Xinjiang",
   "type": {
@@ -18,13 +18,13 @@
   "is_upcoming": false,
   "gallery": [
     {
-      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_QyjLtd7/d0886c13acdb867659b01530f8c97630.webp",
-      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_QyjLtd7/eb267217504a8a9324cf8865a730922f.webp",
+      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_36J5oXL/1052edca0ef98ab40469df6750c4015f.webp",
+      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_36J5oXL/37275bf6f80a26d1fc57a4440653a0a4.webp",
       "caption": "Opening of the meeting"
     },
     {
-      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_wT6ABsp/eb98b4a967d9494f73c816f5237fc0af.webp",
-      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_wT6ABsp/10cf73d448be2ca5f149cee173395f87.webp",
+      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_qlX79ne/376505789d67531cd0df75fdda210bd2.webp",
+      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_qlX79ne/c76ee863dfd4b1ca7f1ead3ade1e72f4.webp",
       "caption": "Negotiations"
     }
   ],

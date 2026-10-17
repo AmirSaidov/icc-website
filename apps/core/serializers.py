@@ -3,7 +3,10 @@
 
 Правило: переводимые поля читаются явно как <field>_<lang>; "" и NULL отдаются как null.
 """
+import re
 from pathlib import PurePosixPath
+
+from django.conf import settings
 
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
@@ -42,6 +45,16 @@ class SeoSerializer(serializers.Serializer):
     )
 
 
+class PhoneSerializer(serializers.Serializer):
+    label = serializers.CharField(allow_null=True, help_text="Подпись на языке запроса")
+    number = serializers.CharField()
+
+
+class SocialSerializer(serializers.Serializer):
+    type = serializers.CharField(help_text="Ключ иконки на фронте: telegram, facebook, ...")
+    url = serializers.URLField()
+
+
 # --- Поля ---------------------------------------------------------------------
 
 
@@ -60,6 +73,27 @@ class TranslatedField(_ReadOnlyField):
 
     def to_representation(self, value):
         return value or None
+
+
+MEDIA_LINK_RE = re.compile(r'(\s(?:src|href)=")(%s[^"]*)"' % re.escape(settings.MEDIA_URL))
+
+
+@extend_schema_field({"type": "string", "nullable": True, "description": "Безопасный HTML"})
+class HtmlField(TranslatedField):
+    """
+    Rich text (content): безопасный HTML (очищен при сохранении). Ссылки на загруженные
+    через редактор файлы (/media/...) превращаются в абсолютные URL.
+    """
+
+    def to_representation(self, value):
+        if not value:
+            return None
+        request = self.context.get("request")
+        if request is None:
+            return value
+        return MEDIA_LINK_RE.sub(
+            lambda m: f'{m.group(1)}{request.build_absolute_uri(m.group(2))}"', value
+        )
 
 
 @extend_schema_field({"type": "string", "nullable": True})
@@ -86,6 +120,18 @@ class IsTranslatedField(_ReadOnlyField):
 
     def to_representation(self, value):
         return is_translated(value, self.context["lang"])
+
+
+@extend_schema_field(PhoneSerializer(many=True))
+class PhonesField(_ReadOnlyField):
+    """[{"label_ru", "label_en", "label_zh", "number"}] → [{"label", "number"}] на языке запроса."""
+
+    def to_representation(self, value):
+        lang = self.context["lang"]
+        return [
+            {"label": item.get(f"label_{lang}") or None, "number": item.get("number")}
+            for item in value or []
+        ]
 
 
 def get_site_settings(context):
@@ -158,12 +204,8 @@ class ContactInfoSerializer(serializers.ModelSerializer):
     email = NullableCharField()
     map_lat = serializers.FloatField(allow_null=True, read_only=True)
     map_lng = serializers.FloatField(allow_null=True, read_only=True)
-    phones = serializers.JSONField(
-        read_only=True, help_text='[{"label": "...", "number": "..."}]'
-    )
-    socials = serializers.JSONField(
-        read_only=True, help_text='[{"type": "telegram", "url": "..."}]'
-    )
+    phones = PhonesField()
+    socials = SocialSerializer(many=True, read_only=True)
 
     class Meta:
         model = ContactInfo

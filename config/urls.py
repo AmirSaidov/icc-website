@@ -4,8 +4,10 @@ from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
-admin.site.site_header = "ЦПК при ТПП КР — администрирование"
-admin.site.site_title = "ЦПК — админка"
+from apps.core.admin_views import ckeditor_upload
+
+admin.site.site_header = "ЦПК при ТПП КР — управление сайтом"
+admin.site.site_title = "ЦПК при ТПП КР"
 admin.site.index_title = "Управление сайтом"
 
 api_v1 = [
@@ -16,6 +18,8 @@ api_v1 = [
 ]
 
 urlpatterns = [
+    # до admin.site.urls, иначе адрес перехватит админка
+    path(f"{settings.ADMIN_URL}ckeditor/upload/", ckeditor_upload, name="ckeditor-upload"),
     path(settings.ADMIN_URL, admin.site.urls),
     path("api/v1/", include(api_v1)),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),

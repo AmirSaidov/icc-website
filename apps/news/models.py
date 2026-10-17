@@ -3,9 +3,10 @@ from django.db import models
 from django.db.models import Q
 from django.utils import timezone
 
-from apps.core.fields import NullableSlugField, unique_slug_constraints
+from apps.core.fields import ImageUploadField, NullableSlugField, unique_slug_constraints
 from apps.core.models import PublishableModel, SeoModel, TimeStampedModel
 from apps.core.sanitize import sanitize_translated_fields
+from apps.core.slugs import fill_translated_slugs
 
 
 class NewsCategory(TimeStampedModel):
@@ -22,13 +23,17 @@ class NewsCategory(TimeStampedModel):
     def __str__(self):
         return self.name_ru or f"Категория #{self.pk}"
 
+    def save(self, *args, **kwargs):
+        fill_translated_slugs(self, title_field="name")
+        super().save(*args, **kwargs)
+
 
 class News(TimeStampedModel, PublishableModel, SeoModel):
     title = models.CharField("заголовок", max_length=255)
     slug = NullableSlugField("slug")
     excerpt = models.TextField("анонс", blank=True)
     content = models.TextField("содержимое", blank=True)
-    cover = models.ImageField("обложка", upload_to="news/%Y/%m/", blank=True)
+    cover = ImageUploadField("обложка", upload_to="news/%Y/%m/", blank=True)
     category = models.ForeignKey(
         NewsCategory,
         on_delete=models.SET_NULL,
@@ -52,6 +57,7 @@ class News(TimeStampedModel, PublishableModel, SeoModel):
         return self.title_ru or f"Новость #{self.pk}"
 
     def save(self, *args, **kwargs):
+        fill_translated_slugs(self)
         sanitize_translated_fields(self, "content")
         super().save(*args, **kwargs)
 
@@ -83,7 +89,7 @@ class Event(TimeStampedModel, PublishableModel, SeoModel):
     location = models.CharField("место проведения", max_length=255, blank=True)
     excerpt = models.TextField("анонс", blank=True)
     content = models.TextField("содержимое", blank=True)
-    cover = models.ImageField("обложка", upload_to="events/%Y/%m/", blank=True)
+    cover = ImageUploadField("обложка", upload_to="events/%Y/%m/", blank=True)
 
     gallery = GenericRelation("core.GalleryImage", related_query_name="event")
     attachments = GenericRelation("core.Attachment", related_query_name="event")
@@ -98,6 +104,7 @@ class Event(TimeStampedModel, PublishableModel, SeoModel):
         return self.title_ru or f"Мероприятие #{self.pk}"
 
     def save(self, *args, **kwargs):
+        fill_translated_slugs(self)
         sanitize_translated_fields(self, "content")
         super().save(*args, **kwargs)
 

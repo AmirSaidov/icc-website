@@ -87,7 +87,7 @@ backend/
 | **Country** — страны-партнёры | TimeStamped | `name` [T], `code` (ISO 3166-1 alpha-2, уникальный), `flag` (картинка, опционально), `description` [T], `is_active`, `order` |
 | **Partner** | TimeStamped | `name` [T], `logo`, `country` (FK → Country), `website`, `description` [T], `consent_to_publish` (bool), `order` |
 | **Project** — международные проекты | TimeStamped, Publishable, Seo | `title` [T], `slug` [T], `excerpt` [T], `content` [T], `country` (FK → Country), `partners` (M2M → Partner), `cover`, `published_at` |
-| **ContactInfo** — singleton | TimeStamped | `official_name` [T], `address` [T], `phones` (JSON: `[{"label": "...", "number": "..."}]`), `email`, `work_hours` [T], `map_lat`, `map_lng`, `socials` (JSON: `[{"type": "telegram", "url": "..."}]`) |
+| **ContactInfo** — singleton | TimeStamped | `official_name` [T], `address` [T], `phones` (JSON: `[{"label_ru": "...", "label_en": "...", "label_zh": "...", "number": "..."}]` — подписи трёхъязычные; API отдаёт `[{"label", "number"}]` на языке запроса, пустая подпись → `null`), `email`, `work_hours` [T], `map_lat`, `map_lng`, `socials` (JSON: `[{"type": "telegram", "url": "..."}]` — не переводится, `type` — ключ иконки на фронте) |
 | **SiteSettings** — singleton | TimeStamped | `feedback_emails` (адреса для заявок через запятую), `analytics_id` (ID счётчика аналитики), `default_og_image` |
 | **Feedback** — обращения | — | `type`: `contact` / `cooperation`, `full_name`, `company`, `country` (строка), `email`, `phone` (nullable), `subject`, `message`, `consent`, `lang`, `status`: `new` / `in_progress` / `closed`, `admin_note` (внутренний комментарий), `ip`, `created_at` |
 
@@ -96,6 +96,7 @@ backend/
 - Страны вынесены в отдельную таблицу, чтобы добавлять новые без изменения архитектуры.
 - Статус мероприятия «предстоящее / прошедшее» **не хранится** — вычисляется по `end_at` (если пусто — по `start_at`) относительно текущего времени.
 - Партнёры попадают в API, только если `consent_to_publish = True`.
+- **Отложенная публикация:** News и Project с `published_at` в будущем (`published_at > now`) скрыты везде — в списках, детальных ответах (404), `/home/` и sitemap — до наступления этой даты.
 - Картинки (`cover`, `image`, `logo`, `og_image`): превью через django-imagekit — WebP, ширина 400 и 1200 px.
 - Singleton-модели (ContactInfo, SiteSettings): ровно одна запись, создаётся миграцией, удалить нельзя.
 - Системные страницы (с непустым `key`) создаются миграцией (статус `draft`), удалить нельзя, `key` в админке только для чтения. Адресуются по `key`, slug не нужен (см. 2.1). Команда `seed` заполняет их на трёх языках и публикует.
@@ -391,5 +392,6 @@ python manage.py seed && python manage.py runserver
 
 - На какой email приходят заявки и есть ли SMTP у заказчика? (Пока — console backend.)
 - Кто даёт VPS и домен?
+- Подписи типов мероприятий на en/zh (`/event-types/`) — проверить переводы носителем языка.
 - Схема URL на фронте (раздел 5.3) — согласовать с Амиром и Ариетом. (Ключи иконок направлений и URL системных страниц — решено, см. 2.3 и 5.3.)
 - Где отдавать sitemap/robots: с бэка (как сейчас) или фронт проксирует — согласовать.

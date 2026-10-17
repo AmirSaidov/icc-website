@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db import models
 
+from .validators import DOCUMENT_ACCEPT, IMAGE_ACCEPT, validate_document_file, validate_image_file
+
 
 def unique_slug_constraints(prefix):
     """
@@ -31,6 +33,7 @@ class NullableSlugField(models.SlugField):
         kwargs.setdefault("null", True)
         kwargs.setdefault("blank", True)
         kwargs.setdefault("allow_unicode", False)
+        kwargs.setdefault("help_text", "Оставьте пустым — заполнится из заголовка при сохранении.")
         super().__init__(*args, **kwargs)
 
     def pre_save(self, model_instance, add):
@@ -39,3 +42,25 @@ class NullableSlugField(models.SlugField):
             value = None
             setattr(model_instance, self.attname, None)
         return value
+
+
+class ImageUploadField(models.ImageField):
+    """Картинка: JPG / PNG / WebP до 10 МБ, расширение + содержимое (SPEC.md, 4.1)."""
+
+    default_validators = [validate_image_file]
+
+    def formfield(self, **kwargs):
+        field = super().formfield(**kwargs)
+        field.widget.attrs.setdefault("accept", IMAGE_ACCEPT)
+        return field
+
+
+class DocumentUploadField(models.FileField):
+    """Документ: PDF / DOCX до 20 МБ, расширение + содержимое (SPEC.md, 4.1)."""
+
+    default_validators = [validate_document_file]
+
+    def formfield(self, **kwargs):
+        field = super().formfield(**kwargs)
+        field.widget.attrs.setdefault("accept", DOCUMENT_ACCEPT)
+        return field

@@ -1,9 +1,10 @@
 from django.core.exceptions import PermissionDenied
 from django.db import models
 
-from apps.core.fields import NullableSlugField, unique_slug_constraints
+from apps.core.fields import ImageUploadField, NullableSlugField, unique_slug_constraints
 from apps.core.models import PublishableModel, SeoModel, TimeStampedModel
 from apps.core.sanitize import sanitize_translated_fields
+from apps.core.slugs import fill_translated_slugs
 
 
 class Page(TimeStampedModel, PublishableModel, SeoModel):
@@ -43,6 +44,7 @@ class Page(TimeStampedModel, PublishableModel, SeoModel):
     def save(self, *args, **kwargs):
         if not self.key:
             self.key = None
+        fill_translated_slugs(self)
         sanitize_translated_fields(self, "content")
         super().save(*args, **kwargs)
 
@@ -63,7 +65,7 @@ class HomeBlock(TimeStampedModel, PublishableModel):
     type = models.CharField("тип блока", max_length=20, choices=Type.choices)
     title = models.CharField("заголовок", max_length=255)
     text = models.TextField("текст", blank=True)
-    image = models.ImageField("изображение", upload_to="home/", blank=True)
+    image = ImageUploadField("изображение", upload_to="home/", blank=True)
     button_text = models.CharField("текст кнопки", max_length=100, blank=True)
     button_link = models.CharField(
         "ссылка кнопки",
@@ -116,6 +118,7 @@ class Direction(TimeStampedModel, PublishableModel, SeoModel):
         return self.title_ru or f"Направление #{self.pk}"
 
     def save(self, *args, **kwargs):
+        fill_translated_slugs(self)
         sanitize_translated_fields(self, "content")
         super().save(*args, **kwargs)
 
@@ -141,5 +144,6 @@ class Service(TimeStampedModel, PublishableModel, SeoModel):
         return self.title_ru or f"Услуга #{self.pk}"
 
     def save(self, *args, **kwargs):
+        fill_translated_slugs(self)
         sanitize_translated_fields(self, "content")
         super().save(*args, **kwargs)

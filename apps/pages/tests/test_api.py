@@ -57,8 +57,11 @@ def test_regular_page_by_slug_in_any_language_and_menu(api):
 
 
 def test_regular_page_without_slug_is_not_translated(api):
-    make(Page, "noslug", fields=("title",), slug=False, show_in_menu=True)
+    page = make(Page, "noslug", fields=("title",), show_in_menu=True)
+    # save() заполняет slug автоматически — обходим его, чтобы проверить само правило API
+    Page.objects.filter(pk=page.pk).update(slug_ru=None)
     assert api.get("/api/v1/pages/").json() == []
+    assert api.get("/api/v1/pages/noslug-en/").json()["is_translated"] is False
 
 
 # --- Направления и услуги ---------------------------------------------------------

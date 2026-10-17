@@ -39,13 +39,17 @@ def test_contacts(api):
     contacts = ContactInfo.load()
     contacts.official_name_ru = "ЦПК"
     contacts.official_name_en = "ICC"
-    contacts.phones = [{"label": "Приёмная", "number": "+996"}]
+    contacts.phones = [
+        {"label_ru": "Приёмная", "label_en": "Reception", "label_zh": "", "number": "+996"},
+    ]
     contacts.map_lat = "42.874600"
     contacts.save()
     data = api.get("/api/v1/contacts/", {"lang": "en"}).json()
     assert data["official_name"] == "ICC"
     assert data["address"] is None
-    assert data["phones"] == [{"label": "Приёмная", "number": "+996"}]
+    assert data["phones"] == [{"label": "Reception", "number": "+996"}]
+    zh = api.get("/api/v1/contacts/", {"lang": "zh"}).json()
+    assert zh["phones"] == [{"label": None, "number": "+996"}]
     assert data["map_lat"] == 42.8746 and data["map_lng"] is None
 
 

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from apps.core.serializers import (
+    HtmlField,
     ImageVersionsField,
     IsTranslatedField,
     NullableCharField,
@@ -25,7 +26,7 @@ class PageMenuSerializer(serializers.ModelSerializer):
 class PageDetailSerializer(serializers.ModelSerializer):
     slug = TranslatedField(help_text="null у системных страниц — они адресуются по key")
     title = TranslatedField()
-    content = TranslatedField(help_text="Безопасный HTML (очищен при сохранении)")
+    content = HtmlField()
     is_translated = IsTranslatedField()
     seo = SeoField()
 
@@ -71,7 +72,7 @@ class DirectionListSerializer(serializers.ModelSerializer):
 
 
 class DirectionDetailSerializer(DirectionListSerializer):
-    content = TranslatedField(help_text="Безопасный HTML (очищен при сохранении)")
+    content = HtmlField()
     seo = SeoField(description_field="short_text")
 
     class Meta(DirectionListSerializer.Meta):
@@ -90,7 +91,7 @@ class ServiceListSerializer(serializers.ModelSerializer):
 
 
 class ServiceDetailSerializer(ServiceListSerializer):
-    content = TranslatedField(help_text="Безопасный HTML (очищен при сохранении)")
+    content = HtmlField()
     how_to_apply = TranslatedField()
     contact_person = TranslatedField()
     contact_email = NullableCharField()

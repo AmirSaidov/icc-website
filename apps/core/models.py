@@ -3,6 +3,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.db import models
 
+from .fields import DocumentUploadField, ImageUploadField
+
 # --- Миксины (SPEC.md, 2.2) ---------------------------------------------------
 
 
@@ -39,7 +41,7 @@ class SeoModel(models.Model):
 
     meta_title = models.CharField("meta title", max_length=255, blank=True)
     meta_description = models.TextField("meta description", blank=True)
-    og_image = models.ImageField("OG-картинка", upload_to="seo/%Y/%m/", blank=True)
+    og_image = ImageUploadField("OG-картинка", upload_to="seo/%Y/%m/", blank=True)
 
     class Meta:
         abstract = True
@@ -87,7 +89,7 @@ class ContactInfo(SingletonModel, TimeStampedModel):
         "телефоны",
         default=list,
         blank=True,
-        help_text='Список вида [{"label": "Приёмная", "number": "+996 ..."}]',
+        help_text="Подписи на трёх языках и номер.",
     )
     email = models.EmailField("email", blank=True)
     work_hours = models.CharField("часы работы", max_length=255, blank=True)
@@ -97,7 +99,7 @@ class ContactInfo(SingletonModel, TimeStampedModel):
         "соцсети",
         default=list,
         blank=True,
-        help_text='Список вида [{"type": "telegram", "url": "https://..."}]',
+        help_text="Тип — ключ иконки на фронте (telegram, facebook, instagram, ...) и ссылка.",
     )
 
     class Meta:
@@ -116,7 +118,7 @@ class SiteSettings(SingletonModel, TimeStampedModel):
         help_text="Адреса через запятую. Если пусто — используется FEEDBACK_EMAIL из .env.",
     )
     analytics_id = models.CharField("ID счётчика аналитики", max_length=100, blank=True)
-    default_og_image = models.ImageField("OG-картинка по умолчанию", upload_to="seo/", blank=True)
+    default_og_image = ImageUploadField("OG-картинка по умолчанию", upload_to="seo/", blank=True)
 
     class Meta:
         verbose_name = "настройки сайта"
@@ -127,7 +129,7 @@ class SiteSettings(SingletonModel, TimeStampedModel):
 
 
 class GalleryImage(TimeStampedModel):
-    image = models.ImageField("изображение", upload_to="gallery/%Y/%m/")
+    image = ImageUploadField("изображение", upload_to="gallery/%Y/%m/")
     caption = models.CharField("подпись", max_length=255, blank=True)
     order = models.PositiveIntegerField("порядок", default=0)
     content_type = models.ForeignKey(
@@ -150,7 +152,7 @@ class GalleryImage(TimeStampedModel):
 
 
 class Attachment(TimeStampedModel):
-    file = models.FileField("файл", upload_to="documents/%Y/%m/")
+    file = DocumentUploadField("файл", upload_to="documents/%Y/%m/")
     title = models.CharField("название", max_length=255)
     size = models.PositiveBigIntegerField("размер, байт", default=0, editable=False)
     content_type = models.ForeignKey(

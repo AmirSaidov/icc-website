@@ -3,6 +3,7 @@ from rest_framework import serializers
 from apps.core.serializers import (
     AttachmentSerializer,
     GalleryImageSerializer,
+    HtmlField,
     ImageVersionsField,
     IsTranslatedField,
     NullableCharField,
@@ -59,7 +60,7 @@ class ProjectListSerializer(serializers.ModelSerializer):
 
 
 class ProjectDetailSerializer(ProjectListSerializer):
-    content = TranslatedField(help_text="Безопасный HTML (очищен при сохранении)")
+    content = HtmlField()
     partners = PartnerSerializer(
         many=True, read_only=True, help_text="Только партнёры с согласием на публикацию"
     )

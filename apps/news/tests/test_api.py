@@ -5,6 +5,7 @@ from django.test.utils import CaptureQueriesContext
 from apps.core.models import PublishableModel, SiteSettings
 from apps.core.tests.factories import add_pdf, add_photo, days, image_file, make
 from apps.news.models import Event, News, NewsCategory
+from apps.pages.models import Page
 
 pytestmark = pytest.mark.django_db
 
@@ -267,3 +268,22 @@ def test_news_and_event_detail_have_no_n_plus_one(api):
             add_pdf(obj)
     assert _count_queries(api, "/api/v1/news/detail-ru/") == few_news
     assert _count_queries(api, "/api/v1/events/detail-event-ru/") == few_event
+
+
+# --- Отложенная публикация (SPEC.md, 2.4) ------------------------------------------
+
+
+def test_scheduled_news_hidden_everywhere_until_published_at(api):
+    home = Page.objects.get(key="home")
+    home.title_ru, home.status = "Главная", PublishableModel.Status.PUBLISHED
+    home.save()
+    visible = make_news("now", published_at=days(-1))
+    scheduled = make_news("later", published_at=days(1))
+
+    assert [n["id"] for n in api.get("/api/v1/news/").json()["results"]] == [visible.id]
+    assert api.get("/api/v1/news/later-ru/").status_code == 404
+    assert [n["id"] for n in api.get("/api/v1/home/").json()["news"]] == [visible.id]
+
+    News.objects.filter(pk=scheduled.pk).update(published_at=days(-0.01))  # дата наступила
+    assert api.get("/api/v1/news/later-ru/").status_code == 200
+    assert api.get("/api/v1/news/").json()["count"] == 2

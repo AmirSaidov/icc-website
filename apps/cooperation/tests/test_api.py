@@ -4,7 +4,7 @@ from django.test.utils import CaptureQueriesContext
 
 from apps.cooperation.models import Country, Partner, Project
 from apps.core.models import PublishableModel
-from apps.core.tests.factories import add_photo, image_file, make
+from apps.core.tests.factories import add_photo, days, image_file, make
 
 pytestmark = pytest.mark.django_db
 
@@ -90,3 +90,10 @@ def test_project_detail_has_no_n_plus_one(api, china):
         project.partners.add(make_partner(f"p{i}", china))
         add_photo(project, order=i)
     assert count() == few
+
+
+def test_scheduled_project_hidden_until_published_at(api, china):
+    visible = make_project("now", china, published_at=days(-1))
+    make_project("later", china, published_at=days(2))
+    assert [p["id"] for p in api.get("/api/v1/projects/").json()["results"]] == [visible.id]
+    assert api.get("/api/v1/projects/later-ru/").status_code == 404

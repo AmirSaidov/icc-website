@@ -3,9 +3,10 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.utils import timezone
 
-from apps.core.fields import NullableSlugField, unique_slug_constraints
+from apps.core.fields import ImageUploadField, NullableSlugField, unique_slug_constraints
 from apps.core.models import PublishableModel, SeoModel, TimeStampedModel
 from apps.core.sanitize import sanitize_translated_fields
+from apps.core.slugs import fill_translated_slugs
 
 
 class Country(TimeStampedModel):
@@ -16,7 +17,7 @@ class Country(TimeStampedModel):
         unique=True,
         validators=[RegexValidator(r"^[A-Z]{2}$", "Две заглавные латинские буквы, например CN.")],
     )
-    flag = models.ImageField("флаг", upload_to="flags/", blank=True)
+    flag = ImageUploadField("флаг", upload_to="flags/", blank=True)
     description = models.TextField("описание", blank=True)
     is_active = models.BooleanField("активна", default=True)
     order = models.PositiveIntegerField("порядок", default=0)
@@ -32,7 +33,7 @@ class Country(TimeStampedModel):
 
 class Partner(TimeStampedModel):
     name = models.CharField("название", max_length=255)
-    logo = models.ImageField("логотип", upload_to="partners/", blank=True)
+    logo = ImageUploadField("логотип", upload_to="partners/", blank=True)
     country = models.ForeignKey(
         Country,
         on_delete=models.PROTECT,
@@ -70,7 +71,7 @@ class Project(TimeStampedModel, PublishableModel, SeoModel):
         related_name="projects",
         verbose_name="партнёры",
     )
-    cover = models.ImageField("обложка", upload_to="projects/%Y/%m/", blank=True)
+    cover = ImageUploadField("обложка", upload_to="projects/%Y/%m/", blank=True)
     published_at = models.DateTimeField("дата публикации", default=timezone.now, db_index=True)
 
     gallery = GenericRelation("core.GalleryImage", related_query_name="project")
@@ -86,5 +87,6 @@ class Project(TimeStampedModel, PublishableModel, SeoModel):
         return self.title_ru or f"Проект #{self.pk}"
 
     def save(self, *args, **kwargs):
+        fill_translated_slugs(self)
         sanitize_translated_fields(self, "content")
         super().save(*args, **kwargs)

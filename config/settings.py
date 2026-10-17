@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "imagekit",
     "rest_framework",
     "drf_spectacular",
+    "django_ckeditor_5",
     # проект
     "apps.core",
     "apps.pages",
@@ -145,11 +146,14 @@ MODELTRANSLATION_REQUIRED_LANGUAGES = ("ru",)
 # Fallback-и выключены: нет перевода — API отдаёт null, а не русский текст.
 MODELTRANSLATION_ENABLE_FALLBACKS = False
 MODELTRANSLATION_FALLBACK_LANGUAGES = ()
+# Вкладки языков в админке: jQuery UI из static/, без CDN.
+JQUERY_UI_URL = "vendor/jquery-ui/jquery-ui.min.js"
 
 # --- Статика и медиа ----------------------------------------------------------
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
@@ -198,3 +202,44 @@ SPECTACULAR_SETTINGS = {
     "SCHEMA_PATH_PREFIX": r"/api/v1",
     "COMPONENT_SPLIT_REQUEST": True,
 }
+
+# --- CKEditor 5 (rich text в админке) -----------------------------------------
+# Тулбар — только то, что пропускает nh3 (SPEC.md, 2.4). Плагины, дающие другую
+# разметку (стили, шрифты, выравнивание, размеры картинок, Markdown, HTML-вставки),
+# отключены, чтобы редактор не показывал того, что потом вырежет санитайзер.
+
+CKEDITOR_5_CONFIGS = {
+    "default": {
+        "language": "ru",
+        "removePlugins": [
+            "Markdown", "FullPage", "SourceEditing", "GeneralHtmlSupport", "Style", "HtmlEmbed",
+            "CodeBlock", "Code", "Subscript", "Superscript", "Font", "Highlight", "Alignment",
+            "ImageStyle", "ImageResize", "LinkImage", "MediaEmbed", "PageBreak", "HorizontalLine",
+            "Indent", "IndentBlock", "TodoList", "ListProperties", "TableProperties",
+            "TableCellProperties", "TableCaption", "Mention", "Autosave",
+        ],
+        "toolbar": [
+            "heading", "|",
+            "bold", "italic", "underline", "strikethrough", "|",
+            "link", "bulletedList", "numberedList", "blockQuote", "|",
+            "insertImage", "insertTable", "|",
+            "removeFormat", "undo", "redo",
+        ],
+        "heading": {
+            "options": [
+                {"model": "paragraph", "title": "Абзац", "class": "ck-heading_paragraph"},
+                {"model": "heading2", "view": "h2", "title": "Заголовок 2", "class": "ck-heading_heading2"},
+                {"model": "heading3", "view": "h3", "title": "Заголовок 3", "class": "ck-heading_heading3"},
+                {"model": "heading4", "view": "h4", "title": "Заголовок 4", "class": "ck-heading_heading4"},
+            ],
+        },
+        "image": {"toolbar": ["imageTextAlternative", "toggleImageCaption"]},
+        # без объединения ячеек: colspan/rowspan nh3 не пропускает
+        "table": {"contentToolbar": ["tableColumn", "tableRow"]},
+        "link": {"addTargetToExternalLinks": True, "defaultProtocol": "https://"},
+    },
+}
+CKEDITOR_5_FILE_UPLOAD_PERMISSION = "staff"
+# Своя вьюха загрузки: та же проверка картинок, что и у ImageField (SPEC.md, 4.1).
+CK_EDITOR_5_UPLOAD_FILE_VIEW_NAME = "ckeditor-upload"
+CKEDITOR_5_UPLOAD_FILE_TYPES = ["jpeg", "jpg", "png", "webp"]

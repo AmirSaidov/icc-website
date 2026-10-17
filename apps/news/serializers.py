@@ -5,6 +5,7 @@ from apps.core.i18n import is_translated, translated_value
 from apps.core.serializers import (
     AttachmentSerializer,
     GalleryImageSerializer,
+    HtmlField,
     ImageVersionsField,
     IsTranslatedField,
     SeoField,
@@ -55,7 +56,7 @@ class NewsListSerializer(serializers.ModelSerializer):
 
 
 class NewsDetailSerializer(NewsListSerializer):
-    content = TranslatedField(help_text="Безопасный HTML (очищен при сохранении)")
+    content = HtmlField()
     gallery = GalleryImageSerializer(many=True, read_only=True)
     attachments = AttachmentSerializer(many=True, read_only=True)
     seo = SeoField(description_field="excerpt", image_field="cover")
@@ -122,7 +123,7 @@ class EventListSerializer(serializers.ModelSerializer):
 
 
 class EventDetailSerializer(EventListSerializer):
-    content = TranslatedField(help_text="Безопасный HTML (очищен при сохранении)")
+    content = HtmlField()
     gallery = GalleryImageSerializer(many=True, read_only=True)
     attachments = AttachmentSerializer(many=True, read_only=True)
     seo = SeoField(description_field="excerpt", image_field="cover")

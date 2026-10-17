@@ -95,7 +95,7 @@ paths:
               examples:
                 Пример(seed-данные):
                   value:
-                  - id: 3
+                  - id: 5
                     code: CN
                     name: Китай
                     description: Ключевой партнёр Кыргызстана в промышленной кооперации.
@@ -144,7 +144,7 @@ paths:
               examples:
                 Пример(seed-данные):
                   value:
-                  - id: 9
+                  - id: 17
                     slug: promyshlennaia-kooperatsiia
                     title: Промышленная кооперация
                     short_text: Связываем производителей для совместной работы.
@@ -195,7 +195,7 @@ paths:
               examples:
                 Пример(seed-данные):
                   value:
-                    id: 9
+                    id: 17
                     slug: promyshlennaia-kooperatsiia
                     title: Промышленная кооперация
                     short_text: Связываем производителей для совместной работы.
@@ -381,7 +381,7 @@ paths:
                     next: http://api.example.org/accounts/?page=4
                     previous: http://api.example.org/accounts/?page=2
                     results:
-                    - id: 13
+                    - id: 21
                       slug: vebinar-po-eksportnym-protseduram
                       title: Вебинар по экспортным процедурам
                       type:
@@ -441,7 +441,7 @@ paths:
               examples:
                 Пример(seed-данные):
                   value:
-                    id: 9
+                    id: 17
                     slug: business-mission-to-xinjiang
                     title: Business mission to Xinjiang
                     type:
@@ -459,11 +459,11 @@ paths:
                       large: http://localhost:8000/media/CACHE/images/events/2026/10/event-1/a510160fb27adf0dbad59cdb0183a770.webp
                     is_upcoming: false
                     gallery:
-                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_QyjLtd7/d0886c13acdb867659b01530f8c97630.webp
-                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_QyjLtd7/eb267217504a8a9324cf8865a730922f.webp
+                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_36J5oXL/1052edca0ef98ab40469df6750c4015f.webp
+                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_36J5oXL/37275bf6f80a26d1fc57a4440653a0a4.webp
                       caption: Opening of the meeting
-                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_wT6ABsp/eb98b4a967d9494f73c816f5237fc0af.webp
-                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_wT6ABsp/10cf73d448be2ca5f149cee173395f87.webp
+                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_qlX79ne/376505789d67531cd0df75fdda210bd2.webp
+                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_qlX79ne/c76ee863dfd4b1ca7f1ead3ade1e72f4.webp
                       caption: Negotiations
                     attachments: []
                     is_translated: true
@@ -522,7 +522,7 @@ paths:
                 Пример(seed-данные):
                   value:
                     blocks:
-                    - id: 6
+                    - id: 11
                       type: hero
                       title: Центр промышленной кооперации
                       text: Помогаем предприятиям Кыргызстана находить партнёров за
@@ -534,7 +534,7 @@ paths:
                       button_link: /services
                       order: 0
                       is_translated: true
-                    - id: 7
+                    - id: 12
                       type: about
                       title: О Центре
                       text: Центр создан при Торгово-промышленной палате для развития
@@ -547,14 +547,14 @@ paths:
                       order: 1
                       is_translated: true
                     directions:
-                    - id: 9
+                    - id: 17
                       slug: promyshlennaia-kooperatsiia
                       title: Промышленная кооперация
                       short_text: Связываем производителей для совместной работы.
                       icon: cooperation
                       order: 0
                       is_translated: true
-                    - id: 10
+                    - id: 18
                       slug: poisk-partnerov
                       title: Поиск партнёров
                       short_text: Подбираем надёжных партнёров за рубежом.
@@ -562,7 +562,7 @@ paths:
                       order: 1
                       is_translated: true
                     news:
-                    - id: 13
+                    - id: 25
                       slug: delovaia-missiia-v-urumchi
                       title: Деловая миссия в Урумчи
                       excerpt: Предприниматели Кыргызстана провели переговоры с компаниями
@@ -575,7 +575,7 @@ paths:
                         name: Деловые миссии
                       published_at: '2026-10-15T10:00:00+06:00'
                       is_translated: true
-                    - id: 14
+                    - id: 26
                       slug: tsentr-podpisal-memorandum-s-torgovoi-palatoi-sintsziana
                       title: Центр подписал меморандум с торговой палатой Синьцзяна
                       excerpt: Стороны договорились о совместной работе по поиску
@@ -589,7 +589,7 @@ paths:
                       published_at: '2026-10-11T10:00:00+06:00'
                       is_translated: true
                     events:
-                    - id: 13
+                    - id: 21
                       slug: vebinar-po-eksportnym-protseduram
                       title: Вебинар по экспортным процедурам
                       type:
@@ -604,7 +604,7 @@ paths:
                         large: http://localhost:8000/media/CACHE/images/events/2026/10/event-5/2d483ecbf1534a26d8dad05f0bf51c03.webp
                       is_upcoming: true
                       is_translated: true
-                    - id: 14
+                    - id: 22
                       slug: biznes-missiia-v-guanchzhou
                       title: Бизнес-миссия в Гуанчжоу
                       type:
@@ -688,7 +688,7 @@ paths:
                     next: http://api.example.org/accounts/?page=4
                     previous: http://api.example.org/accounts/?page=2
                     results:
-                    - id: 13
+                    - id: 25
                       slug: delovaia-missiia-v-urumchi
                       title: Деловая миссия в Урумчи
                       excerpt: Предприниматели Кыргызстана провели переговоры с компаниями
@@ -789,7 +789,7 @@ paths:
               examples:
                 Пример(seed-данные):
                   value:
-                    id: 13
+                    id: 25
                     slug: delovaia-missiia-v-urumchi
                     title: Деловая миссия в Урумчи
                     excerpt: Предприниматели Кыргызстана провели переговоры с компаниями
@@ -992,7 +992,7 @@ paths:
               examples:
                 Пример(seed-данные):
                   value:
-                  - id: 5
+                  - id: 9
                     name: Торговая компания «Шёлковый путь» (демо)
                     logo:
                       small: http://localhost:8000/media/CACHE/images/partners/logo-1/4102341f8ee4cfc88052f5d4bba63378.webp
@@ -1063,7 +1063,7 @@ paths:
                     next: http://api.example.org/accounts/?page=4
                     previous: http://api.example.org/accounts/?page=2
                     results:
-                    - id: 4
+                    - id: 7
                       slug: sovmestnoe-proizvodstvo-stroimaterialov-v-chuiskoi-oblasti
                       title: Совместное производство стройматериалов в Чуйской области
                       excerpt: Запуск завода мощностью 100 тыс. тонн в год.
@@ -1120,7 +1120,7 @@ paths:
               examples:
                 Пример(seed-данные):
                   value:
-                    id: 4
+                    id: 7
                     slug: chu-he-zhou-jian-cai-he-zi-sheng-chan
                     title: 楚河州建材合资生产
                     excerpt: 建设年产10万吨的工厂。
@@ -1133,7 +1133,7 @@ paths:
                       name: 中国
                     published_at: '2026-10-07T10:00:00+06:00'
                     partners:
-                    - id: 5
+                    - id: 9
                       name: 丝路贸易有限公司（演示）
                       logo:
                         small: http://localhost:8000/media/CACHE/images/partners/logo-1/4102341f8ee4cfc88052f5d4bba63378.webp
@@ -1144,7 +1144,7 @@ paths:
                       website: https://example.com/silkroad
                       description: 批发贸易与物流。
                       is_translated: true
-                    - id: 6
+                    - id: 10
                       name: 天山机械（演示）
                       logo:
                         small: http://localhost:8000/media/CACHE/images/partners/logo-2/c63583e8b06cfcfc91d4176deae1956f.webp
@@ -1156,11 +1156,11 @@ paths:
                       description: 农业机械制造。
                       is_translated: true
                     gallery:
-                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_MQUBJki/9097fccb4966934eead24dffbb1ea385.webp
-                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_MQUBJki/b9161e74f563145f3b12f6654fa7eee2.webp
+                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_N6u0BWb/2a4e605e95a58aff12eb0e593b05e969.webp
+                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_N6u0BWb/3c9b3ec861991b8c3611abdc6c6f463b.webp
                       caption: 会议开幕
-                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_FpowTct/3a55f85fd1d2cee2a7d30d8b0a00d168.webp
-                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_FpowTct/756773f3ab8671decb9d32a1fdbf296e.webp
+                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_UjcmiyV/fc5ffca5e52128889b64a8b2337d97f1.webp
+                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_UjcmiyV/82c90ed5354eee7d179243f03df98ad8.webp
                       caption: 洽谈
                     attachments: []
                     is_translated: true
@@ -1219,7 +1219,7 @@ paths:
               examples:
                 Пример(seed-данные):
                   value:
-                  - id: 8
+                  - id: 15
                     slug: podbor-partnerov-v-kitae
                     title: Подбор партнёров в Китае
                     short_text: Поиск и проверка производителей и поставщиков.
@@ -1270,7 +1270,7 @@ paths:
               examples:
                 Пример(seed-данные):
                   value:
-                    id: 8
+                    id: 15
                     slug: podbor-partnerov-v-kitae
                     title: Подбор партнёров в Китае
                     short_text: Поиск и проверка производителей и поставщиков.
@@ -1418,8 +1418,10 @@ components:
           nullable: true
           readOnly: true
         phones:
+          type: array
+          items:
+            $ref: '#/components/schemas/Phone'
           readOnly: true
-          description: '[{"label": "...", "number": "..."}]'
         email:
           type: string
           nullable: true
@@ -1439,8 +1441,10 @@ components:
           readOnly: true
           nullable: true
         socials:
+          type: array
+          items:
+            $ref: '#/components/schemas/Social'
           readOnly: true
-          description: '[{"type": "telegram", "url": "..."}]'
       required:
       - address
       - email
@@ -1527,8 +1531,8 @@ components:
         content:
           type: string
           nullable: true
+          description: Безопасный HTML
           readOnly: true
-          description: Безопасный HTML (очищен при сохранении)
         icon:
           allOf:
           - $ref: '#/components/schemas/IconEnum'
@@ -1653,8 +1657,8 @@ components:
         content:
           type: string
           nullable: true
+          description: Безопасный HTML
           readOnly: true
-          description: Безопасный HTML (очищен при сохранении)
         cover:
           allOf:
           - $ref: '#/components/schemas/ImageVersions'
@@ -1944,8 +1948,8 @@ components:
         content:
           type: string
           nullable: true
+          description: Безопасный HTML
           readOnly: true
-          description: Безопасный HTML (очищен при сохранении)
         cover:
           allOf:
           - $ref: '#/components/schemas/ImageVersions'
@@ -2056,8 +2060,8 @@ components:
         content:
           type: string
           nullable: true
+          description: Безопасный HTML
           readOnly: true
-          description: Безопасный HTML (очищен при сохранении)
         is_translated:
           type: boolean
           readOnly: true
@@ -2206,6 +2210,18 @@ components:
       - logo
       - name
       - website
+    Phone:
+      type: object
+      properties:
+        label:
+          type: string
+          nullable: true
+          description: Подпись на языке запроса
+        number:
+          type: string
+      required:
+      - label
+      - number
     ProjectDetail:
       type: object
       properties:
@@ -2227,8 +2243,8 @@ components:
         content:
           type: string
           nullable: true
+          description: Безопасный HTML
           readOnly: true
-          description: Безопасный HTML (очищен при сохранении)
         cover:
           allOf:
           - $ref: '#/components/schemas/ImageVersions'
@@ -2367,8 +2383,8 @@ components:
         content:
           type: string
           nullable: true
+          description: Безопасный HTML
           readOnly: true
-          description: Безопасный HTML (очищен при сохранении)
         how_to_apply:
           type: string
           nullable: true
@@ -2458,6 +2474,18 @@ components:
       required:
       - analytics_id
       - default_og_image
+    Social:
+      type: object
+      properties:
+        type:
+          type: string
+          description: 'Ключ иконки на фронте: telegram, facebook, ...'
+        url:
+          type: string
+          format: uri
+      required:
+      - type
+      - url
     TypeEnum:
       enum:
       - hero

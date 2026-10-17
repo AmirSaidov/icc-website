@@ -32,6 +32,12 @@ Swagger: http://localhost:8000/api/docs/ · документация для фр
 - Списки без N+1: `select_related` / `prefetch_related`, тесты через `CaptureQueriesContext`.
 - Изменил API → пересобрать документацию: `seed`, `export_api_examples`,
   `spectacular --file docs/openapi.yaml --validate` и закоммитить `docs/` + `apps/core/api_examples/`.
+- Админка: переводимые модели — `TranslationAdminBase` (`apps/core/admin.py`: вкладки RU/EN/中文, CKEditor 5
+  для `content_*`), SEO — `SEO_FIELDSET`, галерея/документы — `GalleryInline` / `AttachmentInline`.
+  Права по ролям — `apps/core/roles.py` (`is_admin_role`). Без django-unfold. Без CDN: jQuery UI лежит в `static/vendor/`.
+- Файлы: только `ImageUploadField` / `DocumentUploadField` (`apps/core/fields.py`) — проверка расширения, содержимого, размера.
+- Slug: в `save()` моделей со slug вызывать `fill_translated_slugs` (пустой slug_X ← title_X, конфликт → -2, -3).
+- Отложенная публикация: публичные выборки — только через `published()` (`apps/core/api.py`).
 - Тесты — `apps/<app>/tests/`, данные через `apps/core/tests/factories.py`, без новых зависимостей.
 - Секреты только в `.env` (не в git). `db.sqlite3`, `media/`, `logs/` не коммитятся.
 - Команды в документации — для Windows (`.venv\Scripts\activate`, `copy`).
