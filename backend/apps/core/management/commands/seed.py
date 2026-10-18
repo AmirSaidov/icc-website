@@ -10,6 +10,7 @@ python manage.py seed [--flush]
 import io
 import secrets
 from datetime import timedelta
+from pathlib import Path
 
 from django.contrib.auth.models import Group, User
 from django.core.files.base import ContentFile
@@ -38,8 +39,54 @@ PALETTE = [
 
 # --- Заглушки файлов (Pillow, без интернета) ---------------------------------
 
+# Реальные фото для демо-данных: подпись картинки → файл в apps/core/seed_photos/.
+# Подписи без фото (логотипы, флаги) генерируются заглушкой, как раньше.
+SEED_PHOTOS_DIR = Path(__file__).resolve().parents[2] / "seed_photos"
+SEED_PHOTOS = {
+    # главная
+    "HERO": "factory", "ABOUT": "meeting", "KG_CHINA": "shanghai", "ICC Kyrgyzstan": "factory",
+    # новости — по порядку NEWS в seed_data
+    "News 1": "airplane", "News 2": "signing", "News 3": "negotiations", "News 4": "expo-hall",
+    "News 5": "seminar", "News 6": "tractor", "News 7": "handshake", "News 8": "analytics",
+    "News 9": "round-table", "News 10": "microphone", "News 11": "conference", "News 12": "cranes",
+    # мероприятия — по порядку EVENTS
+    "Event 1": "mountain-road", "Event 2": "conference", "Event 3": "metalwork", "Event 4": "negotiations",
+    "Event 5": "webinar", "Event 6": "port", "Event 7": "microphone", "Event 8": "engineer",
+    # проекты — по порядку PROJECTS
+    "Project 1": "construction", "Project 2": "tractor", "Project 3": "field-handshake",
+    # галерея — по GALLERY_CAPTIONS: открытие, переговоры, подписание
+    "Photo 1": "conference", "Photo 2": "meeting", "Photo 3": "signing",
+}
+
+
+def make_logo(name, index):
+    """Демо-логотип партнёра: цветной знак с инициалами + название (вместо плашки «Logo N»)."""
+    width, height, mark = 900, 300, 220
+    image = Image.new("RGB", (width, height), (255, 255, 255))
+    draw = ImageDraw.Draw(image)
+    top = (height - mark) // 2
+    draw.rounded_rectangle([20, top, 20 + mark, top + mark], radius=40, fill=PALETTE[index % len(PALETTE)])
+    words = [w for w in name.replace("(demo)", "").replace("LLP", "").replace("Co.", "").split() if w[0].isalpha()]
+    initials = "".join(w[0] for w in words[:2]).upper()
+    draw.text((20 + mark / 2, height / 2), initials, fill=(255, 255, 255),
+              font=ImageFont.load_default(size=96), anchor="mm")
+    lines = [" ".join(words[:2]), " ".join(words[2:])] if len(words) > 2 else [" ".join(words)]
+    font = ImageFont.load_default(size=56)
+    y = height / 2 - (len(lines) - 1) * 34
+    for line in lines:
+        draw.text((280, y), line, fill=(26, 31, 44), font=font, anchor="lm")
+        y += 68
+    buffer = io.BytesIO()
+    image.save(buffer, "PNG")
+    return ContentFile(buffer.getvalue(), name=f"logo-{index + 1}.png")
+
 
 def make_image(label, index, size=(1600, 900)):
+    if label.startswith("Logo: "):
+        return make_logo(label.removeprefix("Logo: "), index)
+    photo = SEED_PHOTOS.get(label)
+    if photo:
+        return ContentFile((SEED_PHOTOS_DIR / f"{photo}.jpg").read_bytes(), name=f"{photo}.jpg")
     image = Image.new("RGB", size, PALETTE[index % len(PALETTE)])
     draw = ImageDraw.Draw(image)
     width, height = size
@@ -365,7 +412,7 @@ class Command(BaseCommand):
                 "order": order,
             }
             partner, _ = self.ensure(
-                Partner, {"name_ru": name[0]}, images={"logo": f"Logo {order + 1}"}, **fields
+                Partner, {"name_ru": name[0]}, images={"logo": f"Logo: {name[1]}"}, **fields
             )
             partners.append(partner)
         return partners

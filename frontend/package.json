@@ -7,7 +7,7 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "gen:types": "openapi-typescript http://localhost:8000/api/schema/ -o lib/api-schema.d.ts",
+    "gen:types": "openapi-typescript ../backend/docs/openapi.yaml -o lib/api-schema.d.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

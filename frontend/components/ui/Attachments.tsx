@@ -18,7 +18,7 @@ export function Attachments({items, title}: {items: Attachment[]; title?: string
         {items.map((file) => {
           const size = fileSize(file.size, locale);
           return (
-            <li key={file.id}>
+            <li key={file.url}>
               <a
                 href={file.url}
                 download
@@ -26,7 +26,7 @@ export function Attachments({items, title}: {items: Attachment[]; title?: string
               >
                 <FileText aria-hidden className="size-8 shrink-0 text-primary" strokeWidth={1.5} />
                 <span className="min-w-0 flex-1">
-                  <span className="block font-medium break-words">{file.title}</span>
+                  <span className="block font-medium break-words">{file.title ?? file.url.split('/').pop()}</span>
                   <span className="text-sm text-muted">
                     {file.ext.toUpperCase()}, {size.value} {t(`units.${size.unit}`)}
                   </span>

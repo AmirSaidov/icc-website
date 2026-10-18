@@ -10,7 +10,8 @@
     "services": "Services",
     "news": "News & events",
     "cooperation": "Cooperation",
-    "contacts": "Contacts"
+    "contacts": "Contacts",
+    "events": "Events"
   },
   "Header": {
     "logoMark": "ICC",
@@ -89,5 +90,90 @@
       "kb": "KB",
       "mb": "MB"
     }
+  },
+  "Directions": {
+    "title": "Areas of work",
+    "description": "The Center's main areas of work.",
+    "empty": "No publications yet",
+    "services": "Our services",
+    "untranslated": "This content is not available in this language yet"
+  },
+  "Services": {
+    "title": "Services",
+    "description": "Support for companies developing international cooperation.",
+    "empty": "No publications yet",
+    "steps": "How to apply",
+    "contactPerson": "Contact person",
+    "apply": "Submit a request",
+    "untranslated": "This content is not available in this language yet"
+  },
+  "News": {
+    "title": "News",
+    "description": "News and updates from the Center.",
+    "empty": "No publications yet",
+    "category": "Category",
+    "allCategories": "All categories",
+    "loadMore": "Load more",
+    "loading": "Loading...",
+    "untranslated": "This content is not available in this language yet",
+    "related": "Related articles"
+  },
+  "Events": {
+    "title": "Events",
+    "description": "Upcoming events and event archive.",
+    "empty": "No publications yet",
+    "upcoming": "Upcoming",
+    "past": "Past events",
+    "allTypes": "All types",
+    "untranslated": "This content is not available in this language yet",
+    "related": "Related events"
+  },
+  "Cooperation": {
+    "title": "International cooperation",
+    "country": "Country",
+    "allCountries": "All countries",
+    "filter": "Filter",
+    "partners": "Partners",
+    "noPartners": "No partners found.",
+    "projects": "Projects",
+    "noProjects": "No projects found.",
+    "formTitle": "Discuss cooperation",
+    "untranslated": "This content is not available in this language yet"
+  },
+  "Contacts": {
+    "title": "Contacts",
+    "description": "Get in touch with the Industrial Cooperation Center.",
+    "organization": "Organization",
+    "schedule": "Working hours",
+    "mapTitle": "Centre location on the map",
+    "openIn2gis": "Open in 2GIS →",
+    "formTitle": "Send us a message"
+  },
+  "Feedback": {
+    "fields": {
+      "full_name": "Name",
+      "company": "Company",
+      "country": "Country",
+      "email": "Email",
+      "phone": "Phone",
+      "subject": "Subject",
+      "message": "Message"
+    },
+    "consent": "I agree to the processing of my personal data.",
+    "submit": "Send",
+    "sending": "Sending...",
+    "success": "Thank you! Your message has been sent.",
+    "invalid": "Please check this field.",
+    "required": "This field is required.",
+    "tooMany": "Too many requests. Please try again later.",
+    "error": "Could not send your message. Please try again."
+  },
+  "Errors": {
+    "notFoundTitle": "Page not found",
+    "notFound": "The address may have changed or the page may have been removed.",
+    "home": "Go to homepage",
+    "errorTitle": "Something went wrong",
+    "errorText": "An error occurred while loading this page.",
+    "retry": "Try again"
   }
 }

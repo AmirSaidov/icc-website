@@ -7,6 +7,7 @@ import type {ReactNode} from 'react';
 import {AlternatesProvider} from '@/components/layout/Alternates';
 import {Footer} from '@/components/layout/Footer';
 import {Header} from '@/components/layout/Header';
+import {RevealObserver} from '@/components/layout/RevealObserver';
 import {htmlLang, routing, type Locale} from '@/i18n/routing';
 import {SITE_URL} from '@/lib/seo';
 import '../globals.css';
@@ -57,7 +58,12 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   return (
-    <html lang={htmlLang[locale]} className={`${inter.variable} ${notoSansSC.variable}`}>
+    // suppressHydrationWarning: скрипт ниже добавляет класс js до гидрации
+    <html lang={htmlLang[locale]} className={`${inter.variable} ${notoSansSC.variable}`} suppressHydrationWarning>
+      <head>
+        {/* До первой отрисовки: включает анимации появления (globals.css). Без JS всё видно сразу. */}
+        <script dangerouslySetInnerHTML={{__html: "document.documentElement.classList.add('js')"}} />
+      </head>
       <body className="flex min-h-dvh flex-col font-sans antialiased">
         <NextIntlClientProvider>
           <AlternatesProvider>
@@ -66,6 +72,7 @@ export default async function LocaleLayout({
               {children}
             </main>
             <Footer locale={locale} />
+            <RevealObserver />
           </AlternatesProvider>
         </NextIntlClientProvider>
       </body>

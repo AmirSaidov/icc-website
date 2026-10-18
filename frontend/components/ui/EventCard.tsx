@@ -10,7 +10,6 @@ import {CARD_IMAGE_SIZES} from './NewsCard';
 
 export function EventCard({item, headingLevel = 'h3'}: {item: EventListItem; headingLevel?: 'h2' | 'h3'}) {
   const locale = useLocale() as Locale;
-  const t = useTranslations('EventTypes');
   const tCard = useTranslations('EventCard');
   const Heading = headingLevel;
 
@@ -19,15 +18,15 @@ export function EventCard({item, headingLevel = 'h3'}: {item: EventListItem; hea
       <div className="relative aspect-[3/2] bg-primary-light">
         {item.cover && (
           <Image
-            src={item.cover.url}
-            alt={item.cover.alt}
+            src={item.cover.small}
+            alt={item.title ?? ''}
             fill
             sizes={CARD_IMAGE_SIZES}
-            className="object-cover"
+            className="object-cover transition-transform duration-500 group-has-[a.card-link:hover]:scale-105"
           />
         )}
         <Badge tone="inverse" className="absolute left-3 top-3">
-          {t(item.type)}
+          {item.type.label}
         </Badge>
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
@@ -39,7 +38,7 @@ export function EventCard({item, headingLevel = 'h3'}: {item: EventListItem; hea
             <dt className="sr-only">{tCard('date')}</dt>
             <CalendarDays aria-hidden className="mt-0.5 size-4 shrink-0 text-primary" />
             <dd>
-              <time dateTime={item.start_date}>{formatDateRange(item.start_date, item.end_date, locale)}</time>
+              <time dateTime={item.start_at}>{formatDateRange(item.start_at, item.end_at ?? null, locale)}</time>
             </dd>
           </div>
           {item.location && (

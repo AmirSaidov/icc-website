@@ -10,7 +10,8 @@
     "services": "服务",
     "news": "新闻与活动",
     "cooperation": "国际合作",
-    "contacts": "联系我们"
+    "contacts": "联系我们",
+    "events": "活动"
   },
   "Header": {
     "logoMark": "ICC",
@@ -89,5 +90,90 @@
       "kb": "KB",
       "mb": "MB"
     }
+  },
+  "Directions": {
+    "title": "业务方向",
+    "description": "中心的主要业务方向。",
+    "empty": "暂无内容",
+    "services": "中心服务",
+    "untranslated": "此内容暂时没有此语言版本"
+  },
+  "Services": {
+    "title": "服务",
+    "description": "支持企业开展国际合作。",
+    "empty": "暂无内容",
+    "steps": "如何申请",
+    "contactPerson": "联系人",
+    "apply": "提交申请",
+    "untranslated": "此内容暂时没有此语言版本"
+  },
+  "News": {
+    "title": "新闻",
+    "description": "中心新闻与动态。",
+    "empty": "暂无内容",
+    "category": "类别",
+    "allCategories": "所有类别",
+    "loadMore": "加载更多",
+    "loading": "加载中…",
+    "untranslated": "此内容暂时没有此语言版本",
+    "related": "相关文章"
+  },
+  "Events": {
+    "title": "活动",
+    "description": "即将举行的活动及往期活动。",
+    "empty": "暂无内容",
+    "upcoming": "即将举行",
+    "past": "往期活动",
+    "allTypes": "所有类型",
+    "untranslated": "此内容暂时没有此语言版本",
+    "related": "相关活动"
+  },
+  "Cooperation": {
+    "title": "国际合作",
+    "country": "国家",
+    "allCountries": "所有国家",
+    "filter": "筛选",
+    "partners": "合作伙伴",
+    "noPartners": "未找到合作伙伴。",
+    "projects": "项目",
+    "noProjects": "未找到项目。",
+    "formTitle": "洽谈合作",
+    "untranslated": "此内容暂时没有此语言版本"
+  },
+  "Contacts": {
+    "title": "联系方式",
+    "description": "联系工业合作中心。",
+    "organization": "机构",
+    "schedule": "工作时间",
+    "mapTitle": "中心在地图上的位置",
+    "openIn2gis": "在 2GIS 中打开 →",
+    "formTitle": "给我们留言"
+  },
+  "Feedback": {
+    "fields": {
+      "full_name": "姓名",
+      "company": "公司",
+      "country": "国家",
+      "email": "电子邮箱",
+      "phone": "电话",
+      "subject": "主题",
+      "message": "留言"
+    },
+    "consent": "我同意处理个人数据。",
+    "submit": "发送",
+    "sending": "发送中…",
+    "success": "谢谢！您的消息已发送。",
+    "invalid": "请检查此字段。",
+    "required": "此字段为必填项。",
+    "tooMany": "请求过于频繁，请稍后再试。",
+    "error": "无法发送消息，请重试。"
+  },
+  "Errors": {
+    "notFoundTitle": "页面未找到",
+    "notFound": "地址可能已更改，或页面已被删除。",
+    "home": "返回首页",
+    "errorTitle": "出现问题",
+    "errorText": "加载页面时发生错误。",
+    "retry": "重试"
   }
 }

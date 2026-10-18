@@ -16,7 +16,7 @@ interface SectionTitleProps {
 
 export function SectionTitle({children, id, subtitle, action, as: Tag = 'h2', className}: SectionTitleProps) {
   return (
-    <div className={cn('mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 md:mb-8', className)}>
+    <div data-reveal className={cn('mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 md:mb-8', className)}>
       <div className="min-w-0">
         <Tag id={id} className="text-2xl font-bold leading-tight text-text md:text-3xl">
           {children}
@@ -26,10 +26,10 @@ export function SectionTitle({children, id, subtitle, action, as: Tag = 'h2', cl
       {action && (
         <Link
           href={action.href}
-          className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-primary hover:underline"
+          className="group inline-flex shrink-0 items-center gap-1 text-sm font-medium text-primary hover:underline"
         >
           {action.label}
-          <ArrowRight aria-hidden className="size-4" />
+          <ArrowRight aria-hidden className="size-4 transition-transform group-hover:translate-x-1" />
         </Link>
       )}
     </div>
