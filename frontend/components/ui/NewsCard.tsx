@@ -18,23 +18,23 @@ export function NewsCard({item, headingLevel = 'h3'}: {item: NewsListItem; headi
       <div className="relative aspect-[3/2] bg-primary-light">
         {item.cover && (
           <Image
-            src={item.cover.url}
-            alt={item.cover.alt}
+            src={item.cover.small}
+            alt={item.title ?? ''}
             fill
             sizes={CARD_IMAGE_SIZES}
-            className="object-cover"
+            className="object-cover transition-transform duration-500 group-has-[a.card-link:hover]:scale-105"
           />
         )}
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
-          <time dateTime={item.published_at}>{formatDate(item.published_at, locale)}</time>
-          {item.category && <Badge>{item.category.title}</Badge>}
+          {item.published_at && <time dateTime={item.published_at}>{formatDate(item.published_at, locale)}</time>}
+          {item.category?.name && <Badge>{item.category.name}</Badge>}
         </div>
         <Heading className="line-clamp-3 text-lg font-semibold leading-snug">
           <CardLink href={`/news/${item.slug}`}>{item.title}</CardLink>
         </Heading>
-        {item.summary && <p className="line-clamp-3 text-sm text-muted">{item.summary}</p>}
+        {item.excerpt && <p className="line-clamp-3 text-sm text-muted">{item.excerpt}</p>}
       </div>
     </Card>
   );

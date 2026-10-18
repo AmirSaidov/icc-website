@@ -3,11 +3,12 @@ import {getTranslations} from 'next-intl/server';
 import {Link} from '@/i18n/navigation';
 import type {Locale} from '@/i18n/routing';
 import {getContacts} from '@/lib/api';
-import type {Contacts, SocialLink} from '@/lib/api-types';
+import type {Contacts} from '@/lib/api-types';
 import {Logo} from './Logo';
 import {NAV_ITEMS} from './nav';
 
-const SOCIAL_NAMES: Record<SocialLink['type'], string> = {
+/** type из API — ключ соцсети; незнакомый показываем как есть. */
+const SOCIAL_NAMES: Record<string, string> = {
   telegram: 'Telegram',
   whatsapp: 'WhatsApp',
   facebook: 'Facebook',
@@ -53,21 +54,24 @@ export async function Footer({locale}: {locale: Locale}) {
                 </li>
               )}
               {contacts.phones.map((phone) => (
-                <li key={phone} className="flex gap-3">
+                <li key={phone.number} className="flex gap-3">
                   <Phone aria-hidden className="mt-0.5 size-4 shrink-0" />
-                  <a href={telHref(phone)} className="hover:text-white hover:underline">
-                    {phone}
-                  </a>
+                  <span>
+                    {phone.label && <span className="text-white/60">{phone.label}: </span>}
+                    <a href={telHref(phone.number)} className="hover:text-white hover:underline">
+                      {phone.number}
+                    </a>
+                  </span>
                 </li>
               ))}
-              {contacts.emails.map((email) => (
-                <li key={email} className="flex gap-3">
+              {contacts.email && (
+                <li className="flex gap-3">
                   <Mail aria-hidden className="mt-0.5 size-4 shrink-0" />
-                  <a href={`mailto:${email}`} className="break-all hover:text-white hover:underline">
-                    {email}
+                  <a href={`mailto:${contacts.email}`} className="break-all hover:text-white hover:underline">
+                    {contacts.email}
                   </a>
                 </li>
-              ))}
+              )}
             </ul>
           )}
         </section>
@@ -106,7 +110,7 @@ export async function Footer({locale}: {locale: Locale}) {
                     ) : (
                       <Globe aria-hidden className="size-4" />
                     )}
-                    {SOCIAL_NAMES[social.type]}
+                    {SOCIAL_NAMES[social.type] ?? social.type}
                   </a>
                 </li>
               ))}

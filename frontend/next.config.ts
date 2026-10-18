@@ -3,15 +3,18 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
+// Картинки и файлы Django отдаёт с того же хоста, что и API (/media/...).
+const apiUrl = new URL(process.env.API_URL ?? 'http://127.0.0.1:8000/api/v1');
+
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: [
-      // Стоковые фото для MVP, заказчик потом заменит.
-      {protocol: 'https', hostname: 'images.unsplash.com'},
-      // Медиа из Django. Хост прода добавить, когда Айбек его назовёт.
-      {protocol: 'http', hostname: 'localhost', port: '8000'},
-      {protocol: 'http', hostname: '127.0.0.1', port: '8000'}
-    ]
+    // Оба протокола: схему в абсолютных URL Django берёт из X-Forwarded-Proto прокси хостинга.
+    remotePatterns: (['https', 'http'] as const).map((protocol) => ({
+      protocol,
+      hostname: apiUrl.hostname,
+      port: apiUrl.port,
+      pathname: '/media/**'
+    }))
   }
 };
 

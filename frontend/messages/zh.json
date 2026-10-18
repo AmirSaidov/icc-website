@@ -137,19 +137,21 @@
     "noPartners": "未找到合作伙伴。",
     "projects": "项目",
     "noProjects": "未找到项目。",
-    "formTitle": "洽谈合作"
+    "formTitle": "洽谈合作",
+    "untranslated": "此内容暂时没有此语言版本"
   },
   "Contacts": {
     "title": "联系方式",
     "description": "联系工业合作中心。",
     "organization": "机构",
     "schedule": "工作时间",
-    "mapTitle": "中心在 2GIS 地图上的位置",
+    "mapTitle": "中心在地图上的位置",
+    "openIn2gis": "在 2GIS 中打开 →",
     "formTitle": "给我们留言"
   },
   "Feedback": {
     "fields": {
-      "name": "姓名",
+      "full_name": "姓名",
       "company": "公司",
       "country": "国家",
       "email": "电子邮箱",

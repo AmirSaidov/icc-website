@@ -8,8 +8,9 @@ import type {
   DocumentFile,
   EventItem,
   EventListItem,
-  EventStatus,
-  EventType,
+  EventTypeCode,
+  EventTypeOption,
+  EventWhen,
   Home,
   NewsCategory,
   NewsItem,
@@ -18,18 +19,16 @@ import type {
   Paginated,
   Partner,
   Project,
+  ProjectListItem,
   Service,
   ServiceListItem
 } from './api-types';
 
-export const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
-export const API_URL = (process.env.API_URL ?? 'http://localhost:8000/api/v1').replace(/\/$/, '');
+/** Адрес API Айбека, например https://icc.pythonanywhere.com/api/v1 (только сервер Next.js). */
+export const API_URL = (process.env.API_URL ?? 'http://127.0.0.1:8000/api/v1').replace(/\/$/, '');
 /** ISR: страницы и запросы обновляются раз в 60 секунд. */
 export const REVALIDATE = 60;
 export const NEWS_PAGE_SIZE = 9;
-
-/** Как язык называется для Django (LocaleMiddleware + modeltranslation). */
-export const API_LANG: Record<Locale, string> = {ru: 'ru', en: 'en', zh: 'zh-hans'};
 
 export class ApiError extends Error {
   constructor(
@@ -43,8 +42,9 @@ export class ApiError extends Error {
 
 export type Query = Record<string, string | number | null | undefined>;
 
-function toSearchParams(query?: Query) {
-  const params = new URLSearchParams();
+function toSearchParams(locale: Locale, query?: Query) {
+  // Бэк читает язык только из ?lang= (ru | en | zh), Accept-Language игнорирует.
+  const params = new URLSearchParams({lang: locale});
   for (const [key, value] of Object.entries(query ?? {})) {
     if (value !== undefined && value !== null && value !== '') params.set(key, String(value));
   }
@@ -52,16 +52,8 @@ function toSearchParams(query?: Query) {
 }
 
 async function get<T>(path: string, locale: Locale, query?: Query): Promise<T> {
-  const params = toSearchParams(query);
-
-  if (USE_MOCKS) {
-    const {mockGet} = await import('@/mocks/handlers');
-    return mockGet(path, locale, params) as T;
-  }
-
-  const qs = params.toString();
-  const res = await fetch(`${API_URL}${path}${qs ? `?${qs}` : ''}`, {
-    headers: {Accept: 'application/json', 'Accept-Language': API_LANG[locale]},
+  const res = await fetch(`${API_URL}${path}?${toSearchParams(locale, query)}`, {
+    headers: {Accept: 'application/json'},
     next: {revalidate: REVALIDATE}
   });
   if (!res.ok) throw new ApiError(res.status, `GET ${path} → ${res.status}`);
@@ -69,9 +61,9 @@ async function get<T>(path: string, locale: Locale, query?: Query): Promise<T> {
 }
 
 /** Для детальных страниц: 404 → null, страница вызывает notFound(). */
-async function getOrNull<T>(path: string, locale: Locale): Promise<T | null> {
+async function getOrNull<T>(path: string, locale: Locale, query?: Query): Promise<T | null> {
   try {
-    return await get<T>(path, locale);
+    return await get<T>(path, locale, query);
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) return null;
     throw error;
@@ -84,8 +76,8 @@ const slugPath = (slug: string) => encodeURIComponent(slug);
 
 export const getHome = (locale: Locale) => get<Home>('/home/', locale);
 
-export const getPage = (locale: Locale, slug: 'about' | 'cooperation') =>
-  getOrNull<Page>(`/pages/${slug}/`, locale);
+export const getPage = (locale: Locale, key: 'about' | 'cooperation') =>
+  getOrNull<Page>(`/pages/${key}/`, locale);
 
 export const getDocuments = (locale: Locale) => get<DocumentFile[]>('/documents/', locale);
 
@@ -113,15 +105,17 @@ export const getNewsItem = (locale: Locale, slug: string) =>
   getOrNull<NewsItem>(`/news/${slugPath(slug)}/`, locale);
 
 export const getNewsCategories = (locale: Locale) =>
-  get<NewsCategory[]>('/news/categories/', locale);
+  get<NewsCategory[]>('/news-categories/', locale);
 
 export const getEvents = (
   locale: Locale,
-  {status = 'upcoming', type, page = 1, pageSize = NEWS_PAGE_SIZE}: {status?: EventStatus; type?: EventType; page?: number; pageSize?: number} = {}
-) => get<Paginated<EventListItem>>('/events/', locale, {status, type, page, page_size: pageSize});
+  {when, type, page = 1, pageSize = NEWS_PAGE_SIZE}: {when?: EventWhen; type?: EventTypeCode; page?: number; pageSize?: number} = {}
+) => get<Paginated<EventListItem>>('/events/', locale, {when, type, page, page_size: pageSize});
 
 export const getEvent = (locale: Locale, slug: string) =>
   getOrNull<EventItem>(`/events/${slugPath(slug)}/`, locale);
+
+export const getEventTypes = (locale: Locale) => get<EventTypeOption[]>('/event-types/', locale);
 
 // ——— Международное сотрудничество ———
 
@@ -130,8 +124,13 @@ export const getCountries = (locale: Locale) => get<Country[]>('/countries/', lo
 export const getPartners = (locale: Locale, country?: string) =>
   get<Partner[]>('/partners/', locale, {country});
 
-export const getProjects = (locale: Locale, country?: string) =>
-  get<Project[]>('/projects/', locale, {country});
+export const getProjects = (
+  locale: Locale,
+  {country, page = 1, pageSize = NEWS_PAGE_SIZE}: {country?: string; page?: number; pageSize?: number} = {}
+) => get<Paginated<ProjectListItem>>('/projects/', locale, {country, page, page_size: pageSize});
+
+export const getProject = (locale: Locale, slug: string) =>
+  getOrNull<Project>(`/projects/${slugPath(slug)}/`, locale);
 
 // ——— Контакты ———
 

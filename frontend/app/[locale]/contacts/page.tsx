@@ -30,67 +30,85 @@ export default async function ContactsPage({ params, searchParams }: Props) {
         getTranslations("Contacts"),
         getTranslations("Nav"),
     ]);
-    const map = `https://maps.2gis.com/widget?m=${data.map_lng}%2C${data.map_lat}%2F16`;
+    // Встраиваемая карта OpenStreetMap (без ключа) + ссылка на ту же точку в 2ГИС.
+    const point =
+        data.map_lat != null && data.map_lng != null
+            ? { lat: data.map_lat, lng: data.map_lng }
+            : null;
+    const map = point && {
+        embed: `https://www.openstreetmap.org/export/embed.html?bbox=${point.lng - 0.006}%2C${point.lat - 0.003}%2C${point.lng + 0.006}%2C${point.lat + 0.003}&layer=mapnik&marker=${point.lat}%2C${point.lng}`,
+        twoGis: `https://2gis.kg/bishkek/geo/${point.lng}%2C${point.lat}?m=${point.lng}%2C${point.lat}%2F17`,
+    };
     return (
         <>
             <PageHeader
                 title={t("title")}
                 breadcrumbs={[{ label: nav("contacts") }]}
             />
-            <main className="container-page grid min-w-0 gap-12 py-12 lg:grid-cols-2">
+            <div className="container-page grid min-w-0 gap-12 py-12 lg:grid-cols-2">
                 <section className="min-w-0">
                     <SectionTitle>{t("organization")}</SectionTitle>
-                    <h2 className="text-lg font-semibold">{data.name}</h2>
+                    <h2 className="text-lg font-semibold">{data.official_name}</h2>
                     <div className="mt-5 space-y-3 text-muted">
-                        <p>{data.address}</p>
+                        {data.address && <p>{data.address}</p>}
                         <ul>
                             {data.phones.map((phone) => (
-                                <li key={phone}>
+                                <li key={phone.number}>
+                                    {phone.label && `${phone.label}: `}
                                     <a
                                         className="text-primary"
-                                        href={`tel:${phone.replace(/[^+\d]/g, "")}`}
+                                        href={`tel:${phone.number.replace(/[^+\d]/g, "")}`}
                                     >
-                                        {phone}
+                                        {phone.number}
                                     </a>
                                 </li>
                             ))}
                         </ul>
-                        <ul>
-                            {data.emails.map((email) => (
-                                <li key={email}>
-                                    <a
-                                        className="text-primary"
-                                        href={`mailto:${email}`}
-                                    >
-                                        {email}
-                                    </a>
-                                </li>
-                            ))}
-                        </ul>
-                        {data.schedule && (
+                        {data.email && (
+                            <p>
+                                <a
+                                    className="text-primary"
+                                    href={`mailto:${data.email}`}
+                                >
+                                    {data.email}
+                                </a>
+                            </p>
+                        )}
+                        {data.work_hours && (
                             <p>
                                 <span className="font-medium text-text">
                                     {t("schedule")}:{" "}
                                 </span>
-                                {data.schedule}
+                                {data.work_hours}
                             </p>
                         )}
                     </div>
-                    <div className="mt-8 overflow-hidden rounded-lg border border-border">
-                        <iframe
-                            src={map}
-                            loading="lazy"
-                            title={t("mapTitle")}
-                            className="h-80 w-full border-0"
-                            referrerPolicy="no-referrer-when-downgrade"
-                        />
-                    </div>
+                    {map && (
+                        <div className="mt-8">
+                            <div className="overflow-hidden rounded-lg border border-border">
+                                <iframe
+                                    src={map.embed}
+                                    loading="lazy"
+                                    title={t("mapTitle")}
+                                    className="h-80 w-full border-0"
+                                />
+                            </div>
+                            <a
+                                href={map.twoGis}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-3 inline-block text-sm font-medium text-primary hover:underline"
+                            >
+                                {t("openIn2gis")}
+                            </a>
+                        </div>
+                    )}
                 </section>
                 <section id="form" className="min-w-0 scroll-mt-24">
                     <SectionTitle>{t("formTitle")}</SectionTitle>
                     <FeedbackForm type="contact" defaultSubject={subject} />
                 </section>
-            </main>
+            </div>
         </>
     );
 }

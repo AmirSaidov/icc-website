@@ -5,7 +5,7 @@ export default async function NotFound() {
     const locale = (await getLocale()) as Locale;
     const t = await getTranslations("Errors");
     return (
-        <main className="container-page py-20 text-center">
+        <div className="container-page py-20 text-center">
             <p className="text-7xl font-bold text-primary">404</p>
             <h1 className="mt-4 text-3xl font-bold">{t("notFoundTitle")}</h1>
             <p className="mt-3 text-muted">{t("notFound")}</p>
@@ -16,6 +16,6 @@ export default async function NotFound() {
                 {t("home")}
             </Link>
             <span className="sr-only">{locale}</span>
-        </main>
+        </div>
     );
 }

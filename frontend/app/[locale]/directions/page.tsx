@@ -35,7 +35,7 @@ export default async function DirectionsPage({ params }: Props) {
                 breadcrumbs={[{ label: nav("directions") }]}
             />
             <section className="container-page py-12">
-                <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <ul data-reveal-stagger className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     {items.slice(0, 8).map((item) => (
                         <li key={item.id} className="flex [&>*]:flex-1">
                             <DirectionCard item={item} />

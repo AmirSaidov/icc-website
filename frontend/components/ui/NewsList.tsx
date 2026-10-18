@@ -1,9 +1,74 @@
 'use client';
+
 import {useState, useTransition} from 'react';
-import {useLocale,useTranslations} from 'next-intl';
+import {useLocale, useTranslations} from 'next-intl';
 import type {Locale} from '@/i18n/routing';
-import type {NewsCategory,NewsListItem} from '@/lib/api-types';
-import {NewsCard} from './NewsCard';
-import {Button} from './Button';
+import type {NewsCategory, NewsListItem} from '@/lib/api-types';
 import {loadMoreNews} from '@/app/[locale]/news/actions';
-export function NewsList({initial,categories,category,hasMore}:{initial:NewsListItem[];categories:NewsCategory[];category:string;hasMore:boolean}){const locale=useLocale() as Locale;const t=useTranslations('News');const [items,setItems]=useState(initial);const [page,setPage]=useState(2);const [more,setMore]=useState(hasMore);const [pending,start]=useTransition();return <><form className="mb-8 flex flex-wrap items-center gap-3" action=""><label htmlFor="category" className="font-medium">{t('category')}</label><select id="category" name="category" defaultValue={category} className="min-h-11 max-w-full rounded border border-border bg-white px-3" onChange={e=>{const url=new URL(window.location.href); if(e.target.value)url.searchParams.set('category',e.target.value);else url.searchParams.delete('category');window.location.href=url.toString();}}><option value="">{t('allCategories')}</option>{categories.map(c=><option key={c.slug} value={c.slug}>{c.title}</option>)}</select></form>{items.length?<ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{items.map(item=><li key={item.id} className="flex [&>*]:flex-1"><NewsCard item={item}/></li>)}</ul>:<p className="text-muted">{t('empty')}</p>}{more&&<div className="mt-8 text-center"><Button disabled={pending} onClick={()=>start(async()=>{const next=await loadMoreNews(locale,category,page);setItems(current=>[...current,...next.results]);setPage(value=>value+1);setMore(Boolean(next.next));})}>{pending?t('loading'):t('loadMore')}</Button></div>}</>;}
+import {Button} from './Button';
+import {FilterSelect} from './FilterSelect';
+import {NewsCard} from './NewsCard';
+
+/** Фильтр по категории + сетка новостей + «Загрузить ещё». На странице ставится с key={category}. */
+export function NewsList({
+  initial,
+  categories,
+  category,
+  hasMore
+}: {
+  initial: NewsListItem[];
+  categories: NewsCategory[];
+  category: string;
+  hasMore: boolean;
+}) {
+  const locale = useLocale() as Locale;
+  const t = useTranslations('News');
+  const [items, setItems] = useState(initial);
+  const [page, setPage] = useState(2);
+  const [more, setMore] = useState(hasMore);
+  const [pending, start] = useTransition();
+
+  const loadMore = () =>
+    start(async () => {
+      const next = await loadMoreNews(locale, category, page);
+      setItems((current) => [...current, ...next.results]);
+      setPage((value) => value + 1);
+      setMore(Boolean(next.next));
+    });
+
+  return (
+    <>
+      {categories.length > 0 && (
+        <div className="mb-8">
+          <FilterSelect
+            param="category"
+            label={t('category')}
+            allLabel={t('allCategories')}
+            value={category}
+            options={categories
+              .filter((c) => c.slug && c.name)
+              .map((c) => ({value: c.slug!, label: c.name!}))}
+          />
+        </div>
+      )}
+      {items.length ? (
+        <ul data-reveal-stagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((item) => (
+            <li key={item.id} className="flex [&>*]:flex-1">
+              <NewsCard item={item} />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-muted">{t('empty')}</p>
+      )}
+      {more && (
+        <div className="mt-8 text-center">
+          <Button disabled={pending} onClick={loadMore}>
+            {pending ? t('loading') : t('loadMore')}
+          </Button>
+        </div>
+      )}
+    </>
+  );
+}

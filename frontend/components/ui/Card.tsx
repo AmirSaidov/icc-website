@@ -14,7 +14,7 @@ export function Card<T extends ElementType = 'article'>({as, className, children
   return (
     <Tag
       className={cn(
-        'relative flex flex-col overflow-hidden rounded-lg border border-border bg-surface transition-shadow has-[a.card-link:hover]:shadow-md has-[a.card-link:focus-visible]:shadow-md',
+        'group relative flex flex-col overflow-hidden rounded-lg border border-border bg-surface transition-[box-shadow,transform,border-color] duration-300 has-[a.card-link:hover]:-translate-y-1 has-[a.card-link:hover]:border-primary/30 has-[a.card-link:hover]:shadow-lg has-[a.card-link:focus-visible]:shadow-lg',
         className
       )}
       {...rest}

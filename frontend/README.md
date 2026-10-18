@@ -4,17 +4,20 @@ Next.js 15 (App Router) · TypeScript · Tailwind CSS v4 · next-intl · ISR 60 
 
 ## Запуск
 
+Фронт работает только с бэком, моков нет. Сначала поднять бэк (`backend/README.md`: `migrate`, `createcachetable`, `seed`, `runserver`), потом:
+
 ```bash
 npm install
-cp .env.example .env.local   # по умолчанию NEXT_PUBLIC_USE_MOCKS=true — бэк не нужен
+cp .env.example .env.local
 npm run dev                  # http://localhost:3000 → /ru
 ```
 
 | Переменная | Что делает |
 |---|---|
-| `NEXT_PUBLIC_USE_MOCKS` | `true` — данные из `mocks/`, `false` — из API |
-| `API_URL` | адрес API Айбека, например `http://localhost:8000/api/v1` (только сервер) |
+| `API_URL` | адрес API, локально `http://127.0.0.1:8000/api/v1` (только сервер). Именно `127.0.0.1`: Node резолвит `localhost` в IPv6, а runserver слушает IPv4 |
 | `NEXT_PUBLIC_SITE_URL` | публичный адрес сайта для canonical / hreflang / OG |
+
+`next build` пререндерит страницы с данными, поэтому во время сборки бэк должен быть доступен. Деплой — [../DEPLOY.md](../DEPLOY.md).
 
 Проверки перед PR: `npm run typecheck && npm run lint && npm run build`.
 
@@ -22,19 +25,19 @@ npm run dev                  # http://localhost:3000 → /ru
 
 ```
 app/[locale]/          страницы; layout.tsx — html lang, шрифты, Header/Footer
-app/api/feedback/      прокси POST /feedback/ (в режиме моков — фейковый ответ)
+app/api/feedback/      прокси POST /feedback/ → Django
 components/ui/         Button, Card, Badge, SectionTitle, Breadcrumbs, PageHeader,
                        NewsCard, EventCard, DirectionCard, RichText, Gallery, Attachments, Icon
 components/layout/     Header, Footer, LanguageSwitcher, MobileMenu, Alternates
 components/sections/   CtaBlock и блоки страниц
 i18n/                  routing (ru/en/zh), navigation (Link, useRouter), request
-lib/api.ts             все запросы к API; переключение на моки
-lib/api-types.ts       типы ответов (временно, до Swagger)
+lib/api.ts             все запросы к API (язык — параметром ?lang=)
+lib/api-types.ts       имена типов ответов → lib/api-schema.d.ts (генерируется из openapi.yaml)
+lib/detail.ts          redirectToOwnSlug(): 308 на slug записи на текущем языке
 lib/seo.ts             buildMetadata(): title, description, canonical, hreflang, OG
 lib/format.ts          даты по языку, размер файла
 lib/feedback.ts        sendFeedback() для FeedbackForm
 messages/*.json        тексты интерфейса на трёх языках
-mocks/                 данные моков + handlers.ts (фейковый бэкенд)
 ```
 
 ## Правила
@@ -47,7 +50,7 @@ mocks/                 данные моков + handlers.ts (фейковый �
 - **Даты:** `formatDate(value, locale)`, `formatDateRange(start, end, locale)`.
 - В каждом `page.tsx` указываем `export const revalidate = 60;` (литерал — Next не принимает импортированную константу) и `setRequestLocale(locale)`.
 
-## Как сделать детальную страницу (для Ариета)
+## Детальная страница
 
 ```tsx
 // app/[locale]/news/[slug]/page.tsx
@@ -56,6 +59,7 @@ import {setRequestLocale} from 'next-intl/server';
 import {SetAlternates} from '@/components/layout/Alternates';
 import type {Locale} from '@/i18n/routing';
 import {getNewsItem} from '@/lib/api';
+import {redirectToOwnSlug} from '@/lib/detail';
 import {buildMetadata, detailPaths} from '@/lib/seo';
 
 export const revalidate = 60;
@@ -70,17 +74,20 @@ export async function generateMetadata({params}: Props) {
     paths: detailPaths('news', item.seo.alternates),
     seo: item.seo,
     title: item.title,
-    description: item.summary,
-    image: item.cover?.url,
+    description: item.excerpt,
+    image: item.cover?.large,
     noindex: !item.is_translated
   });
 }
 
 export default async function NewsPage({params}: Props) {
-  const {locale, slug} = await params;
+  const {locale, slug: rawSlug} = await params;
+  const slug = decodeURIComponent(rawSlug);
   setRequestLocale(locale);
-  const item = await getNewsItem(locale, decodeURIComponent(slug));
+  const item = await getNewsItem(locale, slug);
   if (!item) notFound();
+  // бэк находит запись по slug на любом языке — поправляем адрес
+  redirectToOwnSlug(locale, 'news', slug, item);
   return (
     <>
       {/* обязательно: без этого переключатель языка уведёт на список */}
@@ -96,25 +103,29 @@ export default async function NewsPage({params}: Props) {
 - на детальных берёт slug из `SetAlternates`;
 - если перевода нет, ведёт на список раздела.
 
-## Моки
+Непереведённая запись приходит со статусом 200, `is_translated: false` и `title: null`: показываем заглушку `untranslated`, в метаданных `noindex`.
 
-Записи в `mocks/*.json` хранятся как модели с переводами: `{"title": {"ru": "...", "en": "...", "zh": "..."}}`, картинка задаётся ключом из `images.json`. `mocks/handlers.ts` собирает из них ответы в формате `lib/api-types.ts`: выбирает язык, собирает `seo.alternates` и `is_translated`, применяет фильтры (`?category=`, `?status=upcoming|past`, `?type=`, `?country=`) и пагинацию (`page`, `page_size`).
+**Не добавлять `loading.tsx` над детальными страницами:** со стримингом статус 200 уходит раньше, чем страница вызовет `notFound()` или редирект, и вместо 404/308 получается 200.
 
-Тестовые случаи:
-- `/ru/news/delovaya-missiya` ↔ `/en/news/business-mission`: новость с переводом;
-- `/ru/news/iniciativa-sozdaniya-centra`: только на русском;
-- `/en/news/eaeu-seminar`: нет китайского;
-- в новостях на русском 11 штук, чтобы проверить «Загрузить ещё» по 9;
-- форма (`/api/feedback` в режиме моков): email на `@example.invalid` → 400 под полем, тема `429` → 429.
+Картинки с бэка — `{small, large}` (WebP 400 и 1200 px): в карточках `small`, на первом экране и в детальной `large`.
+
+## Проверка на данных seed
+
+- `/ru/news/delovaia-missiia-v-urumchi` ↔ `/en/news/business-mission-to-urumqi`: новость с переводом;
+- `/en/news/delovaia-missiia-v-urumchi` → 308 на английский slug;
+- `/zh/news/vstrecha-s-predprinimateliami-osha`: нет китайского — заглушка и `noindex`;
+- `/ru/news/no-such-news` → 404.
 
 ## Форма обратной связи
 
 ```ts
 import {sendFeedback} from '@/lib/feedback';
-const result = await sendFeedback({...values, type: 'contact', locale, website: honeypot});
+const result = await sendFeedback({...values, type: 'contact', lang: locale, website: honeypot});
 // result.ok | result.status === 400 → result.errors.{field} | result.status === 429
 ```
 
-## Типы из Swagger
+Поля — как в `FeedbackRequest` из схемы: `full_name`, `lang`, `phone` (или `null`). Лимит бэка — 5 обращений в час с одного IP, считаются и отклонённые.
 
-Когда Айбек поднимет схему: `npm run gen:types` (берёт `http://localhost:8000/api/schema/`) → `lib/api-schema.d.ts`. После этого интерфейсы в `lib/api-types.ts` заменяем на `components['schemas'][...]`.
+## Типы из схемы бэка
+
+Айбек поменял API → `npm run gen:types` (берёт `../backend/docs/openapi.yaml`) → `lib/api-schema.d.ts` → `npm run typecheck` покажет, что сломалось.

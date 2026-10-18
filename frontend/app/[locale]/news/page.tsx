@@ -37,14 +37,15 @@ export default async function NewsPage({ params, searchParams }: Props) {
                 lead={t("description")}
                 breadcrumbs={[{ label: nav("news") }]}
             />
-            <main className="container-page py-12">
+            <div className="container-page py-12">
                 <NewsList
+                    key={category}
                     initial={data.results}
                     categories={categories}
                     category={category}
                     hasMore={Boolean(data.next)}
                 />
-            </main>
+            </div>
         </>
     );
 }

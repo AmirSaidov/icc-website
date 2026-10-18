@@ -5,6 +5,7 @@ import {Menu, X} from 'lucide-react';
 import {useTranslations} from 'next-intl';
 import {Button} from '@/components/ui/Button';
 import {usePathname} from '@/i18n/navigation';
+import {cn} from '@/lib/cn';
 import {LanguageSwitcher} from './LanguageSwitcher';
 import {NavLinks} from './NavLinks';
 
@@ -46,8 +47,10 @@ export function MobileMenu() {
 
       <div
         id="mobile-menu"
-        hidden={!open}
-        className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto bg-surface"
+        className={cn(
+          'fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto bg-surface transition duration-200 ease-out',
+          open ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-2 opacity-0'
+        )}
       >
         <div className="container-page flex flex-col gap-6 py-4">
           <nav aria-label={t('mainNav')}>

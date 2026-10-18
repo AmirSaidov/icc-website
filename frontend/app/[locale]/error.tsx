@@ -13,7 +13,7 @@ export default function ErrorPage({
         console.error(error);
     }, [error]);
     return (
-        <main className="container-page py-20 text-center">
+        <div className="container-page py-20 text-center">
             <h1 className="text-3xl font-bold">{t("errorTitle")}</h1>
             <p className="mt-3 text-muted">{t("errorText")}</p>
             <button
@@ -23,6 +23,6 @@ export default function ErrorPage({
             >
                 {t("retry")}
             </button>
-        </main>
+        </div>
     );
 }

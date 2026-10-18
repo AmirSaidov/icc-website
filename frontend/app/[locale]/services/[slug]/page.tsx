@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import type { Locale } from "@/i18n/routing";
 import { getService } from "@/lib/api";
+import { redirectToOwnSlug } from "@/lib/detail";
 import { buildMetadata, detailPaths } from "@/lib/seo";
 export const revalidate = 60;
 type Props = { params: Promise<{ locale: Locale; slug: string }> };
@@ -21,84 +22,82 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         paths: detailPaths("services", item.seo.alternates),
         seo: item.seo,
         title: item.title,
-        description: item.summary,
+        description: item.short_text,
         noindex: !item.is_translated,
     });
 }
 export default async function ServicePage({ params }: Props) {
-    const { locale, slug } = await params;
+    const { locale, slug: rawSlug } = await params;
+    const slug = decodeURIComponent(rawSlug);
     setRequestLocale(locale);
     const [item, t, nav] = await Promise.all([
-        getService(locale, decodeURIComponent(slug)),
+        getService(locale, slug),
         getTranslations("Services"),
         getTranslations("Nav"),
     ]);
     if (!item) notFound();
+    redirectToOwnSlug(locale, "services", slug, item);
+    const title = item.title ?? t("untranslated");
+    const hasContact =
+        item.contact_person || item.contact_phone || item.contact_email;
     return (
         <>
             <SetAlternates section="services" slugs={item.seo.alternates} />
             <PageHeader
-                title={item.title}
-                lead={item.summary}
+                title={title}
+                lead={item.short_text ?? undefined}
                 breadcrumbs={[
                     { label: nav("services"), href: "/services" },
-                    { label: item.title },
+                    { label: title },
                 ]}
             />
             {item.is_translated ? (
-                <main className="container-page space-y-10 py-12">
-                    <RichText html={item.content} />
-                    {item.steps.length > 0 && (
+                <div className="container-page space-y-10 py-12">
+                    {item.content && <RichText html={item.content} />}
+                    {item.how_to_apply && (
                         <section>
                             <SectionTitle>{t("steps")}</SectionTitle>
-                            <ol className="list-decimal space-y-4 pl-6">
-                                {item.steps.map((step, i) => (
-                                    <li key={`${step.title}-${i}`}>
-                                        <h3 className="font-semibold">
-                                            {step.title}
-                                        </h3>
-                                        <p className="text-muted">
-                                            {step.text}
-                                        </p>
-                                    </li>
-                                ))}
-                            </ol>
+                            <p className="whitespace-pre-line">
+                                {item.how_to_apply}
+                            </p>
                         </section>
                     )}
-                    {item.contact_person && (
+                    {hasContact && (
                         <section>
                             <SectionTitle>{t("contactPerson")}</SectionTitle>
-                            <p className="font-semibold">
-                                {item.contact_person.name}
-                            </p>
-                            <p className="text-muted">
-                                {item.contact_person.position}
-                            </p>
-                            <a
-                                className="text-primary"
-                                href={`tel:${item.contact_person.phone}`}
-                            >
-                                {item.contact_person.phone}
-                            </a>
-                            <br />
-                            <a
-                                className="text-primary"
-                                href={`mailto:${item.contact_person.email}`}
-                            >
-                                {item.contact_person.email}
-                            </a>
+                            {item.contact_person && (
+                                <p className="font-semibold">
+                                    {item.contact_person}
+                                </p>
+                            )}
+                            {item.contact_phone && (
+                                <a
+                                    className="block text-primary"
+                                    href={`tel:${item.contact_phone.replace(/[^+\d]/g, "")}`}
+                                >
+                                    {item.contact_phone}
+                                </a>
+                            )}
+                            {item.contact_email && (
+                                <a
+                                    className="block text-primary"
+                                    href={`mailto:${item.contact_email}`}
+                                >
+                                    {item.contact_email}
+                                </a>
+                            )}
                         </section>
                     )}
                     <Button
-                        href={`/contacts?subject=${encodeURIComponent(item.title)}#form`}
+                        href={`/contacts?subject=${encodeURIComponent(title)}#form`}
                     >
                         {t("apply")}
                     </Button>
-                </main>
+                </div>
             ) : (
-                <main className="container-page py-12">
+                <div className="container-page py-12">
                     <p className="text-muted">{t("untranslated")}</p>
-                </main>
+                </div>
             )}
             <CtaBlock />
         </>

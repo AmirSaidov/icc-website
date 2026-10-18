@@ -28,10 +28,10 @@ interface BuildMetadataArgs {
   locale: Locale;
   paths: LocalePaths;
   seo?: Seo | null;
-  /** Если seo.title пустой — заголовок записи. */
-  title: string;
-  /** Если seo.description пустой — краткое описание записи. */
-  description?: string;
+  /** Если seo.meta_title пустой — заголовок записи. */
+  title: string | null;
+  /** Если seo.meta_description пустой — краткое описание записи. */
+  description?: string | null;
   image?: string | null;
   /** Для главной: title без шаблона «… | Название сайта». */
   absoluteTitle?: boolean;
@@ -52,8 +52,8 @@ export function buildMetadata({
   absoluteTitle,
   noindex
 }: BuildMetadataArgs): Metadata {
-  const metaTitle = seo?.title || title;
-  const metaDescription = seo?.description || description || undefined;
+  const metaTitle = seo?.meta_title || title || '';
+  const metaDescription = seo?.meta_description || description || undefined;
   const ogImage = seo?.og_image || image;
   const ownPath = paths[locale] ?? '';
   const canonical = absoluteUrl(locale, ownPath);

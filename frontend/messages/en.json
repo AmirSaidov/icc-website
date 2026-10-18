@@ -137,19 +137,21 @@
     "noPartners": "No partners found.",
     "projects": "Projects",
     "noProjects": "No projects found.",
-    "formTitle": "Discuss cooperation"
+    "formTitle": "Discuss cooperation",
+    "untranslated": "This content is not available in this language yet"
   },
   "Contacts": {
     "title": "Contacts",
     "description": "Get in touch with the Industrial Cooperation Center.",
     "organization": "Organization",
     "schedule": "Working hours",
-    "mapTitle": "Center location on 2GIS map",
+    "mapTitle": "Centre location on the map",
+    "openIn2gis": "Open in 2GIS →",
     "formTitle": "Send us a message"
   },
   "Feedback": {
     "fields": {
-      "name": "Name",
+      "full_name": "Name",
       "company": "Company",
       "country": "Country",
       "email": "Email",

@@ -9,7 +9,8 @@ import { Gallery } from "@/components/ui/Gallery";
 import { Attachments } from "@/components/ui/Attachments";
 import { EventCard } from "@/components/ui/EventCard";
 import { formatDateRange } from "@/lib/format";
-import { getEvent } from "@/lib/api";
+import { getEvent, getEvents } from "@/lib/api";
+import { redirectToOwnSlug } from "@/lib/detail";
 import { buildMetadata, detailPaths } from "@/lib/seo";
 import type { Locale } from "@/i18n/routing";
 export const revalidate = 60;
@@ -23,38 +24,45 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         paths: detailPaths("events", item.seo.alternates),
         seo: item.seo,
         title: item.title,
-        description: item.summary,
-        image: item.cover?.url,
+        description: item.excerpt,
+        image: item.cover?.large,
         noindex: !item.is_translated,
     });
 }
 export default async function EventDetail({ params }: Props) {
-    const { locale, slug } = await params;
+    const { locale, slug: rawSlug } = await params;
+    const slug = decodeURIComponent(rawSlug);
     setRequestLocale(locale);
-    const [item, t, nav] = await Promise.all([
-        getEvent(locale, decodeURIComponent(slug)),
+    const [item, upcoming, t, nav] = await Promise.all([
+        getEvent(locale, slug),
+        getEvents(locale, { when: "upcoming", pageSize: 4 }),
         getTranslations("Events"),
         getTranslations("Nav"),
     ]);
     if (!item) notFound();
+    redirectToOwnSlug(locale, "events", slug, item);
+    // Отдельного «похожие» в API нет — показываем ближайшие, кроме текущего.
+    const related = upcoming.results.filter((x) => x.id !== item.id).slice(0, 3);
+    const title = item.title ?? t("untranslated");
     return (
         <>
             <SetAlternates section="events" slugs={item.seo.alternates} />
             <PageHeader
-                title={item.title}
-                lead={item.summary}
+                title={title}
+                lead={item.excerpt ?? undefined}
                 breadcrumbs={[
                     { label: nav("events"), href: "/events" },
-                    { label: item.title },
+                    { label: title },
                 ]}
             />
-            <main className="container-page space-y-10 py-10">
+            <div className="container-page space-y-10 py-10">
                 {item.is_translated ? (
                     <>
                         <p className="text-muted">
+                            {item.type.label} ·{" "}
                             {formatDateRange(
-                                item.start_date,
-                                item.end_date,
+                                item.start_at,
+                                item.end_at ?? null,
                                 locale,
                             )}
                             {item.location ? ` · ${item.location}` : ""}
@@ -62,8 +70,8 @@ export default async function EventDetail({ params }: Props) {
                         {item.cover && (
                             <div className="relative aspect-[16/9] overflow-hidden rounded-lg">
                                 <Image
-                                    src={item.cover.url}
-                                    alt={item.cover.alt}
+                                    src={item.cover.large}
+                                    alt={item.title ?? ""}
                                     fill
                                     priority
                                     sizes="(min-width: 1200px) 1200px, 100vw"
@@ -71,20 +79,20 @@ export default async function EventDetail({ params }: Props) {
                                 />
                             </div>
                         )}
-                        <RichText html={item.content} />
+                        {item.content && <RichText html={item.content} />}
                         <Gallery images={item.gallery} />
                         <Attachments items={item.attachments} />
                     </>
                 ) : (
                     <p className="text-muted">{t("untranslated")}</p>
                 )}
-                {item.related.length > 0 && (
+                {related.length > 0 && (
                     <section>
                         <h2 className="mb-5 text-2xl font-bold">
                             {t("related")}
                         </h2>
-                        <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                            {item.related.slice(0, 3).map((x) => (
+                        <ul data-reveal-stagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                            {related.map((x) => (
                                 <li key={x.id} className="flex [&>*]:flex-1">
                                     <EventCard item={x} />
                                 </li>
@@ -92,7 +100,7 @@ export default async function EventDetail({ params }: Props) {
                         </ul>
                     </section>
                 )}
-            </main>
+            </div>
         </>
     );
 }

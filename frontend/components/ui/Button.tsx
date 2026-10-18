@@ -7,7 +7,7 @@ type Variant = 'primary' | 'secondary' | 'link' | 'inverse' | 'inverse-outline';
 type Size = 'md' | 'lg';
 
 const base =
-  'inline-flex items-center justify-center gap-2 font-medium transition-colors disabled:pointer-events-none disabled:opacity-60';
+  'inline-flex items-center justify-center gap-2 font-medium transition-[color,background-color,border-color,transform] duration-200 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-60';
 
 const variants: Record<Variant, string> = {
   primary: 'rounded-md bg-primary text-white hover:bg-primary-hover',

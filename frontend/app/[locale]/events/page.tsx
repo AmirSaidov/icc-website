@@ -3,16 +3,15 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { EventCard } from "@/components/ui/EventCard";
 import { Link } from "@/i18n/navigation";
-import { getEvents } from "@/lib/api";
+import { getEvents, getEventTypes } from "@/lib/api";
 import { buildMetadata, staticPaths } from "@/lib/seo";
-import type { EventStatus, EventType } from "@/lib/api-types";
+import type { EventWhen } from "@/lib/api-types";
 import type { Locale } from "@/i18n/routing";
 export const revalidate = 60;
 type Props = {
     params: Promise<{ locale: Locale }>;
-    searchParams: Promise<{ status?: string; type?: string }>;
+    searchParams: Promise<{ when?: string; type?: string }>;
 };
-const types: EventType[] = ["mission", "forum", "exhibition", "b2b"];
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { locale } = await params;
     const t = await getTranslations({ locale, namespace: "Events" });
@@ -23,18 +22,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         description: t("description"),
     });
 }
+/** /events?when=past&type=forum — без пустых параметров. */
+function eventsHref(when: EventWhen, type?: string) {
+    const params = new URLSearchParams();
+    if (when === "past") params.set("when", "past");
+    if (type) params.set("type", type);
+    const qs = params.toString();
+    return qs ? `/events?${qs}` : "/events";
+}
 export default async function EventsPage({ params, searchParams }: Props) {
     const { locale } = await params;
     const query = await searchParams;
-    const status: EventStatus = query.status === "past" ? "past" : "upcoming";
-    const type = types.find((x) => x === query.type);
+    const when: EventWhen = query.when === "past" ? "past" : "upcoming";
     setRequestLocale(locale);
-    const [data, t, nav, eventTypes] = await Promise.all([
-        getEvents(locale, { status, type }),
+    const [eventTypes, t, nav] = await Promise.all([
+        getEventTypes(locale),
         getTranslations("Events"),
         getTranslations("Nav"),
-        getTranslations("EventTypes"),
     ]);
+    // Неизвестный type бэк отклоняет с 400 — пропускаем только коды из /event-types/.
+    const type = eventTypes.find((x) => x.code === query.type)?.code;
+    const data = await getEvents(locale, { when, type });
     return (
         <>
             <PageHeader
@@ -42,46 +50,38 @@ export default async function EventsPage({ params, searchParams }: Props) {
                 lead={t("description")}
                 breadcrumbs={[{ label: nav("events") }]}
             />
-            <main className="container-page py-12">
+            <div className="container-page py-12">
                 <div className="mb-8 flex flex-wrap gap-3">
                     <Link
-                        className={`rounded px-4 py-2 ${status === "upcoming" ? "bg-primary text-white" : "border border-border"}`}
-                        href={type ? `/events?type=${type}` : "/events"}
+                        className={`rounded px-4 py-2 ${when === "upcoming" ? "bg-primary text-white" : "border border-border"}`}
+                        href={eventsHref("upcoming", type)}
                     >
                         {t("upcoming")}
                     </Link>
                     <Link
-                        className={`rounded px-4 py-2 ${status === "past" ? "bg-primary text-white" : "border border-border"}`}
-                        href={
-                            type
-                                ? `/events?status=past&type=${type}`
-                                : "/events?status=past"
-                        }
+                        className={`rounded px-4 py-2 ${when === "past" ? "bg-primary text-white" : "border border-border"}`}
+                        href={eventsHref("past", type)}
                     >
                         {t("past")}
                     </Link>
                     <Link
-                        className="rounded border border-border px-4 py-2"
-                        href={
-                            status === "past"
-                                ? "/events?status=past"
-                                : "/events"
-                        }
+                        className={`rounded border border-border px-4 py-2 ${!type ? "bg-primary-light" : ""}`}
+                        href={eventsHref(when)}
                     >
                         {t("allTypes")}
                     </Link>
-                    {types.map((v) => (
+                    {eventTypes.map((v) => (
                         <Link
-                            key={v}
-                            className={`rounded border border-border px-4 py-2 ${type === v ? "bg-primary-light" : ""}`}
-                            href={`/events?${status === "past" ? "status=past&" : ""}type=${v}`}
+                            key={v.code}
+                            className={`rounded border border-border px-4 py-2 ${type === v.code ? "bg-primary-light" : ""}`}
+                            href={eventsHref(when, v.code)}
                         >
-                            {eventTypes(v)}
+                            {v.label}
                         </Link>
                     ))}
                 </div>
                 {data.results.length ? (
-                    <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <ul data-reveal-stagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         {data.results.map((item) => (
                             <li key={item.id} className="flex [&>*]:flex-1">
                                 <EventCard item={item} />
@@ -91,7 +91,7 @@ export default async function EventsPage({ params, searchParams }: Props) {
                 ) : (
                     <p className="text-muted">{t("empty")}</p>
                 )}
-            </main>
+            </div>
         </>
     );
 }

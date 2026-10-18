@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { RichText } from "@/components/ui/RichText";
 import type { Locale } from "@/i18n/routing";
 import { getDirection } from "@/lib/api";
+import { redirectToOwnSlug } from "@/lib/detail";
 import { buildMetadata, detailPaths } from "@/lib/seo";
 
 export const revalidate = 60;
@@ -20,39 +21,40 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         paths: detailPaths("directions", item.seo.alternates),
         seo: item.seo,
         title: item.title,
-        description: item.summary,
+        description: item.short_text,
         noindex: !item.is_translated,
     });
 }
 export default async function DirectionPage({ params }: Props) {
-    const { locale, slug } = await params;
+    const { locale, slug: rawSlug } = await params;
+    const slug = decodeURIComponent(rawSlug);
     setRequestLocale(locale);
     const [item, t, nav] = await Promise.all([
-        getDirection(locale, decodeURIComponent(slug)),
+        getDirection(locale, slug),
         getTranslations("Directions"),
         getTranslations("Nav"),
     ]);
     if (!item) notFound();
+    redirectToOwnSlug(locale, "directions", slug, item);
+    const title = item.title ?? t("untranslated");
     return (
         <>
             <SetAlternates section="directions" slugs={item.seo.alternates} />
             <PageHeader
-                title={item.title}
-                lead={item.summary}
+                title={title}
+                lead={item.short_text ?? undefined}
                 breadcrumbs={[
                     { label: nav("directions"), href: "/directions" },
-                    { label: item.title },
+                    { label: title },
                 ]}
             />
-            {item.is_translated ? (
-                <main className="container-page space-y-10 py-12">
-                    <RichText html={item.content} />
-                </main>
-            ) : (
-                <main className="container-page py-12">
+            <div className="container-page space-y-10 py-12">
+                {item.is_translated ? (
+                    item.content && <RichText html={item.content} />
+                ) : (
                     <p className="text-muted">{t("untranslated")}</p>
-                </main>
-            )}
+                )}
+            </div>
             <CtaBlock />
         </>
     );

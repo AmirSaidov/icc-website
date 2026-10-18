@@ -4,6 +4,9 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { FeedbackForm } from "@/components/ui/FeedbackForm";
+import { Card, CardLink } from "@/components/ui/Card";
+import { FilterSelect } from "@/components/ui/FilterSelect";
+import { CARD_IMAGE_SIZES } from "@/components/ui/NewsCard";
 import { getCountries, getPartners, getProjects, getPage } from "@/lib/api";
 import { buildMetadata, staticPaths } from "@/lib/seo";
 import { RichText } from "@/components/ui/RichText";
@@ -15,14 +18,15 @@ type Props = {
 };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { locale } = await params;
-    const page = await getPage(locale, "cooperation");
-    if (!page) return {};
+    const [page, t] = await Promise.all([
+        getPage(locale, "cooperation"),
+        getTranslations({ locale, namespace: "Cooperation" }),
+    ]);
     return buildMetadata({
         locale,
         paths: staticPaths("/cooperation"),
-        seo: page.seo,
-        title: page.title,
-        description: page.lead,
+        seo: page?.seo,
+        title: page?.title ?? t("title"),
     });
 }
 export default async function CooperationPage({ params, searchParams }: Props) {
@@ -33,7 +37,7 @@ export default async function CooperationPage({ params, searchParams }: Props) {
         getPage(locale, "cooperation"),
         getCountries(locale),
         getPartners(locale, country || undefined),
-        getProjects(locale, country || undefined),
+        getProjects(locale, { country: country || undefined, pageSize: 50 }),
         getTranslations("Cooperation"),
         getTranslations("Nav"),
     ]);
@@ -41,70 +45,62 @@ export default async function CooperationPage({ params, searchParams }: Props) {
         <>
             <PageHeader
                 title={page?.title ?? t("title")}
-                lead={page?.lead}
                 breadcrumbs={[{ label: nav("cooperation") }]}
             />
-            <main className="container-page space-y-12 py-12">
+            <div className="container-page space-y-12 py-12">
                 {page?.content && (
                     <RichText html={page.content} className="max-w-3xl" />
                 )}
-                <form action="" className="flex flex-wrap items-center gap-3">
-                    <label htmlFor="country" className="font-medium">
-                        {t("country")}
-                    </label>
-                    <select
-                        id="country"
-                        name="country"
-                        defaultValue={country}
-                        className="min-h-11 max-w-full rounded border border-border bg-white px-3"
-                    >
-                        <option value="">{t("allCountries")}</option>
-                        {countries.map((c) => (
-                            <option key={c.id} value={c.code}>
-                                {c.name}
-                            </option>
-                        ))}
-                    </select>
-                    <button className="rounded bg-primary px-4 py-2 text-white">
-                        {t("filter")}
-                    </button>
-                </form>
+                <FilterSelect
+                    param="country"
+                    label={t("country")}
+                    allLabel={t("allCountries")}
+                    value={country.toUpperCase()}
+                    options={countries.map((c) => ({
+                        value: c.code,
+                        label: c.name ?? c.code,
+                    }))}
+                />
                 <section>
                     <SectionTitle>{t("partners")}</SectionTitle>
-                    <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                        {partners.map((p) => (
-                            <li
-                                key={p.id}
-                                className="flex min-w-0 items-center justify-center rounded-lg border border-border p-4"
-                            >
-                                {p.url ? (
-                                    <a
-                                        href={p.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        aria-label={p.name}
-                                    >
-                                        <Image
-                                            src={p.logo.url}
-                                            alt={p.logo.alt || p.name}
-                                            width={p.logo.width}
-                                            height={p.logo.height}
-                                            sizes="(min-width: 1024px) 220px, 40vw"
-                                            className="h-auto max-h-24 max-w-full object-contain"
-                                        />
-                                    </a>
-                                ) : (
+                    <ul data-reveal-stagger className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                        {partners.map((p) => {
+                            const logo = p.logo ? (
+                                <span className="relative block h-24 w-full">
                                     <Image
-                                        src={p.logo.url}
-                                        alt={p.logo.alt || p.name}
-                                        width={p.logo.width}
-                                        height={p.logo.height}
+                                        src={p.logo.small}
+                                        alt={p.name ?? ""}
+                                        fill
                                         sizes="(min-width: 1024px) 220px, 40vw"
-                                        className="h-auto max-h-24 max-w-full object-contain"
+                                        className="object-contain"
                                     />
-                                )}
-                            </li>
-                        ))}
+                                </span>
+                            ) : (
+                                <span className="text-center font-medium">
+                                    {p.name}
+                                </span>
+                            );
+                            return (
+                                <li
+                                    key={p.id}
+                                    className="flex min-h-32 min-w-0 items-center justify-center rounded-lg border border-border p-4"
+                                >
+                                    {p.website ? (
+                                        <a
+                                            href={p.website}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            aria-label={p.name ?? undefined}
+                                            className="flex w-full justify-center"
+                                        >
+                                            {logo}
+                                        </a>
+                                    ) : (
+                                        logo
+                                    )}
+                                </li>
+                            );
+                        })}
                     </ul>
                     {!partners.length && (
                         <p className="text-muted">{t("noPartners")}</p>
@@ -112,33 +108,45 @@ export default async function CooperationPage({ params, searchParams }: Props) {
                 </section>
                 <section>
                     <SectionTitle>{t("projects")}</SectionTitle>
-                    <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        {projects.map((p) => (
-                            <li
-                                key={p.id}
-                                className="overflow-hidden rounded-lg border border-border"
-                            >
-                                {p.cover && (
-                                    <div className="relative aspect-[3/2]">
-                                        <Image
-                                            src={p.cover.url}
-                                            alt={p.cover.alt}
-                                            fill
-                                            sizes="(min-width: 1024px) 33vw, 100vw"
-                                            className="object-cover"
-                                        />
+                    <ul data-reveal-stagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                        {projects.results.map((p) => (
+                            <li key={p.id} className="flex [&>*]:flex-1">
+                                <Card>
+                                    <div className="relative aspect-[3/2] bg-primary-light">
+                                        {p.cover && (
+                                            <Image
+                                                src={p.cover.small}
+                                                alt={p.title ?? ""}
+                                                fill
+                                                sizes={CARD_IMAGE_SIZES}
+                                                className="object-cover transition-transform duration-500 group-has-[a.card-link:hover]:scale-105"
+                                            />
+                                        )}
                                     </div>
-                                )}
-                                <div className="p-5">
-                                    <h3 className="font-semibold">{p.title}</h3>
-                                    <p className="mt-2 text-sm text-muted">
-                                        {p.summary}
-                                    </p>
-                                </div>
+                                    <div className="flex flex-1 flex-col gap-2 p-5">
+                                        {p.country.name && (
+                                            <span className="text-sm text-muted">
+                                                {p.country.name}
+                                            </span>
+                                        )}
+                                        <h3 className="font-semibold">
+                                            <CardLink
+                                                href={`/cooperation/projects/${p.slug}`}
+                                            >
+                                                {p.title}
+                                            </CardLink>
+                                        </h3>
+                                        {p.excerpt && (
+                                            <p className="text-sm text-muted">
+                                                {p.excerpt}
+                                            </p>
+                                        )}
+                                    </div>
+                                </Card>
                             </li>
                         ))}
                     </ul>
-                    {!projects.length && (
+                    {!projects.results.length && (
                         <p className="text-muted">{t("noProjects")}</p>
                     )}
                 </section>
@@ -146,7 +154,7 @@ export default async function CooperationPage({ params, searchParams }: Props) {
                     <SectionTitle>{t("formTitle")}</SectionTitle>
                     <FeedbackForm type="cooperation" />
                 </section>
-            </main>
+            </div>
         </>
     );
 }
