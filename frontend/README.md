@@ -17,7 +17,7 @@ npm run dev                  # http://localhost:3000 → /ru
 | `API_URL` | адрес API, локально `http://127.0.0.1:8000/api/v1` (только сервер). Именно `127.0.0.1`: Node резолвит `localhost` в IPv6, а runserver слушает IPv4 |
 | `NEXT_PUBLIC_SITE_URL` | публичный адрес сайта для canonical / hreflang / OG |
 
-`next build` пререндерит страницы с данными, поэтому во время сборки бэк должен быть доступен. Деплой — [../DEPLOY.md](../DEPLOY.md).
+Сборке бэк не нужен: страницы рендерятся при первом запросе и кэшируются на 60 с (`generateStaticParams` в layout возвращает `[]`). Страницы с фильтрами (`searchParams`) — `dynamic = "force-dynamic"`, ответы API кэшируются в `fetch`. Деплой — [../DEPLOY.md](../DEPLOY.md).
 
 Проверки перед PR: `npm run typecheck && npm run lint && npm run build`.
 

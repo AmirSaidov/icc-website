@@ -27,8 +27,11 @@ const notoSansSC = Noto_Sans_SC({
   preload: false
 });
 
+// Пустой список: страницы не пререндерятся при сборке, а рендерятся при первом запросе
+// и кэшируются (ISR, revalidate = 60). Так деплой на Vercel не зависит от того, доступен ли бэк.
+// Неизвестный язык отсекает hasLocale ниже.
 export function generateStaticParams() {
-  return routing.locales.map((locale) => ({locale}));
+  return [];
 }
 
 export async function generateMetadata({params}: {params: Promise<{locale: string}>}): Promise<Metadata> {
