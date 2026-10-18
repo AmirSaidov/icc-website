@@ -1,0 +1,2677 @@
+openapi: 3.0.3
+info:
+  title: API сайта ЦПК при ТПП КР
+  version: 1.0.0
+  description: Публичное API сайта Центра промышленной кооперации. Все эндпоинты —
+    GET без авторизации. Язык — параметр `?lang=ru|en|zh` (по умолчанию ru). Подробности
+    для фронтенда — docs/API.md.
+paths:
+  /api/v1/contacts/:
+    get:
+      operationId: contacts_retrieve
+      description: |-
+        Единая обработка ?lang=ru|en|zh для всех вьюх: валидирует параметр
+        (невалидный → 400) и передаёт язык в контекст сериализатора.
+      summary: Контакты
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      tags:
+      - Справочная информация
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactInfo'
+              examples:
+                Пример(seed-данные):
+                  value:
+                    official_name: Центр промышленной кооперации при Торгово-промышленной
+                      палате Кыргызской Республики
+                    address: 720000, г. Бишкек, ул. Примерная, 1 (тестовый адрес)
+                    phones:
+                    - label: Приёмная
+                      number: +996 312 000 000
+                    - label: Отдел кооперации
+                      number: +996 312 000 001
+                    email: info@example.kg
+                    work_hours: Пн–Пт, 9:00–18:00
+                    map_lat: 42.8746
+                    map_lng: 74.6122
+                    socials:
+                    - type: telegram
+                      url: https://t.me/example
+                    - type: facebook
+                      url: https://facebook.com/example
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+  /api/v1/countries/:
+    get:
+      operationId: countries_list
+      description: Активные страны, переведённые на `lang`.
+      summary: Страны-партнёры
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      tags:
+      - Международное сотрудничество
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Country'
+              examples:
+                Пример(seed-данные):
+                  value:
+                  - id: 5
+                    code: CN
+                    name: Китай
+                    description: Ключевой партнёр Кыргызстана в промышленной кооперации.
+                    flag:
+                      small: http://localhost:8000/media/CACHE/images/flags/cn/016c0dbcea457959ba6bb508ac5f537f.webp
+                      large: http://localhost:8000/media/CACHE/images/flags/cn/662eb7c33a66ec0595b18575d17bb2ac.webp
+                    is_translated: true
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+  /api/v1/directions/:
+    get:
+      operationId: directions_list
+      description: Опубликованные и переведённые на `lang` направления по `order`
+        (без content).
+      summary: Направления
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      tags:
+      - Направления и услуги
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DirectionList'
+              examples:
+                Пример(seed-данные):
+                  value:
+                  - id: 17
+                    slug: promyshlennaia-kooperatsiia
+                    title: Промышленная кооперация
+                    short_text: Связываем производителей для совместной работы.
+                    icon: cooperation
+                    order: 0
+                    is_translated: true
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+  /api/v1/directions/{slug}/:
+    get:
+      operationId: directions_retrieve
+      description: Поиск по slug на любом языке.
+      summary: Направление
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      - in: path
+        name: slug
+        schema:
+          type: string
+        description: slug записи на любом из трёх языков (ru, en или zh)
+        required: true
+      tags:
+      - Направления и услуги
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DirectionDetail'
+              examples:
+                Пример(seed-данные):
+                  value:
+                    id: 17
+                    slug: promyshlennaia-kooperatsiia
+                    title: Промышленная кооперация
+                    short_text: Связываем производителей для совместной работы.
+                    content: <p>Связываем производителей для совместной работы.</p><p>Центр
+                      промышленной кооперации помогает предприятиям Кыргызстана находить
+                      партнёров, выходить на новые рынки и развивать совместные производства.</p>
+                    icon: cooperation
+                    order: 0
+                    is_translated: true
+                    seo:
+                      meta_title: Промышленная кооперация
+                      meta_description: Связываем производителей для совместной работы.
+                      og_image: http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp
+                      alternates:
+                        ru: promyshlennaia-kooperatsiia
+                        en: industrial-cooperation
+                        zh: gong-ye-he-zuo
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailError'
+          description: Запись не найдена или не опубликована
+  /api/v1/documents/:
+    get:
+      operationId: documents_list
+      description: Документы с `show_in_documents=True`, переведённые на `lang`, по
+        `order`.
+      summary: Документы
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      tags:
+      - Справочная информация
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attachment'
+              examples:
+                Пример(seed-данные):
+                  value:
+                  - title: Положение о Центре
+                    url: http://localhost:8000/media/documents/2026/10/polozhenie-o-centre.pdf
+                    size: 46092
+                    ext: pdf
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+  /api/v1/event-types/:
+    get:
+      operationId: event_types_list
+      description: Коды типов с подписями на языке запроса — для фильтра `type`.
+      summary: Типы мероприятий
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      tags:
+      - Новости и мероприятия
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventType'
+              examples:
+                Пример(seed-данные):
+                  value:
+                  - code: mission
+                    label: 商务考察团
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+  /api/v1/events/:
+    get:
+      operationId: events_list
+      description: '`when=upcoming` — по `start_at` по возрастанию; `when=past` —
+        по `start_at` по убыванию; без `when` — все, по убыванию. Предстоящее/прошедшее
+        определяется по `end_at` (если пусто — по `start_at`).'
+      summary: Мероприятия
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: type
+        schema:
+          type: string
+          enum:
+          - b2b
+          - exhibition
+          - forum
+          - mission
+          - other
+        description: Тип мероприятия
+      - in: query
+        name: when
+        schema:
+          type: string
+          enum:
+          - past
+          - upcoming
+        description: Предстоящие или прошедшие
+      tags:
+      - Новости и мероприятия
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEventListList'
+              examples:
+                Пример(seed-данные):
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - id: 21
+                      slug: vebinar-po-eksportnym-protseduram
+                      title: Вебинар по экспортным процедурам
+                      type:
+                        code: other
+                        label: Другое
+                      start_at: '2026-10-24T10:00:00+06:00'
+                      end_at: null
+                      location: Онлайн
+                      excerpt: Таможня, сертификация, логистика.
+                      cover:
+                        small: http://localhost:8000/media/CACHE/images/events/2026/10/event-5/23e55ed6f8c76970f620e022bc0f643f.webp
+                        large: http://localhost:8000/media/CACHE/images/events/2026/10/event-5/2d483ecbf1534a26d8dad05f0bf51c03.webp
+                      is_upcoming: true
+                      is_translated: true
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+  /api/v1/events/{slug}/:
+    get:
+      operationId: events_retrieve
+      description: 'Поиск по slug на любом языке. Без перевода на `lang` — 200, переводимые
+        поля null, `is_translated: false`.'
+      summary: Мероприятие
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      - in: path
+        name: slug
+        schema:
+          type: string
+        description: slug записи на любом из трёх языков (ru, en или zh)
+        required: true
+      tags:
+      - Новости и мероприятия
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDetail'
+              examples:
+                Пример(seed-данные):
+                  value:
+                    id: 17
+                    slug: business-mission-to-xinjiang
+                    title: Business mission to Xinjiang
+                    type:
+                      code: mission
+                      label: Business mission
+                    start_at: '2026-08-18T10:00:00+06:00'
+                    end_at: '2026-08-21T10:00:00+06:00'
+                    location: Urumqi
+                    excerpt: Company visits and negotiations.
+                    content: <p>Company visits and negotiations.</p><p>The Industrial
+                      Cooperation Centre helps Kyrgyz companies find partners, enter
+                      new markets and develop joint production.</p>
+                    cover:
+                      small: http://localhost:8000/media/CACHE/images/events/2026/10/event-1/0dd78e7373ae6d2000b6f19a4904b7e7.webp
+                      large: http://localhost:8000/media/CACHE/images/events/2026/10/event-1/a510160fb27adf0dbad59cdb0183a770.webp
+                    is_upcoming: false
+                    gallery:
+                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_36J5oXL/1052edca0ef98ab40469df6750c4015f.webp
+                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_36J5oXL/37275bf6f80a26d1fc57a4440653a0a4.webp
+                      caption: Opening of the meeting
+                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_qlX79ne/376505789d67531cd0df75fdda210bd2.webp
+                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_qlX79ne/c76ee863dfd4b1ca7f1ead3ade1e72f4.webp
+                      caption: Negotiations
+                    attachments: []
+                    is_translated: true
+                    seo:
+                      meta_title: Business mission to Xinjiang
+                      meta_description: Company visits and negotiations.
+                      og_image: http://localhost:8000/media/CACHE/images/events/2026/10/event-1/a510160fb27adf0dbad59cdb0183a770.webp
+                      alternates:
+                        ru: biznes-missiia-v-sintszian
+                        en: business-mission-to-xinjiang
+                        zh: xin-jiang-shang-wu-kao-cha-tuan
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailError'
+          description: Запись не найдена или не опубликована
+  /api/v1/feedback/:
+    post:
+      operationId: feedback_create
+      description: 'Форма «Контакты» / «Сотрудничество». Без авторизации и CSRF. Лимит
+        — 5 запросов в час с одного IP (считаются все POST, включая невалидные), 6-й
+        → 429. Поле `website` — honeypot: если заполнено, ответ тоже 201, но обращение
+        не сохраняется.'
+      summary: Отправить обращение
+      tags:
+      - Формы
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequest'
+            examples:
+              Обращение:
+                value:
+                  type: cooperation
+                  full_name: Асель Токтогулова
+                  company: ОсОО «Ала-Тоо Текстиль»
+                  country: Кыргызстан
+                  email: asel@example.kg
+                  phone: +996 555 123 456
+                  subject: Поиск партнёра в Китае
+                  message: Ищем производителя оборудования для швейного цеха.
+                  consent: true
+                  lang: ru
+                  website: ''
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedbackCreated'
+              examples:
+                Успех:
+                  value:
+                    ok: true
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldErrors'
+              examples:
+                ОшибкиВалидации:
+                  value:
+                    email:
+                    - Обязательное поле.
+                    message:
+                    - Убедитесь, что это значение содержит не менее 10 символов.
+                    consent:
+                    - Необходимо согласие на обработку персональных данных.
+                  summary: Ошибки валидации
+          description: 'Ошибки по полям: {"<поле>": ["ошибка"]}'
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+              examples:
+                Лимит:
+                  value:
+                    detail: Слишком много обращений с вашего адреса. Попробуйте снова
+                      через 3599 с.
+          description: Превышен лимит запросов
+  /api/v1/home/:
+    get:
+      operationId: home_retrieve
+      description: 'Всё для главной одним запросом: опубликованные блоки (по order),
+        4 направления, 3 последние новости, 3 ближайших предстоящих мероприятия и
+        seo страницы `home`. Во всех списках — только записи, переведённые на `lang`.'
+      summary: Главная
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      tags:
+      - Главная и страницы
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Home'
+              examples:
+                Пример(seed-данные):
+                  value:
+                    blocks:
+                    - id: 11
+                      type: hero
+                      title: Центр промышленной кооперации
+                      text: Помогаем предприятиям Кыргызстана находить партнёров за
+                        рубежом
+                      image:
+                        small: http://localhost:8000/media/CACHE/images/home/hero/7c97cbbd6910903db6d8984ec0a61b83.webp
+                        large: http://localhost:8000/media/CACHE/images/home/hero/d31d418e7647766cabfc160f31597949.webp
+                      button_text: Наши услуги
+                      button_link: /services
+                      order: 0
+                      is_translated: true
+                    - id: 12
+                      type: about
+                      title: О Центре
+                      text: Центр создан при Торгово-промышленной палате для развития
+                        промышленной кооперации.
+                      image:
+                        small: http://localhost:8000/media/CACHE/images/home/about/89df32e7302812723bbe2f5c9187f575.webp
+                        large: http://localhost:8000/media/CACHE/images/home/about/f61f513eb35923254e5db4428bc300c9.webp
+                      button_text: Подробнее
+                      button_link: /about
+                      order: 1
+                      is_translated: true
+                    directions:
+                    - id: 17
+                      slug: promyshlennaia-kooperatsiia
+                      title: Промышленная кооперация
+                      short_text: Связываем производителей для совместной работы.
+                      icon: cooperation
+                      order: 0
+                      is_translated: true
+                    - id: 18
+                      slug: poisk-partnerov
+                      title: Поиск партнёров
+                      short_text: Подбираем надёжных партнёров за рубежом.
+                      icon: partnership
+                      order: 1
+                      is_translated: true
+                    news:
+                    - id: 25
+                      slug: delovaia-missiia-v-urumchi
+                      title: Деловая миссия в Урумчи
+                      excerpt: Предприниматели Кыргызстана провели переговоры с компаниями
+                        Синьцзяна.
+                      cover:
+                        small: http://localhost:8000/media/CACHE/images/news/2026/10/news-1/180f0002dfa5cacc94a2a51ef9efc6a6.webp
+                        large: http://localhost:8000/media/CACHE/images/news/2026/10/news-1/8d061b86952d98a3aab9a4c50f4b83c2.webp
+                      category:
+                        slug: missions
+                        name: Деловые миссии
+                      published_at: '2026-10-15T10:00:00+06:00'
+                      is_translated: true
+                    - id: 26
+                      slug: tsentr-podpisal-memorandum-s-torgovoi-palatoi-sintsziana
+                      title: Центр подписал меморандум с торговой палатой Синьцзяна
+                      excerpt: Стороны договорились о совместной работе по поиску
+                        партнёров.
+                      cover:
+                        small: http://localhost:8000/media/CACHE/images/news/2026/10/news-2/6a636923db5281d95aa52c724a0461cd.webp
+                        large: http://localhost:8000/media/CACHE/images/news/2026/10/news-2/7642e9d4216d1ccb43996ec0f78b7d12.webp
+                      category:
+                        slug: partnership
+                        name: Партнёрство
+                      published_at: '2026-10-11T10:00:00+06:00'
+                      is_translated: true
+                    events:
+                    - id: 21
+                      slug: vebinar-po-eksportnym-protseduram
+                      title: Вебинар по экспортным процедурам
+                      type:
+                        code: other
+                        label: Другое
+                      start_at: '2026-10-24T10:00:00+06:00'
+                      end_at: null
+                      location: Онлайн
+                      excerpt: Таможня, сертификация, логистика.
+                      cover:
+                        small: http://localhost:8000/media/CACHE/images/events/2026/10/event-5/23e55ed6f8c76970f620e022bc0f643f.webp
+                        large: http://localhost:8000/media/CACHE/images/events/2026/10/event-5/2d483ecbf1534a26d8dad05f0bf51c03.webp
+                      is_upcoming: true
+                      is_translated: true
+                    - id: 22
+                      slug: biznes-missiia-v-guanchzhou
+                      title: Бизнес-миссия в Гуанчжоу
+                      type:
+                        code: mission
+                        label: Деловая миссия
+                      start_at: '2026-11-06T10:00:00+06:00'
+                      end_at: '2026-11-11T10:00:00+06:00'
+                      location: Гуанчжоу
+                      excerpt: Участие в выставке и деловые встречи.
+                      cover:
+                        small: http://localhost:8000/media/CACHE/images/events/2026/10/event-6/64e85e9c458c6776c919be396e7d3a96.webp
+                        large: http://localhost:8000/media/CACHE/images/events/2026/10/event-6/878abf26973605a2e9e086cd13e5d03b.webp
+                      is_upcoming: true
+                      is_translated: true
+                    seo:
+                      meta_title: Центр промышленной кооперации при ТПП КР
+                      meta_description: Поиск партнёров, деловые миссии и промышленная
+                        кооперация с Китаем и другими странами.
+                      og_image: http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp
+                      alternates:
+                        ru: home
+                        en: home
+                        zh: home
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+  /api/v1/news/:
+    get:
+      operationId: news_list
+      description: Опубликованные и переведённые на `lang` новости, свежие сверху
+        (по `published_at`).
+      summary: Новости
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: string
+        description: slug категории на любом языке
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Новости и мероприятия
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNewsListList'
+              examples:
+                Пример(seed-данные):
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - id: 25
+                      slug: delovaia-missiia-v-urumchi
+                      title: Деловая миссия в Урумчи
+                      excerpt: Предприниматели Кыргызстана провели переговоры с компаниями
+                        Синьцзяна.
+                      cover:
+                        small: http://localhost:8000/media/CACHE/images/news/2026/10/news-1/180f0002dfa5cacc94a2a51ef9efc6a6.webp
+                        large: http://localhost:8000/media/CACHE/images/news/2026/10/news-1/8d061b86952d98a3aab9a4c50f4b83c2.webp
+                      category:
+                        slug: missions
+                        name: Деловые миссии
+                      published_at: '2026-10-15T10:00:00+06:00'
+                      is_translated: true
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+  /api/v1/news-categories/:
+    get:
+      operationId: news_categories_list
+      description: 'Список: только опубликованные (если у модели есть status) и переведённые
+        на язык запроса.'
+      summary: Категории новостей
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      tags:
+      - Новости и мероприятия
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NewsCategory'
+              examples:
+                Пример(seed-данные):
+                  value:
+                  - slug: center
+                    name: Новости Центра
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+  /api/v1/news/{slug}/:
+    get:
+      operationId: news_retrieve
+      description: 'Поиск по slug на любом языке. Без перевода на `lang` — 200, переводимые
+        поля null, `is_translated: false`.'
+      summary: Новость
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      - in: path
+        name: slug
+        schema:
+          type: string
+        description: slug записи на любом из трёх языков (ru, en или zh)
+        required: true
+      tags:
+      - Новости и мероприятия
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsDetail'
+              examples:
+                Пример(seed-данные):
+                  value:
+                    id: 25
+                    slug: delovaia-missiia-v-urumchi
+                    title: Деловая миссия в Урумчи
+                    excerpt: Предприниматели Кыргызстана провели переговоры с компаниями
+                      Синьцзяна.
+                    content: <p>Предприниматели Кыргызстана провели переговоры с компаниями
+                      Синьцзяна.</p><p>Центр промышленной кооперации помогает предприятиям
+                      Кыргызстана находить партнёров, выходить на новые рынки и развивать
+                      совместные производства.</p>
+                    cover:
+                      small: http://localhost:8000/media/CACHE/images/news/2026/10/news-1/180f0002dfa5cacc94a2a51ef9efc6a6.webp
+                      large: http://localhost:8000/media/CACHE/images/news/2026/10/news-1/8d061b86952d98a3aab9a4c50f4b83c2.webp
+                    category:
+                      slug: missions
+                      name: Деловые миссии
+                    published_at: '2026-10-15T10:00:00+06:00'
+                    gallery:
+                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1/3fbeb4c9d36df2f3914fb2e5d015c9ce.webp
+                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1/09142fef4aba283b8a0d640e15a313e2.webp
+                      caption: Открытие встречи
+                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2/27934dff64ad428503edb6fb41d9c026.webp
+                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2/747c2e80015e11af58c01a46b7a27a34.webp
+                      caption: Переговоры
+                    attachments:
+                    - title: Программа
+                      url: http://localhost:8000/media/documents/2026/10/programme.pdf
+                      size: 40949
+                      ext: pdf
+                    is_translated: true
+                    seo:
+                      meta_title: Деловая миссия в Урумчи — ЦПК
+                      meta_description: Предприниматели Кыргызстана провели переговоры
+                        с компаниями Синьцзяна.
+                      og_image: http://localhost:8000/media/CACHE/images/news/2026/10/news-1/8d061b86952d98a3aab9a4c50f4b83c2.webp
+                      alternates:
+                        ru: delovaia-missiia-v-urumchi
+                        en: business-mission-to-urumqi
+                        zh: wu-lu-mu-qi-shang-wu-kao-cha
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailError'
+          description: Запись не найдена или не опубликована
+  /api/v1/pages/:
+    get:
+      operationId: pages_list
+      description: Опубликованные страницы с `show_in_menu=True`, переведённые на
+        `lang`, по `order`.
+      summary: Страницы для меню
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      tags:
+      - Главная и страницы
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PageMenu'
+              examples:
+                Пример(seed-данные):
+                  value:
+                  - key: about
+                    slug: null
+                    title: О Центре
+                    order: 1
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+  /api/v1/pages/{key_or_slug}/:
+    get:
+      operationId: pages_retrieve
+      description: 'Сначала ищется по `key` (системные страницы: home, about, cooperation),
+        затем по slug на любом языке. Без перевода на `lang` — 200, `is_translated:
+        false`.'
+      summary: Страница
+      parameters:
+      - in: path
+        name: key_or_slug
+        schema:
+          type: string
+        description: key системной страницы или slug на любом языке
+        required: true
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      tags:
+      - Главная и страницы
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageDetail'
+              examples:
+                Пример(seed-данные):
+                  value:
+                    id: 2
+                    key: about
+                    slug: null
+                    title: About the Centre
+                    content: <h2>Who we are</h2><p>The Industrial Cooperation Centre
+                      helps Kyrgyz companies find partners, enter new markets and
+                      develop joint production.</p><p>The Centre operates under the
+                      Chamber of Commerce and Industry of the Kyrgyz Republic.</p>
+                    is_translated: true
+                    seo:
+                      meta_title: About the Centre
+                      meta_description: null
+                      og_image: http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp
+                      alternates:
+                        ru: about
+                        en: about
+                        zh: about
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailError'
+          description: Запись не найдена или не опубликована
+  /api/v1/partners/:
+    get:
+      operationId: partners_list
+      description: Только партнёры с согласием на публикацию.
+      summary: Партнёры
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: Код страны ISO 3166-1 alpha-2, например CN
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      tags:
+      - Международное сотрудничество
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Partner'
+              examples:
+                Пример(seed-данные):
+                  value:
+                  - id: 9
+                    name: Торговая компания «Шёлковый путь» (демо)
+                    logo:
+                      small: http://localhost:8000/media/CACHE/images/partners/logo-1/4102341f8ee4cfc88052f5d4bba63378.webp
+                      large: http://localhost:8000/media/CACHE/images/partners/logo-1/de558907b3fdb77063a7219c781a54b4.webp
+                    country:
+                      code: CN
+                      name: Китай
+                    website: https://example.com/silkroad
+                    description: Оптовая торговля и логистика.
+                    is_translated: true
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+  /api/v1/projects/:
+    get:
+      operationId: projects_list
+      description: Опубликованные и переведённые на `lang` проекты, свежие сверху
+        (по `published_at`).
+      summary: Международные проекты
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: Код страны ISO 3166-1 alpha-2, например CN
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Международное сотрудничество
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProjectListList'
+              examples:
+                Пример(seed-данные):
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - id: 7
+                      slug: sovmestnoe-proizvodstvo-stroimaterialov-v-chuiskoi-oblasti
+                      title: Совместное производство стройматериалов в Чуйской области
+                      excerpt: Запуск завода мощностью 100 тыс. тонн в год.
+                      cover:
+                        small: http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/a78f6a3c567a5b27884697aa88571959.webp
+                        large: http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/666e36e067f2ac51c7aed23fb837aa7d.webp
+                      country:
+                        code: CN
+                        name: Китай
+                      published_at: '2026-10-07T10:00:00+06:00'
+                      is_translated: true
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+  /api/v1/projects/{slug}/:
+    get:
+      operationId: projects_retrieve
+      description: С партнёрами (только с согласием на публикацию), галереей и документами.
+        Поиск по slug на любом языке.
+      summary: Международный проект
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      - in: path
+        name: slug
+        schema:
+          type: string
+        description: slug записи на любом из трёх языков (ru, en или zh)
+        required: true
+      tags:
+      - Международное сотрудничество
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectDetail'
+              examples:
+                Пример(seed-данные):
+                  value:
+                    id: 7
+                    slug: chu-he-zhou-jian-cai-he-zi-sheng-chan
+                    title: 楚河州建材合资生产
+                    excerpt: 建设年产10万吨的工厂。
+                    content: <p>建设年产10万吨的工厂。</p><p>工业合作中心帮助吉尔吉斯斯坦企业寻找合作伙伴、开拓新市场并发展合资生产。</p>
+                    cover:
+                      small: http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/a78f6a3c567a5b27884697aa88571959.webp
+                      large: http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/666e36e067f2ac51c7aed23fb837aa7d.webp
+                    country:
+                      code: CN
+                      name: 中国
+                    published_at: '2026-10-07T10:00:00+06:00'
+                    partners:
+                    - id: 9
+                      name: 丝路贸易有限公司（演示）
+                      logo:
+                        small: http://localhost:8000/media/CACHE/images/partners/logo-1/4102341f8ee4cfc88052f5d4bba63378.webp
+                        large: http://localhost:8000/media/CACHE/images/partners/logo-1/de558907b3fdb77063a7219c781a54b4.webp
+                      country:
+                        code: CN
+                        name: 中国
+                      website: https://example.com/silkroad
+                      description: 批发贸易与物流。
+                      is_translated: true
+                    - id: 10
+                      name: 天山机械（演示）
+                      logo:
+                        small: http://localhost:8000/media/CACHE/images/partners/logo-2/c63583e8b06cfcfc91d4176deae1956f.webp
+                        large: http://localhost:8000/media/CACHE/images/partners/logo-2/28bb25a8d42e128eadd01af0d5844f16.webp
+                      country:
+                        code: CN
+                        name: 中国
+                      website: https://example.com/tianshan
+                      description: 农业机械制造。
+                      is_translated: true
+                    gallery:
+                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_N6u0BWb/2a4e605e95a58aff12eb0e593b05e969.webp
+                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_N6u0BWb/3c9b3ec861991b8c3611abdc6c6f463b.webp
+                      caption: 会议开幕
+                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_UjcmiyV/fc5ffca5e52128889b64a8b2337d97f1.webp
+                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_UjcmiyV/82c90ed5354eee7d179243f03df98ad8.webp
+                      caption: 洽谈
+                    attachments: []
+                    is_translated: true
+                    seo:
+                      meta_title: 楚河州建材合资生产
+                      meta_description: 建设年产10万吨的工厂。
+                      og_image: http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/666e36e067f2ac51c7aed23fb837aa7d.webp
+                      alternates:
+                        ru: sovmestnoe-proizvodstvo-stroimaterialov-v-chuiskoi-oblasti
+                        en: joint-production-of-building-materials-in-the-chui-region
+                        zh: chu-he-zhou-jian-cai-he-zi-sheng-chan
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailError'
+          description: Запись не найдена или не опубликована
+  /api/v1/services/:
+    get:
+      operationId: services_list
+      description: Опубликованные и переведённые на `lang` услуги по `order` (без
+        content, how_to_apply и контактов).
+      summary: Услуги
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      tags:
+      - Направления и услуги
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceList'
+              examples:
+                Пример(seed-данные):
+                  value:
+                  - id: 15
+                    slug: podbor-partnerov-v-kitae
+                    title: Подбор партнёров в Китае
+                    short_text: Поиск и проверка производителей и поставщиков.
+                    order: 0
+                    is_translated: true
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+  /api/v1/services/{slug}/:
+    get:
+      operationId: services_retrieve
+      description: Полностью, включая how_to_apply и контакты. Поиск по slug на любом
+        языке.
+      summary: Услуга
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      - in: path
+        name: slug
+        schema:
+          type: string
+        description: slug записи на любом из трёх языков (ru, en или zh)
+        required: true
+      tags:
+      - Направления и услуги
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceDetail'
+              examples:
+                Пример(seed-данные):
+                  value:
+                    id: 15
+                    slug: podbor-partnerov-v-kitae
+                    title: Подбор партнёров в Китае
+                    short_text: Поиск и проверка производителей и поставщиков.
+                    content: <p>Поиск и проверка производителей и поставщиков.</p><p>Центр
+                      промышленной кооперации помогает предприятиям Кыргызстана находить
+                      партнёров, выходить на новые рынки и развивать совместные производства.</p>
+                    how_to_apply: Оставьте заявку через форму на сайте или позвоните
+                      нам.
+                    contact_person: Иванова Анна
+                    contact_email: services@example.kg
+                    contact_phone: +996 312 000 002
+                    order: 0
+                    is_translated: true
+                    seo:
+                      meta_title: Подбор партнёров в Китае
+                      meta_description: Поиск и проверка производителей и поставщиков.
+                      og_image: http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp
+                      alternates:
+                        ru: podbor-partnerov-v-kitae
+                        en: partner-search-in-china
+                        zh: zai-zhong-guo-xun-zhao-he-zuo-huo-ban
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailError'
+          description: Запись не найдена или не опубликована
+  /api/v1/settings/:
+    get:
+      operationId: settings_retrieve
+      description: |-
+        Единая обработка ?lang=ru|en|zh для всех вьюх: валидирует параметр
+        (невалидный → 400) и передаёт язык в контекст сериализатора.
+      summary: Публичные настройки сайта
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      tags:
+      - Справочная информация
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteSettingsPublic'
+              examples:
+                Пример(seed-данные):
+                  value:
+                    analytics_id: null
+                    default_og_image:
+                      small: http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/829137d66a2b7af8d82c19ccd85a8b59.webp
+                      large: http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+components:
+  schemas:
+    Alternates:
+      type: object
+      properties:
+        ru:
+          type: string
+          nullable: true
+        en:
+          type: string
+          nullable: true
+        zh:
+          type: string
+          nullable: true
+      required:
+      - en
+      - ru
+      - zh
+    Attachment:
+      type: object
+      properties:
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        url:
+          type: string
+          readOnly: true
+          description: Абсолютный URL файла
+        size:
+          type: integer
+          readOnly: true
+          title: Размер, байт
+        ext:
+          type: string
+          readOnly: true
+          description: 'Расширение файла: pdf, docx'
+      required:
+      - ext
+      - size
+      - title
+      - url
+    CodeEnum:
+      enum:
+      - mission
+      - forum
+      - exhibition
+      - b2b
+      - other
+      type: string
+      description: |-
+        * `mission` - Деловая миссия
+        * `forum` - Форум
+        * `exhibition` - Выставка
+        * `b2b` - B2B-встреча
+        * `other` - Другое
+    ContactInfo:
+      type: object
+      properties:
+        official_name:
+          type: string
+          nullable: true
+          readOnly: true
+        address:
+          type: string
+          nullable: true
+          readOnly: true
+        phones:
+          type: array
+          items:
+            $ref: '#/components/schemas/Phone'
+          readOnly: true
+        email:
+          type: string
+          nullable: true
+          readOnly: true
+        work_hours:
+          type: string
+          nullable: true
+          readOnly: true
+        map_lat:
+          type: number
+          format: double
+          readOnly: true
+          nullable: true
+        map_lng:
+          type: number
+          format: double
+          readOnly: true
+          nullable: true
+        socials:
+          type: array
+          items:
+            $ref: '#/components/schemas/Social'
+          readOnly: true
+      required:
+      - address
+      - email
+      - map_lat
+      - map_lng
+      - official_name
+      - phones
+      - socials
+      - work_hours
+    Country:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code:
+          type: string
+          title: Код ISO 3166-1 alpha-2
+          pattern: ^[A-Z]{2}$
+          maxLength: 2
+        name:
+          type: string
+          nullable: true
+          readOnly: true
+        description:
+          type: string
+          nullable: true
+          readOnly: true
+        flag:
+          allOf:
+          - $ref: '#/components/schemas/ImageVersions'
+          nullable: true
+          readOnly: true
+        is_translated:
+          type: boolean
+          readOnly: true
+      required:
+      - code
+      - description
+      - flag
+      - id
+      - is_translated
+      - name
+    CountryShort:
+      type: object
+      properties:
+        code:
+          type: string
+          title: Код ISO 3166-1 alpha-2
+          pattern: ^[A-Z]{2}$
+          maxLength: 2
+        name:
+          type: string
+          nullable: true
+          readOnly: true
+      required:
+      - code
+      - name
+    Detail:
+      type: object
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
+    DetailError:
+      type: object
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
+    DirectionDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        short_text:
+          type: string
+          nullable: true
+          readOnly: true
+        content:
+          type: string
+          nullable: true
+          description: Безопасный HTML
+          readOnly: true
+        icon:
+          allOf:
+          - $ref: '#/components/schemas/IconEnum'
+          title: Иконка
+          description: |-
+            Ключ иконки из набора фронта.
+
+            * `cooperation` - Кооперация
+            * `partnership` - Партнёрство
+            * `joint-production` - Совместное производство
+            * `localization` - Локализация
+            * `subcontracting` - Субконтрактация
+            * `consulting` - Консалтинг
+            * `b2b-meetings` - B2B-встречи
+            * `export` - Экспорт
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: Порядок
+        is_translated:
+          type: boolean
+          readOnly: true
+        seo:
+          allOf:
+          - $ref: '#/components/schemas/Seo'
+          readOnly: true
+      required:
+      - content
+      - icon
+      - id
+      - is_translated
+      - seo
+      - short_text
+      - slug
+      - title
+    DirectionList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        short_text:
+          type: string
+          nullable: true
+          readOnly: true
+        icon:
+          allOf:
+          - $ref: '#/components/schemas/IconEnum'
+          title: Иконка
+          description: |-
+            Ключ иконки из набора фронта.
+
+            * `cooperation` - Кооперация
+            * `partnership` - Партнёрство
+            * `joint-production` - Совместное производство
+            * `localization` - Локализация
+            * `subcontracting` - Субконтрактация
+            * `consulting` - Консалтинг
+            * `b2b-meetings` - B2B-встречи
+            * `export` - Экспорт
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: Порядок
+        is_translated:
+          type: boolean
+          readOnly: true
+      required:
+      - icon
+      - id
+      - is_translated
+      - short_text
+      - slug
+      - title
+    EventDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        type:
+          allOf:
+          - $ref: '#/components/schemas/EventType'
+          readOnly: true
+        start_at:
+          type: string
+          format: date-time
+          title: Начало
+        end_at:
+          type: string
+          format: date-time
+          nullable: true
+          title: Окончание
+        location:
+          type: string
+          nullable: true
+          readOnly: true
+        excerpt:
+          type: string
+          nullable: true
+          readOnly: true
+        content:
+          type: string
+          nullable: true
+          description: Безопасный HTML
+          readOnly: true
+        cover:
+          allOf:
+          - $ref: '#/components/schemas/ImageVersions'
+          nullable: true
+          readOnly: true
+        is_upcoming:
+          type: boolean
+          readOnly: true
+          description: Вычисляется по end_at (если пусто — по start_at)
+        gallery:
+          type: array
+          items:
+            $ref: '#/components/schemas/GalleryImage'
+          readOnly: true
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+          readOnly: true
+        is_translated:
+          type: boolean
+          readOnly: true
+        seo:
+          allOf:
+          - $ref: '#/components/schemas/Seo'
+          readOnly: true
+      required:
+      - attachments
+      - content
+      - cover
+      - excerpt
+      - gallery
+      - id
+      - is_translated
+      - is_upcoming
+      - location
+      - seo
+      - slug
+      - start_at
+      - title
+      - type
+    EventList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        type:
+          allOf:
+          - $ref: '#/components/schemas/EventType'
+          readOnly: true
+        start_at:
+          type: string
+          format: date-time
+          title: Начало
+        end_at:
+          type: string
+          format: date-time
+          nullable: true
+          title: Окончание
+        location:
+          type: string
+          nullable: true
+          readOnly: true
+        excerpt:
+          type: string
+          nullable: true
+          readOnly: true
+        cover:
+          allOf:
+          - $ref: '#/components/schemas/ImageVersions'
+          nullable: true
+          readOnly: true
+        is_upcoming:
+          type: boolean
+          readOnly: true
+          description: Вычисляется по end_at (если пусто — по start_at)
+        is_translated:
+          type: boolean
+          readOnly: true
+      required:
+      - cover
+      - excerpt
+      - id
+      - is_translated
+      - is_upcoming
+      - location
+      - slug
+      - start_at
+      - title
+      - type
+    EventType:
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/CodeEnum'
+        label:
+          type: string
+          description: Подпись на языке запроса
+      required:
+      - code
+      - label
+    FeedbackCreated:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          default: true
+    FeedbackRequest:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/FeedbackTypeEnum'
+        full_name:
+          type: string
+          minLength: 2
+          maxLength: 150
+        company:
+          type: string
+          minLength: 1
+          maxLength: 200
+        country:
+          type: string
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          minLength: 1
+        phone:
+          nullable: true
+          oneOf:
+          - type: string
+            pattern: ^[\d\s+\-()]*$
+            maxLength: 30
+          - type: string
+            maxLength: 0
+        subject:
+          type: string
+          minLength: 1
+          maxLength: 200
+        message:
+          type: string
+          minLength: 10
+          maxLength: 5000
+        consent:
+          type: boolean
+          description: Только true
+        lang:
+          $ref: '#/components/schemas/LangEnum'
+        website:
+          type: string
+          writeOnly: true
+          description: 'Honeypot: скрытое поле, человек его не заполняет. Должно быть
+            пустым.'
+      required:
+      - company
+      - consent
+      - country
+      - email
+      - full_name
+      - lang
+      - message
+      - subject
+      - type
+    FeedbackTypeEnum:
+      enum:
+      - contact
+      - cooperation
+      type: string
+      description: |-
+        * `contact` - Общий вопрос
+        * `cooperation` - Сотрудничество
+    FieldErrors:
+      type: object
+      properties:
+        field:
+          type: array
+          items:
+            type: string
+          description: Ключ — имя поля с ошибкой, значение — список сообщений
+      required:
+      - field
+    GalleryImage:
+      type: object
+      properties:
+        small:
+          type: string
+          format: uri
+          readOnly: true
+          description: WebP, ширина 400 px
+        large:
+          type: string
+          format: uri
+          readOnly: true
+          description: WebP, ширина 1200 px
+        caption:
+          type: string
+          nullable: true
+          readOnly: true
+      required:
+      - caption
+      - large
+      - small
+    Home:
+      type: object
+      description: Всё для главной одним запросом. instance — dict, собранный во вьюхе.
+      properties:
+        blocks:
+          type: array
+          items:
+            $ref: '#/components/schemas/HomeBlock'
+          readOnly: true
+        directions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DirectionList'
+          readOnly: true
+          description: Первые 4 по order
+        news:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsList'
+          readOnly: true
+          description: 3 последние
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventList'
+          readOnly: true
+          description: 3 ближайших предстоящих
+        seo:
+          allOf:
+          - $ref: '#/components/schemas/Seo'
+          readOnly: true
+          description: Из страницы с key=home
+      required:
+      - blocks
+      - directions
+      - events
+      - news
+      - seo
+    HomeBlock:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        type:
+          allOf:
+          - $ref: '#/components/schemas/HomeBlockTypeEnum'
+          title: Тип блока
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        text:
+          type: string
+          nullable: true
+          readOnly: true
+        image:
+          allOf:
+          - $ref: '#/components/schemas/ImageVersions'
+          nullable: true
+          readOnly: true
+        button_text:
+          type: string
+          nullable: true
+          readOnly: true
+        button_link:
+          type: string
+          nullable: true
+          readOnly: true
+          description: Путь без языкового префикса, например /services. Префикс добавляет
+            фронт.
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: Порядок
+        is_translated:
+          type: boolean
+          readOnly: true
+      required:
+      - button_link
+      - button_text
+      - id
+      - image
+      - is_translated
+      - text
+      - title
+      - type
+    HomeBlockTypeEnum:
+      enum:
+      - hero
+      - about
+      - advantages
+      - kg_china
+      - cta
+      type: string
+      description: |-
+        * `hero` - Hero (первый экран)
+        * `about` - О Центре
+        * `advantages` - Преимущества
+        * `kg_china` - Кыргызстан — Китай
+        * `cta` - Призыв к действию (CTA)
+    IconEnum:
+      enum:
+      - cooperation
+      - partnership
+      - joint-production
+      - localization
+      - subcontracting
+      - consulting
+      - b2b-meetings
+      - export
+      type: string
+      description: |-
+        * `cooperation` - Кооперация
+        * `partnership` - Партнёрство
+        * `joint-production` - Совместное производство
+        * `localization` - Локализация
+        * `subcontracting` - Субконтрактация
+        * `consulting` - Консалтинг
+        * `b2b-meetings` - B2B-встречи
+        * `export` - Экспорт
+    ImageVersions:
+      type: object
+      properties:
+        small:
+          type: string
+          format: uri
+          description: WebP, ширина 400 px
+        large:
+          type: string
+          format: uri
+          description: WebP, ширина 1200 px
+      required:
+      - large
+      - small
+    LangEnum:
+      enum:
+      - ru
+      - en
+      - zh
+      type: string
+      description: |-
+        * `ru` - Русский
+        * `en` - English
+        * `zh` - 中文
+    NewsCategory:
+      type: object
+      properties:
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+        name:
+          type: string
+          nullable: true
+          readOnly: true
+      required:
+      - name
+      - slug
+    NewsDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        excerpt:
+          type: string
+          nullable: true
+          readOnly: true
+        content:
+          type: string
+          nullable: true
+          description: Безопасный HTML
+          readOnly: true
+        cover:
+          allOf:
+          - $ref: '#/components/schemas/ImageVersions'
+          nullable: true
+          readOnly: true
+        category:
+          allOf:
+          - $ref: '#/components/schemas/NewsCategory'
+          nullable: true
+          readOnly: true
+        published_at:
+          type: string
+          format: date-time
+          title: Дата публикации
+        gallery:
+          type: array
+          items:
+            $ref: '#/components/schemas/GalleryImage'
+          readOnly: true
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+          readOnly: true
+        is_translated:
+          type: boolean
+          readOnly: true
+        seo:
+          allOf:
+          - $ref: '#/components/schemas/Seo'
+          readOnly: true
+      required:
+      - attachments
+      - category
+      - content
+      - cover
+      - excerpt
+      - gallery
+      - id
+      - is_translated
+      - seo
+      - slug
+      - title
+    NewsList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        excerpt:
+          type: string
+          nullable: true
+          readOnly: true
+        cover:
+          allOf:
+          - $ref: '#/components/schemas/ImageVersions'
+          nullable: true
+          readOnly: true
+        category:
+          allOf:
+          - $ref: '#/components/schemas/NewsCategory'
+          nullable: true
+          readOnly: true
+        published_at:
+          type: string
+          format: date-time
+          title: Дата публикации
+        is_translated:
+          type: boolean
+          readOnly: true
+      required:
+      - category
+      - cover
+      - excerpt
+      - id
+      - is_translated
+      - slug
+      - title
+    PageDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        key:
+          type: string
+          nullable: true
+          title: Системный ключ
+          description: 'Только для системных страниц: home, about, cooperation.'
+          maxLength: 50
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+          description: null у системных страниц — они адресуются по key
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        content:
+          type: string
+          nullable: true
+          description: Безопасный HTML
+          readOnly: true
+        is_translated:
+          type: boolean
+          readOnly: true
+        seo:
+          allOf:
+          - $ref: '#/components/schemas/Seo'
+          readOnly: true
+      required:
+      - content
+      - id
+      - is_translated
+      - seo
+      - slug
+      - title
+    PageMenu:
+      type: object
+      properties:
+        key:
+          type: string
+          nullable: true
+          title: Системный ключ
+          description: 'Только для системных страниц: home, about, cooperation.'
+          maxLength: 50
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+          description: null у системных страниц — они адресуются по key
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: Порядок
+      required:
+      - slug
+      - title
+    PaginatedEventListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventList'
+    PaginatedNewsListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsList'
+    PaginatedProjectListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectList'
+    Partner:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          nullable: true
+          readOnly: true
+        logo:
+          allOf:
+          - $ref: '#/components/schemas/ImageVersions'
+          nullable: true
+          readOnly: true
+        country:
+          allOf:
+          - $ref: '#/components/schemas/CountryShort'
+          readOnly: true
+        website:
+          type: string
+          nullable: true
+          readOnly: true
+        description:
+          type: string
+          nullable: true
+          readOnly: true
+        is_translated:
+          type: boolean
+          readOnly: true
+      required:
+      - country
+      - description
+      - id
+      - is_translated
+      - logo
+      - name
+      - website
+    Phone:
+      type: object
+      properties:
+        label:
+          type: string
+          nullable: true
+          description: Подпись на языке запроса
+        number:
+          type: string
+      required:
+      - label
+      - number
+    ProjectDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        excerpt:
+          type: string
+          nullable: true
+          readOnly: true
+        content:
+          type: string
+          nullable: true
+          description: Безопасный HTML
+          readOnly: true
+        cover:
+          allOf:
+          - $ref: '#/components/schemas/ImageVersions'
+          nullable: true
+          readOnly: true
+        country:
+          allOf:
+          - $ref: '#/components/schemas/CountryShort'
+          readOnly: true
+        published_at:
+          type: string
+          format: date-time
+          title: Дата публикации
+        partners:
+          type: array
+          items:
+            $ref: '#/components/schemas/Partner'
+          readOnly: true
+          description: Только партнёры с согласием на публикацию
+        gallery:
+          type: array
+          items:
+            $ref: '#/components/schemas/GalleryImage'
+          readOnly: true
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+          readOnly: true
+        is_translated:
+          type: boolean
+          readOnly: true
+        seo:
+          allOf:
+          - $ref: '#/components/schemas/Seo'
+          readOnly: true
+      required:
+      - attachments
+      - content
+      - country
+      - cover
+      - excerpt
+      - gallery
+      - id
+      - is_translated
+      - partners
+      - seo
+      - slug
+      - title
+    ProjectList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        excerpt:
+          type: string
+          nullable: true
+          readOnly: true
+        cover:
+          allOf:
+          - $ref: '#/components/schemas/ImageVersions'
+          nullable: true
+          readOnly: true
+        country:
+          allOf:
+          - $ref: '#/components/schemas/CountryShort'
+          readOnly: true
+        published_at:
+          type: string
+          format: date-time
+          title: Дата публикации
+        is_translated:
+          type: boolean
+          readOnly: true
+      required:
+      - country
+      - cover
+      - excerpt
+      - id
+      - is_translated
+      - slug
+      - title
+    Seo:
+      type: object
+      properties:
+        meta_title:
+          type: string
+          nullable: true
+          description: Если пусто — title
+        meta_description:
+          type: string
+          nullable: true
+          description: Если пусто — excerpt / short_text
+        og_image:
+          type: string
+          format: uri
+          nullable: true
+          description: 1200 px; если пусто — cover, затем default_og_image
+        alternates:
+          allOf:
+          - $ref: '#/components/schemas/Alternates'
+          description: slug записи на каждом языке (null — не переведена). Для системных
+            страниц — их key. Данные для переключателя языка и hreflang.
+      required:
+      - alternates
+      - meta_description
+      - meta_title
+      - og_image
+    ServiceDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        short_text:
+          type: string
+          nullable: true
+          readOnly: true
+        content:
+          type: string
+          nullable: true
+          description: Безопасный HTML
+          readOnly: true
+        how_to_apply:
+          type: string
+          nullable: true
+          readOnly: true
+        contact_person:
+          type: string
+          nullable: true
+          readOnly: true
+        contact_email:
+          type: string
+          nullable: true
+          readOnly: true
+        contact_phone:
+          type: string
+          nullable: true
+          readOnly: true
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: Порядок
+        is_translated:
+          type: boolean
+          readOnly: true
+        seo:
+          allOf:
+          - $ref: '#/components/schemas/Seo'
+          readOnly: true
+      required:
+      - contact_email
+      - contact_person
+      - contact_phone
+      - content
+      - how_to_apply
+      - id
+      - is_translated
+      - seo
+      - short_text
+      - slug
+      - title
+    ServiceList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        short_text:
+          type: string
+          nullable: true
+          readOnly: true
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: Порядок
+        is_translated:
+          type: boolean
+          readOnly: true
+      required:
+      - id
+      - is_translated
+      - short_text
+      - slug
+      - title
+    SiteSettingsPublic:
+      type: object
+      properties:
+        analytics_id:
+          type: string
+          nullable: true
+          readOnly: true
+        default_og_image:
+          allOf:
+          - $ref: '#/components/schemas/ImageVersions'
+          nullable: true
+          readOnly: true
+      required:
+      - analytics_id
+      - default_og_image
+    Social:
+      type: object
+      properties:
+        type:
+          type: string
+          description: 'Ключ иконки на фронте: telegram, facebook, ...'
+        url:
+          type: string
+          format: uri
+      required:
+      - type
+      - url
+    ValidationError:
+      type: object
+      properties:
+        lang:
+          type: array
+          items:
+            type: string

@@ -1,0 +1,13 @@
+{% extends "admin/base_site.html" %}
+{% block title %}Вход временно заблокирован | {{ site_title|default:"ЦПК при ТПП КР" }}{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+{% block usertools %}{% endblock %}
+{% block content %}
+<div id="content-main">
+  <p class="errornote">Вход временно заблокирован</p>
+  <p>Было {{ failure_limit }} неудачных попыток входа для этого имени пользователя с вашего IP-адреса.
+     Вход заблокирован на 30 минут.</p>
+  <p>Попробуйте позже. Если вы забыли пароль, обратитесь к администратору сайта.</p>
+</div>
+{% endblock %}

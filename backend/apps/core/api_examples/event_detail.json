@@ -1,0 +1,43 @@
+{
+  "id": 17,
+  "slug": "business-mission-to-xinjiang",
+  "title": "Business mission to Xinjiang",
+  "type": {
+    "code": "mission",
+    "label": "Business mission"
+  },
+  "start_at": "2026-08-18T10:00:00+06:00",
+  "end_at": "2026-08-21T10:00:00+06:00",
+  "location": "Urumqi",
+  "excerpt": "Company visits and negotiations.",
+  "content": "<p>Company visits and negotiations.</p><p>The Industrial Cooperation Centre helps Kyrgyz companies find partners, enter new markets and develop joint production.</p>",
+  "cover": {
+    "small": "http://localhost:8000/media/CACHE/images/events/2026/10/event-1/0dd78e7373ae6d2000b6f19a4904b7e7.webp",
+    "large": "http://localhost:8000/media/CACHE/images/events/2026/10/event-1/a510160fb27adf0dbad59cdb0183a770.webp"
+  },
+  "is_upcoming": false,
+  "gallery": [
+    {
+      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_36J5oXL/1052edca0ef98ab40469df6750c4015f.webp",
+      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_36J5oXL/37275bf6f80a26d1fc57a4440653a0a4.webp",
+      "caption": "Opening of the meeting"
+    },
+    {
+      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_qlX79ne/376505789d67531cd0df75fdda210bd2.webp",
+      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_qlX79ne/c76ee863dfd4b1ca7f1ead3ade1e72f4.webp",
+      "caption": "Negotiations"
+    }
+  ],
+  "attachments": [],
+  "is_translated": true,
+  "seo": {
+    "meta_title": "Business mission to Xinjiang",
+    "meta_description": "Company visits and negotiations.",
+    "og_image": "http://localhost:8000/media/CACHE/images/events/2026/10/event-1/a510160fb27adf0dbad59cdb0183a770.webp",
+    "alternates": {
+      "ru": "biznes-missiia-v-sintszian",
+      "en": "business-mission-to-xinjiang",
+      "zh": "xin-jiang-shang-wu-kao-cha-tuan"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "id": 2,
+  "key": "about",
+  "slug": null,
+  "title": "About the Centre",
+  "content": "<h2>Who we are</h2><p>The Industrial Cooperation Centre helps Kyrgyz companies find partners, enter new markets and develop joint production.</p><p>The Centre operates under the Chamber of Commerce and Industry of the Kyrgyz Republic.</p>",
+  "is_translated": true,
+  "seo": {
+    "meta_title": "About the Centre",
+    "meta_description": null,
+    "og_image": "http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp",
+    "alternates": {
+      "ru": "about",
+      "en": "about",
+      "zh": "about"
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "id": 7,
+  "slug": "chu-he-zhou-jian-cai-he-zi-sheng-chan",
+  "title": "楚河州建材合资生产",
+  "excerpt": "建设年产10万吨的工厂。",
+  "content": "<p>建设年产10万吨的工厂。</p><p>工业合作中心帮助吉尔吉斯斯坦企业寻找合作伙伴、开拓新市场并发展合资生产。</p>",
+  "cover": {
+    "small": "http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/a78f6a3c567a5b27884697aa88571959.webp",
+    "large": "http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/666e36e067f2ac51c7aed23fb837aa7d.webp"
+  },
+  "country": {
+    "code": "CN",
+    "name": "中国"
+  },
+  "published_at": "2026-10-07T10:00:00+06:00",
+  "partners": [
+    {
+      "id": 9,
+      "name": "丝路贸易有限公司（演示）",
+      "logo": {
+        "small": "http://localhost:8000/media/CACHE/images/partners/logo-1/4102341f8ee4cfc88052f5d4bba63378.webp",
+        "large": "http://localhost:8000/media/CACHE/images/partners/logo-1/de558907b3fdb77063a7219c781a54b4.webp"
+      },
+      "country": {
+        "code": "CN",
+        "name": "中国"
+      },
+      "website": "https://example.com/silkroad",
+      "description": "批发贸易与物流。",
+      "is_translated": true
+    },
+    {
+      "id": 10,
+      "name": "天山机械（演示）",
+      "logo": {
+        "small": "http://localhost:8000/media/CACHE/images/partners/logo-2/c63583e8b06cfcfc91d4176deae1956f.webp",
+        "large": "http://localhost:8000/media/CACHE/images/partners/logo-2/28bb25a8d42e128eadd01af0d5844f16.webp"
+      },
+      "country": {
+        "code": "CN",
+        "name": "中国"
+      },
+      "website": "https://example.com/tianshan",
+      "description": "农业机械制造。",
+      "is_translated": true
+    }
+  ],
+  "gallery": [
+    {
+      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_N6u0BWb/2a4e605e95a58aff12eb0e593b05e969.webp",
+      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_N6u0BWb/3c9b3ec861991b8c3611abdc6c6f463b.webp",
+      "caption": "会议开幕"
+    },
+    {
+      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_UjcmiyV/fc5ffca5e52128889b64a8b2337d97f1.webp",
+      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_UjcmiyV/82c90ed5354eee7d179243f03df98ad8.webp",
+      "caption": "洽谈"
+    }
+  ],
+  "attachments": [],
+  "is_translated": true,
+  "seo": {
+    "meta_title": "楚河州建材合资生产",
+    "meta_description": "建设年产10万吨的工厂。",
+    "og_image": "http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/666e36e067f2ac51c7aed23fb837aa7d.webp",
+    "alternates": {
+      "ru": "sovmestnoe-proizvodstvo-stroimaterialov-v-chuiskoi-oblasti",
+      "en": "joint-production-of-building-materials-in-the-chui-region",
+      "zh": "chu-he-zhou-jian-cai-he-zi-sheng-chan"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": 15,
+  "slug": "podbor-partnerov-v-kitae",
+  "title": "Подбор партнёров в Китае",
+  "short_text": "Поиск и проверка производителей и поставщиков.",
+  "content": "<p>Поиск и проверка производителей и поставщиков.</p><p>Центр промышленной кооперации помогает предприятиям Кыргызстана находить партнёров, выходить на новые рынки и развивать совместные производства.</p>",
+  "how_to_apply": "Оставьте заявку через форму на сайте или позвоните нам.",
+  "contact_person": "Иванова Анна",
+  "contact_email": "services@example.kg",
+  "contact_phone": "+996 312 000 002",
+  "order": 0,
+  "is_translated": true,
+  "seo": {
+    "meta_title": "Подбор партнёров в Китае",
+    "meta_description": "Поиск и проверка производителей и поставщиков.",
+    "og_image": "http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp",
+    "alternates": {
+      "ru": "podbor-partnerov-v-kitae",
+      "en": "partner-search-in-china",
+      "zh": "zai-zhong-guo-xun-zhao-he-zuo-huo-ban"
+    }
+  }
+}

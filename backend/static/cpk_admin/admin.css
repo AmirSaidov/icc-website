@@ -1,0 +1,4 @@
+/* Мелкие правки админки ЦПК */
+table.json-rows td { padding: 2px 6px 2px 0; }
+table.json-rows input.vTextField { width: 14em; }
+.ck-editor__editable_inline { min-height: 220px; }
