@@ -7,6 +7,8 @@ import { getContacts } from "@/lib/api";
 import { buildMetadata, staticPaths } from "@/lib/seo";
 import type { Locale } from "@/i18n/routing";
 export const revalidate = 60;
+// Читает searchParams (фильтры) — рендерится на каждый запрос; ответы API всё равно кэшируются на 60 с.
+export const dynamic = "force-dynamic";
 type Props = {
     params: Promise<{ locale: Locale }>;
     searchParams: Promise<{ subject?: string }>;
