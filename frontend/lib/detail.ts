@@ -8,9 +8,11 @@ import type {Locale} from '@/i18n/routing';
  * Непереведённая запись приходит со slug: null — тогда остаёмся и показываем заглушку.
  *
  *   redirectToOwnSlug(locale, 'news', slug, item);
+ *   redirectToOwnSlug(locale, '', slug, page); // страница редактора /{slug}
  */
 export function redirectToOwnSlug(locale: Locale, section: string, urlSlug: string, item: {slug: string | null}) {
   if (item.slug && item.slug !== urlSlug) {
-    permanentRedirect(`/${locale}/${section}/${encodeURIComponent(item.slug)}`);
+    const base = section ? `/${locale}/${section}` : `/${locale}`;
+    permanentRedirect(`${base}/${encodeURIComponent(item.slug)}`);
   }
 }

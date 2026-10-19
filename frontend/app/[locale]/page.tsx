@@ -169,13 +169,17 @@ export default async function HomePage({params}: Props) {
           <SectionTitle id="home-news" action={{href: '/news', label: tCommon('allNews')}}>
             {t('newsTitle')}
           </SectionTitle>
-          <ul data-reveal-stagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {home.news.map((item) => (
-              <li key={item.id} className="flex [&>*]:flex-1">
-                <NewsCard item={item} />
-              </li>
-            ))}
-          </ul>
+          {home.news.length > 0 ? (
+            <ul data-reveal-stagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {home.news.map((item) => (
+                <li key={item.id} className="flex [&>*]:flex-1">
+                  <NewsCard item={item} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-muted">{t('noNews')}</p>
+          )}
 
           <SectionTitle id="home-events" className="mt-14 md:mt-20" action={{href: '/events', label: tCommon('allEvents')}}>
             {t('eventsTitle')}

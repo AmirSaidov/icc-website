@@ -25,7 +25,9 @@ npm run dev                  # http://localhost:3000 → /ru
 
 ```
 app/[locale]/          страницы; layout.tsx — html lang, шрифты, Header/Footer
+app/[locale]/[...slug] страницы редактора /{slug} из админки и 404 для остальных адресов
 app/api/feedback/      прокси POST /feedback/ → Django
+app/robots.ts          robots.txt; app/sitemap.xml/ — sitemap бэка с домена сайта
 components/ui/         Button, Card, Badge, SectionTitle, Breadcrumbs, PageHeader,
                        NewsCard, EventCard, DirectionCard, RichText, Gallery, Attachments, Icon
 components/layout/     Header, Footer, LanguageSwitcher, MobileMenu, Alternates

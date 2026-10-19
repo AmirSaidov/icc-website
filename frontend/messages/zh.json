@@ -39,7 +39,8 @@
     "allDirections": "全部业务方向",
     "services": "服务",
     "breadcrumbs": "导航路径",
-    "openInNewTab": "在新标签页中打开"
+    "openInNewTab": "在新标签页中打开",
+    "loadError": "加载失败，请重试。"
   },
   "Cta": {
     "title": "有项目或问题？",
@@ -56,7 +57,8 @@
     "advantagesTitle": "为什么选择我们",
     "newsTitle": "最新新闻",
     "eventsTitle": "近期活动",
-    "noEvents": "暂无近期活动"
+    "noEvents": "暂无近期活动",
+    "noNews": "暂无新闻"
   },
   "About": {
     "leadershipTitle": "领导层",
@@ -126,7 +128,9 @@
     "past": "往期活动",
     "allTypes": "所有类型",
     "untranslated": "此内容暂时没有此语言版本",
-    "related": "相关活动"
+    "related": "相关活动",
+    "loadMore": "加载更多",
+    "loading": "加载中…"
   },
   "Cooperation": {
     "title": "国际合作",
@@ -175,5 +179,8 @@
     "errorTitle": "出现问题",
     "errorText": "加载页面时发生错误。",
     "retry": "重试"
+  },
+  "Pages": {
+    "untranslated": "此内容暂时没有此语言版本"
   }
 }

@@ -1,5 +1,7 @@
 import 'server-only';
-import type {Locale} from '@/i18n/routing';
+import {notFound} from 'next/navigation';
+import {hasLocale} from 'next-intl';
+import {routing, type Locale} from '@/i18n/routing';
 import type {
   Contacts,
   Country,
@@ -52,6 +54,9 @@ function toSearchParams(locale: Locale, query?: Query) {
 }
 
 async function get<T>(path: string, locale: Locale, query?: Query): Promise<T> {
+  // /robots.txt, /wp-login.php и т.п. попадают в [locale]: generateMetadata страницы
+  // выполняется раньше проверки в layout, и без этой строки бэк отвечал 400, а сайт — 500.
+  if (!hasLocale(routing.locales, locale)) notFound();
   const res = await fetch(`${API_URL}${path}?${toSearchParams(locale, query)}`, {
     headers: {Accept: 'application/json'},
     next: {revalidate: REVALIDATE}
@@ -76,8 +81,9 @@ const slugPath = (slug: string) => encodeURIComponent(slug);
 
 export const getHome = (locale: Locale) => get<Home>('/home/', locale);
 
-export const getPage = (locale: Locale, key: 'about' | 'cooperation') =>
-  getOrNull<Page>(`/pages/${key}/`, locale);
+/** Системная страница по key (about, cooperation) или страница редактора по slug на любом языке. */
+export const getPage = (locale: Locale, keyOrSlug: string) =>
+  getOrNull<Page>(`/pages/${slugPath(keyOrSlug)}/`, locale);
 
 export const getDocuments = (locale: Locale) => get<DocumentFile[]>('/documents/', locale);
 
