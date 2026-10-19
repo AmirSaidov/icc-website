@@ -17,13 +17,16 @@ export const revalidate = 60;
 type Props = { params: Promise<{ locale: Locale; slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { locale, slug } = await params;
-    const item = await getNewsItem(locale, decodeURIComponent(slug));
+    const [item, t] = await Promise.all([
+        getNewsItem(locale, decodeURIComponent(slug)),
+        getTranslations({ locale, namespace: "News" }),
+    ]);
     if (!item) return {};
     return buildMetadata({
         locale,
         paths: detailPaths("news", item.seo.alternates),
         seo: item.seo,
-        title: item.title,
+        title: item.title ?? t("untranslated"),
         description: item.excerpt,
         image: item.cover?.large,
         noindex: !item.is_translated,

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { NewsList } from "@/components/ui/NewsList";
+import { NewsEventsTabs } from "@/components/sections/NewsEventsTabs";
 import { getNews, getNewsCategories } from "@/lib/api";
 import { buildMetadata, staticPaths } from "@/lib/seo";
 import type { Locale } from "@/i18n/routing";
@@ -38,7 +39,9 @@ export default async function NewsPage({ params, searchParams }: Props) {
                 title={t("title")}
                 lead={t("description")}
                 breadcrumbs={[{ label: nav("news") }]}
-            />
+            >
+                <NewsEventsTabs current="news" />
+            </PageHeader>
             <div className="container-page py-12">
                 <NewsList
                     key={category}

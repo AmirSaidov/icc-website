@@ -7,7 +7,7 @@ import { getContacts } from "@/lib/api";
 import { buildMetadata, staticPaths } from "@/lib/seo";
 import type { Locale } from "@/i18n/routing";
 export const revalidate = 60;
-// Читает searchParams (фильтры) — рендерится на каждый запрос; ответы API всё равно кэшируются на 60 с.
+// Читает searchParams (?subject= из «Подать заявку» на услуге) — рендерится на каждый запрос; ответы API всё равно кэшируются на 60 с.
 export const dynamic = "force-dynamic";
 type Props = {
     params: Promise<{ locale: Locale }>;
@@ -50,7 +50,9 @@ export default async function ContactsPage({ params, searchParams }: Props) {
             <div className="container-page grid min-w-0 gap-12 py-12 lg:grid-cols-2">
                 <section className="min-w-0">
                     <SectionTitle>{t("organization")}</SectionTitle>
-                    <h2 className="text-lg font-semibold">{data.official_name}</h2>
+                    {data.official_name && (
+                        <p className="text-lg font-semibold">{data.official_name}</p>
+                    )}
                     <div className="mt-5 space-y-3 text-muted">
                         {data.address && <p>{data.address}</p>}
                         <ul>

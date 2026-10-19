@@ -1,8 +1,6 @@
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import type { Locale } from "@/i18n/routing";
 export default async function NotFound() {
-    const locale = (await getLocale()) as Locale;
     const t = await getTranslations("Errors");
     return (
         <div className="container-page py-20 text-center">
@@ -15,7 +13,6 @@ export default async function NotFound() {
             >
                 {t("home")}
             </Link>
-            <span className="sr-only">{locale}</span>
         </div>
     );
 }

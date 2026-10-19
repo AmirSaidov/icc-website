@@ -39,7 +39,8 @@
     "allDirections": "All areas of work",
     "services": "Services",
     "breadcrumbs": "Breadcrumbs",
-    "openInNewTab": "opens in a new tab"
+    "openInNewTab": "opens in a new tab",
+    "loadError": "Could not load. Please try again."
   },
   "Cta": {
     "title": "Have a project or a question?",
@@ -56,7 +57,8 @@
     "advantagesTitle": "Why work with us",
     "newsTitle": "Latest news",
     "eventsTitle": "Upcoming events",
-    "noEvents": "No upcoming events yet"
+    "noEvents": "No upcoming events yet",
+    "noNews": "No news yet"
   },
   "About": {
     "leadershipTitle": "Leadership",
@@ -126,7 +128,9 @@
     "past": "Past events",
     "allTypes": "All types",
     "untranslated": "This content is not available in this language yet",
-    "related": "Related events"
+    "related": "Related events",
+    "loadMore": "Load more",
+    "loading": "Loading..."
   },
   "Cooperation": {
     "title": "International cooperation",
@@ -175,5 +179,8 @@
     "errorTitle": "Something went wrong",
     "errorText": "An error occurred while loading this page.",
     "retry": "Try again"
+  },
+  "Pages": {
+    "untranslated": "This content is not available in this language yet"
   }
 }

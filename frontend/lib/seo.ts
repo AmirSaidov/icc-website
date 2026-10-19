@@ -1,4 +1,5 @@
 import type {Metadata} from 'next';
+import {getTranslations} from 'next-intl/server';
 import {htmlLang, ogLocale, routing, type Locale} from '@/i18n/routing';
 import type {LocaleSlugs, Seo} from './api-types';
 
@@ -14,12 +15,12 @@ export type LocalePaths = Partial<Record<Locale, string>>;
 export const staticPaths = (path: string): LocalePaths =>
   Object.fromEntries(routing.locales.map((l) => [l, path]));
 
-/** Детальная страница: пути из seo.alternates. */
+/** Детальная страница: пути из seo.alternates. section '' — страница редактора /{slug}. */
 export const detailPaths = (section: string, alternates: LocaleSlugs): LocalePaths =>
   Object.fromEntries(
     Object.entries(alternates)
       .filter(([, slug]) => slug)
-      .map(([l, slug]) => [l, `/${section}/${slug}`])
+      .map(([l, slug]) => [l, section ? `/${section}/${slug}` : `/${slug}`])
   );
 
 export const absoluteUrl = (locale: Locale, path: string) => `${SITE_URL}/${locale}${path}`;
@@ -41,8 +42,9 @@ interface BuildMetadataArgs {
 /**
  * Метаданные для generateMetadata: title, description, canonical,
  * hreflang (ru, en, zh-Hans, x-default) и Open Graph.
+ * openGraph страницы целиком заменяет openGraph из layout, поэтому siteName ставим здесь.
  */
-export function buildMetadata({
+export async function buildMetadata({
   locale,
   paths,
   seo,
@@ -51,12 +53,14 @@ export function buildMetadata({
   image,
   absoluteTitle,
   noindex
-}: BuildMetadataArgs): Metadata {
-  const metaTitle = seo?.meta_title || title || '';
+}: BuildMetadataArgs): Promise<Metadata> {
+  const t = await getTranslations({locale, namespace: 'Meta'});
+  const metaTitle = seo?.meta_title || title || t('siteName');
   const metaDescription = seo?.meta_description || description || undefined;
   const ogImage = seo?.og_image || image;
-  const ownPath = paths[locale] ?? '';
-  const canonical = absoluteUrl(locale, ownPath);
+  // Нет пути на своём языке — запись не переведена (страница-заглушка с noindex): canonical не ставим.
+  const ownPath = paths[locale];
+  const canonical = ownPath !== undefined ? absoluteUrl(locale, ownPath) : undefined;
 
   const languages: Record<string, string> = {};
   for (const l of routing.locales) {
@@ -74,6 +78,7 @@ export function buildMetadata({
     alternates: {canonical, languages},
     openGraph: {
       type: 'website',
+      siteName: t('siteName'),
       url: canonical,
       title: metaTitle,
       description: metaDescription,

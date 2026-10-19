@@ -10,7 +10,8 @@ import type {FeedbackPayload} from '@/lib/api-types';
  */
 export async function POST(request: Request) {
   const body = (await request.json().catch(() => null)) as FeedbackPayload | null;
-  if (!body || typeof body !== 'object') {
+  // Массив тоже object, а бэк на нём падает с 500.
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
     return NextResponse.json({non_field_errors: ['Invalid JSON']}, {status: 400});
   }
 

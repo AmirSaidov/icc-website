@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { EventCard } from "@/components/ui/EventCard";
+import { EventList } from "@/components/ui/EventList";
+import { NewsEventsTabs } from "@/components/sections/NewsEventsTabs";
 import { Link } from "@/i18n/navigation";
 import { getEvents, getEventTypes } from "@/lib/api";
 import { buildMetadata, staticPaths } from "@/lib/seo";
@@ -51,7 +52,9 @@ export default async function EventsPage({ params, searchParams }: Props) {
                 title={t("title")}
                 lead={t("description")}
                 breadcrumbs={[{ label: nav("events") }]}
-            />
+            >
+                <NewsEventsTabs current="events" />
+            </PageHeader>
             <div className="container-page py-12">
                 <div className="mb-8 flex flex-wrap gap-3">
                     <Link
@@ -82,17 +85,13 @@ export default async function EventsPage({ params, searchParams }: Props) {
                         </Link>
                     ))}
                 </div>
-                {data.results.length ? (
-                    <ul data-reveal-stagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        {data.results.map((item) => (
-                            <li key={item.id} className="flex [&>*]:flex-1">
-                                <EventCard item={item} />
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p className="text-muted">{t("empty")}</p>
-                )}
+                <EventList
+                    key={`${when}-${type ?? ""}`}
+                    initial={data.results}
+                    when={when}
+                    type={type}
+                    hasMore={Boolean(data.next)}
+                />
             </div>
         </>
     );

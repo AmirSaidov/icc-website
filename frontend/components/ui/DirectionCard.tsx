@@ -2,7 +2,7 @@ import type {DirectionListItem} from '@/lib/api-types';
 import {Card, CardLink} from './Card';
 import {Icon} from './Icon';
 
-/** Карточка направления: Главная (4 шт.) и раздел «Направления» (8 шт.). */
+/** Карточка направления: Главная (первые 4) и раздел «Направления» (все). */
 export function DirectionCard({item, headingLevel = 'h3'}: {item: DirectionListItem; headingLevel?: 'h2' | 'h3'}) {
   const Heading = headingLevel;
   return (
