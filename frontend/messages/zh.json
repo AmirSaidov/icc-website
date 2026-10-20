@@ -55,21 +55,21 @@
     "heroApply": "提交申请",
     "heroServices": "中心服务",
     "uniteEyebrow": "我们的共同点",
-    "uniteTitle": "三种语言里的天山——同一个合作空间",
+    "uniteTitle": "同一座天山——同一个合作空间",
     "unite": {
       "kg": {
-        "word": "Теңир-Тоо",
-        "caption": "吉尔吉斯语",
+        "word": "吉尔吉斯斯坦",
+        "caption": "吉方优势",
         "text": "生产场地、原材料、进入欧亚经济联盟市场"
       },
       "cn": {
-        "word": "天山",
-        "caption": "中文",
+        "word": "中国",
+        "caption": "中方优势",
         "text": "技术、设备、投资与本地化经验"
       },
       "common": {
-        "word": "Тянь-Шань",
-        "caption": "俄语 · 共同的工作语言",
+        "word": "合作中心",
+        "caption": "连接双方",
         "text": "中心连接双方，全程陪伴项目直至投产"
       }
     },
@@ -186,7 +186,8 @@
     "projects": "项目",
     "noProjects": "未找到项目。",
     "formTitle": "洽谈合作",
-    "untranslated": "此内容暂时没有此语言版本"
+    "untranslated": "此内容暂时没有此语言版本",
+    "website": "公司网站"
   },
   "Contacts": {
     "title": "联系方式",

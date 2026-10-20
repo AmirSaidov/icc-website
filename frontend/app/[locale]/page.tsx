@@ -136,7 +136,7 @@ export default async function HomePage({params}: Props) {
               className="border-t border-border px-6 py-10 text-center first:border-t-0 md:border-l md:border-t-0 md:first:border-l-0"
             >
               <p
-                lang={key === 'cn' ? 'zh-Hans' : key === 'kg' ? 'ky' : undefined}
+                lang={key === 'cn' ? 'zh-Hans' : key === 'kg' && locale !== 'zh' ? 'ky' : undefined}
                 className={cn('font-serif text-[32px] font-bold leading-tight md:text-[36px]', key === 'cn' ? 'text-seal' : 'text-navy')}
               >
                 {t(`unite.${key}.word`)}
