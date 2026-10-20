@@ -16,12 +16,12 @@
   "Header": {
     "logoMark": "ICC",
     "logoTitle": "Industrial Cooperation Center",
-    "logoSubtitle": "under the CCI KR",
-    "contactUs": "Contact us",
+    "logoSubtitle": "under the CCI of the Kyrgyz Republic",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "mainNav": "Main navigation",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "apply": "Submit a request"
   },
   "LanguageSwitcher": {
     "label": "Site language"
@@ -43,20 +43,64 @@
     "loadError": "Could not load. Please try again."
   },
   "Cta": {
-    "title": "Have a project or a question?",
-    "text": "Submit a request and a Center specialist will contact you within two working days.",
+    "title": "Welcome to cooperation",
+    "text": "Like a guest in a yurt — we will welcome you, listen and help. Requests in Russian, English and Chinese.",
     "apply": "Submit a request",
     "contact": "Contact us"
   },
   "Home": {
+    "heroEyebrow": "Kyrgyzstan · China",
+    "heroTitle": "Industrial Cooperation Center",
+    "heroText": "We share the same mountains — the Tian Shan. We help companies from Kyrgyzstan and China join forces in business too: find partners and launch joint production.",
+    "heroApply": "Submit a request",
     "heroServices": "Our services",
-    "heroContact": "Contact us",
+    "uniteEyebrow": "What unites us",
+    "uniteTitle": "The Heavenly Mountains in three languages — one shared space",
+    "unite": {
+      "kg": {
+        "word": "Teñir-Too",
+        "caption": "in Kyrgyz",
+        "text": "Production sites, raw materials, access to the EAEU market"
+      },
+      "cn": {
+        "word": "天山",
+        "caption": "in Chinese",
+        "text": "Technology, equipment, investment and localization experience"
+      },
+      "common": {
+        "word": "Tian Shan",
+        "caption": "our common working language",
+        "text": "The Center connects the parties and supports the project through to launch"
+      }
+    },
+    "aboutEyebrow": "About the Center",
+    "aboutTitle": "Not 100 memorandums, but 100 working enterprises",
+    "aboutText": "The Center was established under the Chamber of Commerce and Industry of the Kyrgyz Republic to develop industrial cooperation, find foreign partners and create joint production. Our priority is cooperation with China.",
     "aboutLink": "More about the Center",
-    "cooperationLink": "About cooperation",
+    "regulation": "Regulations of the Center (PDF)",
     "directionsTitle": "Areas of work",
-    "advantagesTitle": "Why work with us",
-    "newsTitle": "Latest news",
-    "eventsTitle": "Upcoming events",
+    "whyTitle": "Why contact the Center",
+    "why": {
+      "official": {
+        "title": "Official status",
+        "text": "The Center operates under the Chamber of Commerce and Industry of the Kyrgyz Republic"
+      },
+      "bridge": {
+        "title": "A bridge between countries",
+        "text": "Direct contacts with businesses in Kyrgyzstan and China"
+      },
+      "languages": {
+        "title": "Three languages",
+        "text": "Russian, English and Chinese — no intermediaries"
+      },
+      "result": {
+        "title": "Through to results",
+        "text": "Support from the first meeting to the launch of production"
+      }
+    },
+    "newsTitle": "News",
+    "eventsTitle": "Events",
+    "calendar": "Calendar",
     "noEvents": "No upcoming events yet",
     "noNews": "No news yet"
   },

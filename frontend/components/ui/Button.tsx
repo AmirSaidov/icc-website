@@ -7,19 +7,19 @@ type Variant = 'primary' | 'secondary' | 'link' | 'inverse' | 'inverse-outline';
 type Size = 'md' | 'lg';
 
 const base =
-  'inline-flex items-center justify-center gap-2 font-medium transition-[color,background-color,border-color,transform] duration-200 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-60';
+  'inline-flex items-center justify-center gap-2 font-semibold transition-[color,background-color,border-color,transform] duration-200 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-60';
 
 const variants: Record<Variant, string> = {
-  primary: 'rounded-md bg-primary text-white hover:bg-primary-hover',
-  secondary: 'rounded-md border border-primary bg-white text-primary hover:bg-primary-light',
+  primary: 'rounded-sm bg-primary text-white shadow-[inset_0_-1px_0_rgb(0_0_0/0.15)] hover:bg-primary-hover',
+  secondary: 'rounded-sm border border-navy/80 bg-surface text-navy hover:border-primary hover:text-primary',
   link: 'text-primary underline-offset-4 hover:underline',
-  inverse: 'rounded-md bg-white text-primary hover:bg-primary-light',
-  'inverse-outline': 'rounded-md border border-white text-white hover:bg-white/10'
+  inverse: 'rounded-sm bg-white text-navy hover:bg-primary-light',
+  'inverse-outline': 'rounded-sm border border-white/70 text-white hover:bg-white/10'
 };
 
 const sizes: Record<Size, string> = {
-  md: 'min-h-10 px-4 text-sm',
-  lg: 'min-h-12 px-6 text-base'
+  md: 'min-h-10 px-4 text-[13px]',
+  lg: 'min-h-12 px-6 text-sm'
 };
 
 export function buttonClass({variant = 'primary', size = 'md', className}: {variant?: Variant; size?: Size; className?: string} = {}) {
