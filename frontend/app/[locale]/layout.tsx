@@ -1,5 +1,5 @@
 import type {Metadata, Viewport} from 'next';
-import {Inter, Noto_Sans_SC} from 'next/font/google';
+import {Inter, Noto_Sans_SC, Noto_Serif, Noto_Serif_SC} from 'next/font/google';
 import {notFound} from 'next/navigation';
 import {hasLocale, NextIntlClientProvider} from 'next-intl';
 import {getTranslations, setRequestLocale} from 'next-intl/server';
@@ -27,6 +27,22 @@ const notoSansSC = Noto_Sans_SC({
   preload: false
 });
 
+// Заголовки. cyrillic-ext — для кыргызских ң, ө, ү («Теңир-Тоо»).
+const notoSerif = Noto_Serif({
+  subsets: ['latin', 'cyrillic', 'cyrillic-ext'],
+  weight: ['500', '600', '700'],
+  variable: '--font-noto-serif',
+  display: 'swap'
+});
+
+// Иероглифы в заголовках и декоре (天山, 合作, 一…八). Как и Noto Sans SC, качается кусками.
+const notoSerifSC = Noto_Serif_SC({
+  weight: ['500', '700'],
+  variable: '--font-noto-serif-sc',
+  display: 'swap',
+  preload: false
+});
+
 // Пустой список: страницы не пререндерятся при сборке, а рендерятся при первом запросе
 // и кэшируются (ISR, revalidate = 60). Так деплой на Vercel не зависит от того, доступен ли бэк.
 // Неизвестный язык отсекает hasLocale ниже.
@@ -46,7 +62,7 @@ export async function generateMetadata({params}: {params: Promise<{locale: strin
 }
 
 export const viewport: Viewport = {
-  themeColor: '#0b3d91'
+  themeColor: '#15284f'
 };
 
 export default async function LocaleLayout({
@@ -62,7 +78,7 @@ export default async function LocaleLayout({
 
   return (
     // suppressHydrationWarning: скрипт ниже добавляет класс js до гидрации
-    <html lang={htmlLang[locale]} className={`${inter.variable} ${notoSansSC.variable}`} suppressHydrationWarning>
+    <html lang={htmlLang[locale]} className={`${inter.variable} ${notoSansSC.variable} ${notoSerif.variable} ${notoSerifSC.variable}`} suppressHydrationWarning>
       <head>
         {/* До первой отрисовки: включает анимации появления (globals.css). Без JS всё видно сразу. */}
         <script dangerouslySetInnerHTML={{__html: "document.documentElement.classList.add('js')"}} />

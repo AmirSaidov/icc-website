@@ -6,7 +6,6 @@ import {useTranslations} from 'next-intl';
 import {Button} from '@/components/ui/Button';
 import {usePathname} from '@/i18n/navigation';
 import {cn} from '@/lib/cn';
-import {LanguageSwitcher} from './LanguageSwitcher';
 import {NavLinks} from './NavLinks';
 
 /** Бургер-меню до 1280 px. */
@@ -40,7 +39,7 @@ export function MobileMenu() {
         aria-expanded={open}
         aria-controls="mobile-menu"
         aria-label={open ? t('closeMenu') : t('openMenu')}
-        className="flex size-10 items-center justify-center rounded-md text-text hover:bg-primary-light"
+        className="flex size-10 items-center justify-center rounded-sm text-navy hover:bg-primary-light"
       >
         {open ? <X aria-hidden className="size-6" /> : <Menu aria-hidden className="size-6" />}
       </button>
@@ -48,7 +47,7 @@ export function MobileMenu() {
       <div
         id="mobile-menu"
         className={cn(
-          'fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto bg-surface transition duration-200 ease-out',
+          'fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto bg-page md:top-[72px] transition duration-200 ease-out',
           open ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-2 opacity-0'
         )}
       >
@@ -56,9 +55,8 @@ export function MobileMenu() {
           <nav aria-label={t('mainNav')}>
             <NavLinks variant="mobile" onNavigate={() => setOpen(false)} />
           </nav>
-          <LanguageSwitcher />
           <Button href="/contacts#form" size="lg" onClick={() => setOpen(false)}>
-            {t('contactUs')}
+            {t('apply')}
           </Button>
         </div>
       </div>

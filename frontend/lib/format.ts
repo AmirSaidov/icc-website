@@ -35,3 +35,11 @@ export function fileSize(bytes: number, locale: Locale) {
   if (bytes < 1024 * 1024) return {value: number.format(bytes / 1024), unit: 'kb' as const};
   return {value: number.format(bytes / 1024 / 1024), unit: 'mb' as const};
 }
+
+/** Для календарного листка: {day: '05', month: 'нояб.'} / {day: '05', month: 'Nov'} / {day: '05', month: '11月'}. */
+export function dayMonth(value: string | Date, locale: Locale) {
+  const date = new Date(value);
+  const part = (options: Intl.DateTimeFormatOptions) =>
+    new Intl.DateTimeFormat(INTL_LOCALE[locale], {...options, timeZone: 'Asia/Bishkek'}).format(date);
+  return {day: part({day: '2-digit'}).replace(/\D/g, ''), month: part({month: 'short'})};
+}

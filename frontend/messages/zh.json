@@ -17,11 +17,11 @@
     "logoMark": "ICC",
     "logoTitle": "工业合作中心",
     "logoSubtitle": "吉尔吉斯共和国工商会",
-    "contactUs": "联系我们",
     "openMenu": "打开菜单",
     "closeMenu": "关闭菜单",
     "mainNav": "主菜单",
-    "skipToContent": "跳至正文"
+    "skipToContent": "跳至正文",
+    "apply": "提交申请"
   },
   "LanguageSwitcher": {
     "label": "网站语言"
@@ -43,20 +43,64 @@
     "loadError": "加载失败，请重试。"
   },
   "Cta": {
-    "title": "有项目或问题？",
-    "text": "提交申请，中心专员将在两个工作日内与您联系。",
+    "title": "欢迎合作",
+    "text": "如同毡房里的客人——我们热情接待、认真倾听、全力相助。可用俄语、英语和中文提交申请。",
     "apply": "提交申请",
     "contact": "联系我们"
   },
   "Home": {
+    "heroEyebrow": "吉尔吉斯斯坦 · 中国",
+    "heroTitle": "工业合作中心",
+    "heroText": "我们共享同一座山脉——天山。我们帮助吉尔吉斯斯坦和中国企业在事业上携手：寻找合作伙伴，创办合资生产。",
+    "heroApply": "提交申请",
     "heroServices": "中心服务",
-    "heroContact": "联系我们",
+    "uniteEyebrow": "我们的共同点",
+    "uniteTitle": "同一座天山——同一个合作空间",
+    "unite": {
+      "kg": {
+        "word": "吉尔吉斯斯坦",
+        "caption": "吉方优势",
+        "text": "生产场地、原材料、进入欧亚经济联盟市场"
+      },
+      "cn": {
+        "word": "中国",
+        "caption": "中方优势",
+        "text": "技术、设备、投资与本地化经验"
+      },
+      "common": {
+        "word": "合作中心",
+        "caption": "连接双方",
+        "text": "中心连接双方，全程陪伴项目直至投产"
+      }
+    },
+    "aboutEyebrow": "关于中心",
+    "aboutTitle": "不是100份备忘录，而是100家运转的企业",
+    "aboutText": "中心隶属于吉尔吉斯共和国工商会，致力于发展工业合作、寻找外国合作伙伴和创办合资生产。重点是与中国的合作。",
     "aboutLink": "进一步了解中心",
-    "cooperationLink": "了解合作",
+    "regulation": "中心章程（PDF）",
     "directionsTitle": "业务方向",
-    "advantagesTitle": "为什么选择我们",
-    "newsTitle": "最新新闻",
-    "eventsTitle": "近期活动",
+    "whyTitle": "为什么选择本中心",
+    "why": {
+      "official": {
+        "title": "官方地位",
+        "text": "中心隶属于吉尔吉斯共和国工商会"
+      },
+      "bridge": {
+        "title": "两国之间的桥梁",
+        "text": "与吉尔吉斯斯坦和中国企业直接联系"
+      },
+      "languages": {
+        "title": "三种语言",
+        "text": "俄语、英语和中文，无需中间人"
+      },
+      "result": {
+        "title": "直至成果",
+        "text": "从首次会面到投产全程陪同"
+      }
+    },
+    "newsTitle": "新闻",
+    "eventsTitle": "活动",
+    "calendar": "活动日历",
     "noEvents": "暂无近期活动",
     "noNews": "暂无新闻"
   },
@@ -142,7 +186,8 @@
     "projects": "项目",
     "noProjects": "未找到项目。",
     "formTitle": "洽谈合作",
-    "untranslated": "此内容暂时没有此语言版本"
+    "untranslated": "此内容暂时没有此语言版本",
+    "website": "公司网站"
   },
   "Contacts": {
     "title": "联系方式",

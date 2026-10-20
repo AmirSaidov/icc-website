@@ -4,7 +4,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { FeedbackForm } from "@/components/ui/FeedbackForm";
-import { Card, CardLink } from "@/components/ui/Card";
+import { CardLink } from "@/components/ui/Card";
+import { PartnerCard } from "@/components/ui/PartnerCard";
 import { FilterSelect } from "@/components/ui/FilterSelect";
 import { CARD_IMAGE_SIZES } from "@/components/ui/NewsCard";
 import { getCountries, getPartners, getProjects, getPage } from "@/lib/api";
@@ -65,44 +66,12 @@ export default async function CooperationPage({ params, searchParams }: Props) {
                 />
                 <section>
                     <SectionTitle>{t("partners")}</SectionTitle>
-                    <ul data-reveal-stagger className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                        {partners.map((p) => {
-                            const logo = p.logo ? (
-                                <span className="relative block h-24 w-full">
-                                    <Image
-                                        src={p.logo.small}
-                                        alt={p.name ?? ""}
-                                        fill
-                                        sizes="(min-width: 1024px) 220px, 40vw"
-                                        className="object-contain"
-                                    />
-                                </span>
-                            ) : (
-                                <span className="text-center font-medium">
-                                    {p.name}
-                                </span>
-                            );
-                            return (
-                                <li
-                                    key={p.id}
-                                    className="flex min-h-32 min-w-0 items-center justify-center rounded-lg border border-border p-4"
-                                >
-                                    {p.website ? (
-                                        <a
-                                            href={p.website}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            aria-label={p.name ?? undefined}
-                                            className="flex w-full justify-center"
-                                        >
-                                            {logo}
-                                        </a>
-                                    ) : (
-                                        logo
-                                    )}
-                                </li>
-                            );
-                        })}
+                    <ul data-reveal-stagger className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                        {partners.map((p) => (
+                            <li key={p.id} className="min-w-0">
+                                <PartnerCard partner={p} />
+                            </li>
+                        ))}
                     </ul>
                     {!partners.length && (
                         <p className="text-muted">{t("noPartners")}</p>
@@ -113,25 +82,27 @@ export default async function CooperationPage({ params, searchParams }: Props) {
                     <ul data-reveal-stagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         {projects.results.map((p) => (
                             <li key={p.id} className="flex [&>*]:flex-1">
-                                <Card>
-                                    <div className="relative aspect-[3/2] bg-primary-light">
-                                        {p.cover && (
-                                            <Image
-                                                src={p.cover.small}
-                                                alt={p.title ?? ""}
-                                                fill
-                                                sizes={CARD_IMAGE_SIZES}
-                                                className="object-cover transition-transform duration-500 group-has-[a.card-link:hover]:scale-105"
-                                            />
-                                        )}
+                                <article className="group relative flex flex-col gap-3">
+                                    <div className="border border-border bg-surface p-1.5 transition-colors duration-300 group-has-[a.card-link:hover]:border-primary/40">
+                                        <div className="relative aspect-[3/2] overflow-hidden bg-primary-light">
+                                            {p.cover && (
+                                                <Image
+                                                    src={p.cover.small}
+                                                    alt={p.title ?? ""}
+                                                    fill
+                                                    sizes={CARD_IMAGE_SIZES}
+                                                    className="object-cover transition-transform duration-500 group-has-[a.card-link:hover]:scale-105"
+                                                />
+                                            )}
+                                        </div>
                                     </div>
-                                    <div className="flex flex-1 flex-col gap-2 p-5">
+                                    <div className="flex flex-col gap-1.5">
                                         {p.country.name && (
-                                            <span className="text-sm text-muted">
+                                            <p className="text-xs font-semibold text-primary">
                                                 {p.country.name}
-                                            </span>
+                                            </p>
                                         )}
-                                        <h3 className="font-semibold">
+                                        <h3 className="text-lg font-bold leading-snug text-navy">
                                             <CardLink
                                                 href={`/cooperation/projects/${p.slug}`}
                                             >
@@ -139,12 +110,12 @@ export default async function CooperationPage({ params, searchParams }: Props) {
                                             </CardLink>
                                         </h3>
                                         {p.excerpt && (
-                                            <p className="text-sm text-muted">
+                                            <p className="line-clamp-3 text-sm text-muted">
                                                 {p.excerpt}
                                             </p>
                                         )}
                                     </div>
-                                </Card>
+                                </article>
                             </li>
                         ))}
                     </ul>

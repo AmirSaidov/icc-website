@@ -6,32 +6,64 @@ import {cn} from '@/lib/cn';
 interface SectionTitleProps {
   children: ReactNode;
   id?: string;
+  /** Надзаголовок капсом: «ЧТО НАС ОБЪЕДИНЯЕТ». */
+  eyebrow?: ReactNode;
   subtitle?: ReactNode;
   /** Ссылка справа: «Все новости →». */
   action?: {href: string; label: string};
   /** h2 по умолчанию; h1 на странице только один — в PageHeader. */
   as?: 'h2' | 'h3';
+  align?: 'start' | 'center';
+  /** На тёмном фоне (секция «Почему…»). */
+  inverse?: boolean;
   className?: string;
 }
 
-export function SectionTitle({children, id, subtitle, action, as: Tag = 'h2', className}: SectionTitleProps) {
+/** Стрелка-ссылка «Все направления →» — и в заголовках секций, и под списками. */
+export function ArrowLink({href, children, className}: {href: string; children: ReactNode; className?: string}) {
   return (
-    <div data-reveal className={cn('mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 md:mb-8', className)}>
-      <div className="min-w-0">
-        <Tag id={id} className="text-2xl font-bold leading-tight text-text md:text-3xl">
+    <Link
+      href={href}
+      className={cn('group inline-flex shrink-0 items-center gap-1 text-[13px] font-semibold text-primary hover:underline', className)}
+    >
+      {children}
+      <ArrowRight aria-hidden className="size-4 transition-transform group-hover:translate-x-1" />
+    </Link>
+  );
+}
+
+export function SectionTitle({
+  children,
+  id,
+  eyebrow,
+  subtitle,
+  action,
+  as: Tag = 'h2',
+  align = 'start',
+  inverse = false,
+  className
+}: SectionTitleProps) {
+  const center = align === 'center';
+  return (
+    <div
+      data-reveal
+      className={cn(
+        'mb-8 flex flex-wrap gap-x-6 gap-y-2 md:mb-10',
+        center ? 'flex-col items-center text-center' : 'items-end justify-between',
+        className
+      )}
+    >
+      <div className={cn('min-w-0', center && 'max-w-3xl')}>
+        {eyebrow && <p className={cn('eyebrow mb-3', inverse ? 'text-sky' : 'text-primary')}>{eyebrow}</p>}
+        <Tag
+          id={id}
+          className={cn('text-[26px] font-bold leading-tight md:text-[32px]', inverse ? 'text-white' : 'text-navy')}
+        >
           {children}
         </Tag>
-        {subtitle && <p className="mt-2 max-w-2xl text-muted">{subtitle}</p>}
+        {subtitle && <p className={cn('mt-3 max-w-2xl', inverse ? 'text-white/75' : 'text-muted', center && 'mx-auto')}>{subtitle}</p>}
       </div>
-      {action && (
-        <Link
-          href={action.href}
-          className="group inline-flex shrink-0 items-center gap-1 text-sm font-medium text-primary hover:underline"
-        >
-          {action.label}
-          <ArrowRight aria-hidden className="size-4 transition-transform group-hover:translate-x-1" />
-        </Link>
-      )}
+      {action && <ArrowLink href={action.href}>{action.label}</ArrowLink>}
     </div>
   );
 }
