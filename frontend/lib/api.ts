@@ -25,6 +25,7 @@ import type {
   PresentationListItem,
   Project,
   ProjectListItem,
+  Sector,
   Service,
   ServiceListItem
 } from './api-types';
@@ -143,21 +144,16 @@ export const getProject = (locale: Locale, slug: string) =>
 
 // ——— Презентации ———
 
-/** Пока бэк не сделал раздел, /presentations/ отвечает 404 — показываем пустой список, а не ошибку. */
-export async function getPresentations(
+export const getPresentations = (
   locale: Locale,
-  {category, page = 1, pageSize = NEWS_PAGE_SIZE}: {category?: PresentationCategory; page?: number; pageSize?: number} = {}
-): Promise<Paginated<PresentationListItem>> {
-  try {
-    return await get<Paginated<PresentationListItem>>('/presentations/', locale, {category, page, page_size: pageSize});
-  } catch (error) {
-    if (error instanceof ApiError && error.status === 404) return {count: 0, results: []};
-    throw error;
-  }
-}
+  {category, sector, page = 1, pageSize = NEWS_PAGE_SIZE}: {category?: PresentationCategory; sector?: string; page?: number; pageSize?: number} = {}
+) => get<Paginated<PresentationListItem>>('/presentations/', locale, {category, sector, page, page_size: pageSize});
 
 export const getPresentation = (locale: Locale, slug: string) =>
   getOrNull<Presentation>(`/presentations/${slugPath(slug)}/`, locale);
+
+/** Сферы для подвкладок «Промышленность и IT». */
+export const getSectors = (locale: Locale) => get<Sector[]>('/sectors/', locale);
 
 // ——— Контакты ———
 

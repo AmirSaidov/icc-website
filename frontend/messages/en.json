@@ -181,11 +181,14 @@
       "projects": "Joint projects",
       "industry": "Industry & IT"
     },
+    "sections": "Sections",
+    "sectors": "Sectors",
+    "allSectors": "All sectors",
     "empty": "No presentations yet",
     "viewerTitle": "Presentation “{title}”",
     "open": "Open full screen",
     "download": "Download",
-    "noPreview": "This format can't be viewed on the site — please download the file.",
+    "pages": "{count, plural, one {# page} other {# pages}}",
     "untranslated": "This content is not available in this language yet"
   },
   "Contacts": {

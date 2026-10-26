@@ -325,6 +325,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/presentations/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Презентации
+         * @description Опубликованные и переведённые на `lang` презентации, свежие сверху (по `published_at`). `category=projects` — презентации опубликованных проектов, `industry` — остальные; другое значение → 400. Неизвестные `sector` / `project` / `country` → пустой список.
+         */
+        get: operations["presentations_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/presentations/{slug}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Презентация
+         * @description `file` — PDF для просмотра на сайте (iframe или pdf.js), `source_file` — PPTX только для скачивания или null. Поиск по slug на любом языке. Без перевода на `lang` — 200, переводимые поля null, `is_translated: false`.
+         */
+        get: operations["presentations_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/": {
         parameters: {
             query?: never;
@@ -357,6 +397,26 @@ export interface paths {
          * @description С партнёрами (только с согласием на публикацию), галереей и документами. Поиск по slug на любом языке.
          */
         get: operations["projects_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sectors/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Сферы презентаций
+         * @description Сферы, переведённые на `lang`, по порядку — для фильтра `sector`.
+         */
+        get: operations["sectors_list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -444,6 +504,8 @@ export interface components {
             /** @description Расширение файла: pdf, docx */
             readonly ext: string;
         };
+        /** @enum {string} */
+        CategoryEnum: "projects" | "industry";
         /**
          * @description * `mission` - Деловая миссия
          *     * `forum` - Форум
@@ -803,6 +865,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["NewsList"][];
         };
+        PaginatedPresentationListList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["PresentationList"][];
+        };
         PaginatedProjectListList: {
             /** @example 123 */
             count: number;
@@ -832,6 +909,93 @@ export interface components {
             label: string | null;
             number: string;
         };
+        /** @description Элемент списка презентаций внутри проекта (без ссылки на сам проект). */
+        PresentationDetail: {
+            readonly id: number;
+            readonly slug: string | null;
+            readonly title: string | null;
+            readonly excerpt: string | null;
+            /** @description Безопасный HTML */
+            readonly content: string | null;
+            /** @description projects — презентация опубликованного проекта, industry — остальные */
+            readonly category: components["schemas"]["CategoryEnum"];
+            readonly cover: components["schemas"]["ImageVersions"] | null;
+            readonly sector: components["schemas"]["Sector"] | null;
+            readonly project: components["schemas"]["ProjectRef"] | null;
+            readonly country: components["schemas"]["CountryShort"] | null;
+            readonly file: components["schemas"]["PresentationFile"];
+            readonly source_file: components["schemas"]["PresentationSource"] | null;
+            /**
+             * Дата публикации
+             * Format: date-time
+             */
+            published_at?: string;
+            readonly is_translated: boolean;
+            readonly seo: components["schemas"]["Seo"];
+        };
+        PresentationFile: {
+            /**
+             * Format: uri
+             * @description Абсолютный URL PDF — для iframe или pdf.js
+             */
+            url: string;
+            /** @description Размер, байт */
+            size: number;
+            /** @description Число страниц; null — не удалось посчитать */
+            pages: number | null;
+            /** @description Всегда pdf */
+            ext: string;
+        };
+        /** @description Элемент списка презентаций внутри проекта (без ссылки на сам проект). */
+        PresentationList: {
+            readonly id: number;
+            readonly slug: string | null;
+            readonly title: string | null;
+            readonly excerpt: string | null;
+            /** @description projects — презентация опубликованного проекта, industry — остальные */
+            readonly category: components["schemas"]["CategoryEnum"];
+            readonly cover: components["schemas"]["ImageVersions"] | null;
+            readonly sector: components["schemas"]["Sector"] | null;
+            readonly project: components["schemas"]["ProjectRef"] | null;
+            readonly country: components["schemas"]["CountryShort"] | null;
+            readonly file: components["schemas"]["PresentationFile"];
+            /**
+             * Дата публикации
+             * Format: date-time
+             */
+            published_at?: string;
+            readonly is_translated: boolean;
+        };
+        /** @description Элемент списка презентаций внутри проекта (без ссылки на сам проект). */
+        PresentationShort: {
+            readonly id: number;
+            readonly slug: string | null;
+            readonly title: string | null;
+            readonly excerpt: string | null;
+            /** @description projects — презентация опубликованного проекта, industry — остальные */
+            readonly category: components["schemas"]["CategoryEnum"];
+            readonly cover: components["schemas"]["ImageVersions"] | null;
+            readonly sector: components["schemas"]["Sector"] | null;
+            readonly country: components["schemas"]["CountryShort"] | null;
+            readonly file: components["schemas"]["PresentationFile"];
+            /**
+             * Дата публикации
+             * Format: date-time
+             */
+            published_at?: string;
+            readonly is_translated: boolean;
+        };
+        PresentationSource: {
+            /**
+             * Format: uri
+             * @description Абсолютный URL PPTX — только для скачивания
+             */
+            url: string;
+            /** @description Размер, байт */
+            size: number;
+            /** @description Всегда pptx */
+            ext: string;
+        };
         ProjectDetail: {
             readonly id: number;
             readonly slug: string | null;
@@ -850,6 +1014,8 @@ export interface components {
             readonly partners: components["schemas"]["Partner"][];
             readonly gallery: components["schemas"]["GalleryImage"][];
             readonly attachments: components["schemas"]["Attachment"][];
+            /** @description Опубликованные и переведённые на `lang` презентации проекта */
+            readonly presentations: components["schemas"]["PresentationShort"][];
             readonly is_translated: boolean;
             readonly seo: components["schemas"]["Seo"];
         };
@@ -866,6 +1032,14 @@ export interface components {
              */
             published_at?: string;
             readonly is_translated: boolean;
+        };
+        ProjectRef: {
+            slug: string;
+            title: string;
+        };
+        Sector: {
+            readonly slug: string | null;
+            readonly name: string | null;
         };
         Seo: {
             /** @description Если пусто — title */
@@ -1503,6 +1677,92 @@ export interface operations {
             };
         };
     };
+    presentations_list: {
+        parameters: {
+            query?: {
+                /** @description Раздел: projects или industry */
+                category?: "industry" | "projects";
+                /** @description Код страны ISO 3166-1 alpha-2, например CN */
+                country?: string;
+                /** @description Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang": ["..."]}`. */
+                lang?: "en" | "ru" | "zh";
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description slug проекта на любом языке */
+                project?: string;
+                /** @description slug сферы на любом языке */
+                sector?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedPresentationListList"];
+                };
+            };
+            /** @description Невалидный параметр: `{"<параметр>": ["ошибка"]}` */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+        };
+    };
+    presentations_retrieve: {
+        parameters: {
+            query?: {
+                /** @description Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang": ["..."]}`. */
+                lang?: "en" | "ru" | "zh";
+            };
+            header?: never;
+            path: {
+                /** @description slug записи на любом из трёх языков (ru, en или zh) */
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PresentationDetail"];
+                };
+            };
+            /** @description Невалидный параметр: `{"<параметр>": ["ошибка"]}` */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
+                };
+            };
+            /** @description Запись не найдена или не опубликована */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DetailError"];
+                };
+            };
+        };
+    };
     projects_list: {
         parameters: {
             query?: {
@@ -1579,6 +1839,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DetailError"];
+                };
+            };
+        };
+    };
+    sectors_list: {
+        parameters: {
+            query?: {
+                /** @description Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang": ["..."]}`. */
+                lang?: "en" | "ru" | "zh";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Sector"][];
+                };
+            };
+            /** @description Невалидный параметр: `{"<параметр>": ["ошибка"]}` */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationError"];
                 };
             };
         };

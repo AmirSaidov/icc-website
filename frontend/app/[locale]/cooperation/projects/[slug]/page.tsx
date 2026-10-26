@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { RichText } from "@/components/ui/RichText";
 import { Gallery } from "@/components/ui/Gallery";
 import { Attachments } from "@/components/ui/Attachments";
+import { PresentationCard } from "@/components/ui/PresentationCard";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { formatDate } from "@/lib/format";
 import { getProject } from "@/lib/api";
@@ -103,6 +104,18 @@ export default async function ProjectDetail({ params }: Props) {
                                                     {p.description}
                                                 </p>
                                             )}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </section>
+                        )}
+                        {item.presentations.length > 0 && (
+                            <section>
+                                <SectionTitle>{nav("presentations")}</SectionTitle>
+                                <ul data-reveal-stagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                                    {item.presentations.map((p) => (
+                                        <li key={p.id} className="flex [&>*]:flex-1">
+                                            <PresentationCard item={p} />
                                         </li>
                                     ))}
                                 </ul>

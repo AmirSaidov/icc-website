@@ -2,13 +2,16 @@ import Image from 'next/image';
 import {Presentation} from 'lucide-react';
 import {useLocale, useTranslations} from 'next-intl';
 import type {Locale} from '@/i18n/routing';
-import type {PresentationListItem} from '@/lib/api-types';
+import type {PresentationShort} from '@/lib/api-types';
 import {fileSize, formatDate} from '@/lib/format';
 import {CardLink} from './Card';
 import {CARD_IMAGE_SIZES} from './NewsCard';
 
-/** Как карточка новости: превью в рамке (нет превью — иконка), «раздел · дата», заголовок, тип и размер файла. */
-export function PresentationCard({item, headingLevel = 'h3'}: {item: PresentationListItem; headingLevel?: 'h2' | 'h3'}) {
+/**
+ * Как карточка новости: превью в рамке (нет превью — иконка), «раздел · дата», заголовок, PDF, страницы и размер.
+ * Подходит и для списка, и для Project.presentations — у них общие поля.
+ */
+export function PresentationCard({item, headingLevel = 'h3'}: {item: PresentationShort; headingLevel?: 'h2' | 'h3'}) {
   const t = useTranslations('Presentations');
   const tFiles = useTranslations('Attachments');
   const locale = useLocale() as Locale;
@@ -34,7 +37,8 @@ export function PresentationCard({item, headingLevel = 'h3'}: {item: Presentatio
       </div>
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         <p className="text-xs font-semibold text-primary">
-          {t(`categories.${item.category}`)}
+          {/* «Промышленность и IT» уточняем сферой: «Информационные технологии · дата». */}
+          {(item.category === 'industry' && item.sector?.name) || t(`categories.${item.category}`)}
           {item.published_at && (
             <>
               {' · '}
@@ -47,7 +51,7 @@ export function PresentationCard({item, headingLevel = 'h3'}: {item: Presentatio
         </Heading>
         {item.excerpt && <p className="line-clamp-3 text-sm text-muted">{item.excerpt}</p>}
         <p className="mt-auto text-xs text-muted">
-          {item.file.ext.toUpperCase()}, {size.value} {tFiles(`units.${size.unit}`)}
+          PDF{item.file.pages ? `, ${t('pages', {count: item.file.pages})}` : ''}, {size.value} {tFiles(`units.${size.unit}`)}
         </p>
       </div>
     </article>

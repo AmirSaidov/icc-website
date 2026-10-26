@@ -48,32 +48,13 @@ export type Partner = S['Partner'];
 export type ProjectListItem = S['ProjectList'];
 export type Project = S['ProjectDetail'];
 
-/**
- * Презентации совместных проектов и промышленности (в основном IT).
- * Эндпоинтов пока нет в схеме бэка — типы описаны вручную, это контракт для Айбека:
- *   GET /presentations/?lang=&category=projects|industry&page=&page_size= → Paginated<PresentationListItem>
- *   GET /presentations/{slug}/?lang= → Presentation
- * Когда появятся в openapi.yaml — `npm run gen:types` и заменить на S['PresentationList'] / S['PresentationDetail'].
- */
-export type PresentationCategory = 'projects' | 'industry';
-export interface PresentationListItem {
-  id: number;
-  slug: string | null;
-  title: string | null;
-  excerpt: string | null;
-  category: PresentationCategory;
-  /** Превью (обычно первый слайд); null — на карточке иконка файла. */
-  cover: ImageVersions | null;
-  /** Сам файл: PDF — смотрится прямо на сайте, PPTX — через просмотрщик Office. */
-  file: Attachment;
-  published_at?: string;
-  is_translated: boolean;
-}
-export interface Presentation extends PresentationListItem {
-  /** Безопасный HTML */
-  content: string | null;
-  seo: Seo;
-}
+/** Презентации совместных проектов и промышленности (в основном IT). Смотрятся как PDF, PPTX — только скачать. */
+export type PresentationCategory = S['CategoryEnum'];
+export type Sector = S['Sector'];
+export type PresentationListItem = S['PresentationList'];
+export type Presentation = S['PresentationDetail'];
+/** Презентация внутри проекта (Project.presentations) — как элемент списка, без project. */
+export type PresentationShort = S['PresentationShort'];
 
 export type Contacts = S['ContactInfo'];
 export type SocialLink = S['Social'];

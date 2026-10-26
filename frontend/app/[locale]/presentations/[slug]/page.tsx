@@ -59,10 +59,10 @@ export default async function PresentationPage({params}: Props) {
         {item.is_translated ? (
           <>
             <p className="text-sm font-semibold text-primary">
-              {t(`categories.${item.category}`)}
+              {(item.category === 'industry' && item.sector?.name) || t(`categories.${item.category}`)}
               {item.published_at && ` · ${formatDate(item.published_at, locale)}`}
             </p>
-            <PresentationViewer file={item.file} title={title} />
+            <PresentationViewer file={item.file} sourceFile={item.source_file} title={title} />
             {item.content && <RichText html={item.content} />}
           </>
         ) : (
