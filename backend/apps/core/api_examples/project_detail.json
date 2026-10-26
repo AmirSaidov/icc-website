@@ -58,6 +58,33 @@
     }
   ],
   "attachments": [],
+  "presentations": [
+    {
+      "id": 1,
+      "slug": "chu-he-zhou-jian-cai-chang-tou-zi-jian-yi-shu",
+      "title": "楚河州建材厂：投资建议书",
+      "cover": {
+        "small": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/dac4678d340cca6ffc9f92447d5eb492.webp",
+        "large": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/ca69a5ba9adcd1d6008a33343362da53.webp"
+      },
+      "sector": {
+        "slug": "gong-ye",
+        "name": "工业"
+      },
+      "country": {
+        "code": "CN",
+        "name": "中国"
+      },
+      "file": {
+        "url": "http://localhost:8000/media/presentations/2026/10/zavod-stroimaterialov-v-chuiskoi-oblasti-investitsionnoe-predlozhenie.pdf",
+        "size": 162972,
+        "pages": 4,
+        "ext": "pdf"
+      },
+      "published_at": "2026-10-21T10:00:00+06:00",
+      "is_translated": true
+    }
+  ],
   "is_translated": true,
   "seo": {
     "meta_title": "楚河州建材合资生产",

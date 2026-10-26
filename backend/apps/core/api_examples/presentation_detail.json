@@ -1,0 +1,45 @@
+{
+  "id": 2,
+  "slug": "lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia",
+  "title": "Локализация сборки тракторов: этапы и требования",
+  "description": "<p>Как устроена сборка из машинокомплектов и что требуется от площадки.</p>",
+  "cover": {
+    "small": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/d02bc5e477d093f7f59dc05dcea99c02.webp",
+    "large": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/923c64d9a4ad8d43857f40f211b96282.webp"
+  },
+  "sector": {
+    "slug": "promyshlennost",
+    "name": "Промышленность"
+  },
+  "project": {
+    "slug": "lokalizatsiia-sborki-selkhoztekhniki",
+    "title": "Локализация сборки сельхозтехники"
+  },
+  "country": {
+    "code": "CN",
+    "name": "Китай"
+  },
+  "file": {
+    "url": "http://localhost:8000/media/presentations/2026/10/lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia.pdf",
+    "size": 124425,
+    "pages": 3,
+    "ext": "pdf"
+  },
+  "source_file": {
+    "url": "http://localhost:8000/media/presentations/2026/10/lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia.pptx",
+    "size": 322,
+    "ext": "pptx"
+  },
+  "published_at": "2026-10-11T10:00:00+06:00",
+  "is_translated": true,
+  "seo": {
+    "meta_title": "Локализация сборки тракторов: этапы и требования",
+    "meta_description": "Как устроена сборка из машинокомплектов и что требуется от площадки.",
+    "og_image": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/923c64d9a4ad8d43857f40f211b96282.webp",
+    "alternates": {
+      "ru": "lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia",
+      "en": "localizing-tractor-assembly-stages-and-requirements",
+      "zh": "tuo-la-ji-zu-zhuang-ben-di-hua-jie-duan-yu-yao-qiu"
+    }
+  }
+}

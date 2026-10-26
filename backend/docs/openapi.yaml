@@ -381,19 +381,19 @@ paths:
                     next: http://api.example.org/accounts/?page=4
                     previous: http://api.example.org/accounts/?page=2
                     results:
-                    - id: 21
-                      slug: vebinar-po-eksportnym-protseduram
-                      title: Вебинар по экспортным процедурам
+                    - id: 22
+                      slug: biznes-missiia-v-guanchzhou
+                      title: Бизнес-миссия в Гуанчжоу
                       type:
-                        code: other
-                        label: Другое
-                      start_at: '2026-10-24T10:00:00+06:00'
-                      end_at: null
-                      location: Онлайн
-                      excerpt: Таможня, сертификация, логистика.
+                        code: mission
+                        label: Деловая миссия
+                      start_at: '2026-11-06T10:00:00+06:00'
+                      end_at: '2026-11-11T10:00:00+06:00'
+                      location: Гуанчжоу
+                      excerpt: Участие в выставке и деловые встречи.
                       cover:
-                        small: http://localhost:8000/media/CACHE/images/events/2026/10/event-5/23e55ed6f8c76970f620e022bc0f643f.webp
-                        large: http://localhost:8000/media/CACHE/images/events/2026/10/event-5/2d483ecbf1534a26d8dad05f0bf51c03.webp
+                        small: http://localhost:8000/media/CACHE/images/events/2026/10/event-6/64e85e9c458c6776c919be396e7d3a96.webp
+                        large: http://localhost:8000/media/CACHE/images/events/2026/10/event-6/878abf26973605a2e9e086cd13e5d03b.webp
                       is_upcoming: true
                       is_translated: true
                   summary: Пример (seed-данные)
@@ -659,21 +659,6 @@ paths:
                       published_at: '2026-10-11T10:00:00+06:00'
                       is_translated: true
                     events:
-                    - id: 21
-                      slug: vebinar-po-eksportnym-protseduram
-                      title: Вебинар по экспортным процедурам
-                      type:
-                        code: other
-                        label: Другое
-                      start_at: '2026-10-24T10:00:00+06:00'
-                      end_at: null
-                      location: Онлайн
-                      excerpt: Таможня, сертификация, логистика.
-                      cover:
-                        small: http://localhost:8000/media/CACHE/images/events/2026/10/event-5/23e55ed6f8c76970f620e022bc0f643f.webp
-                        large: http://localhost:8000/media/CACHE/images/events/2026/10/event-5/2d483ecbf1534a26d8dad05f0bf51c03.webp
-                      is_upcoming: true
-                      is_translated: true
                     - id: 22
                       slug: biznes-missiia-v-guanchzhou
                       title: Бизнес-миссия в Гуанчжоу
@@ -687,6 +672,21 @@ paths:
                       cover:
                         small: http://localhost:8000/media/CACHE/images/events/2026/10/event-6/64e85e9c458c6776c919be396e7d3a96.webp
                         large: http://localhost:8000/media/CACHE/images/events/2026/10/event-6/878abf26973605a2e9e086cd13e5d03b.webp
+                      is_upcoming: true
+                      is_translated: true
+                    - id: 23
+                      slug: investitsionnyi-forum-v-bishkeke
+                      title: Инвестиционный форум в Бишкеке
+                      type:
+                        code: forum
+                        label: Форум
+                      start_at: '2026-12-01T10:00:00+06:00'
+                      end_at: '2026-12-02T10:00:00+06:00'
+                      location: Бишкек
+                      excerpt: Презентация инвестиционных проектов.
+                      cover:
+                        small: http://localhost:8000/media/CACHE/images/events/2026/10/event-7/72635c5b81bbb81dbccce8d54500b6b1.webp
+                        large: http://localhost:8000/media/CACHE/images/events/2026/10/event-7/a775d6f995813deb882d107cf0688c68.webp
                       is_upcoming: true
                       is_translated: true
                     seo:
@@ -1081,6 +1081,189 @@ paths:
               schema:
                 $ref: '#/components/schemas/ValidationError'
           description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+  /api/v1/presentations/:
+    get:
+      operationId: presentations_list
+      description: Опубликованные и переведённые на `lang` презентации, свежие сверху
+        (по `published_at`). Неизвестные `sector` / `project` / `country` → пустой
+        список.
+      summary: Презентации
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: Код страны ISO 3166-1 alpha-2, например CN
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: project
+        schema:
+          type: string
+        description: slug проекта на любом языке
+      - in: query
+        name: sector
+        schema:
+          type: string
+        description: slug сферы на любом языке
+      tags:
+      - Презентации
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPresentationListList'
+              examples:
+                Пример(seed-данные):
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - id: 1
+                      slug: zavod-stroimaterialov-v-chuiskoi-oblasti-investitsionnoe-predlozhenie
+                      title: 'Завод стройматериалов в Чуйской области: инвестиционное
+                        предложение'
+                      cover:
+                        small: http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/dac4678d340cca6ffc9f92447d5eb492.webp
+                        large: http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/ca69a5ba9adcd1d6008a33343362da53.webp
+                      sector:
+                        slug: promyshlennost
+                        name: Промышленность
+                      project:
+                        slug: sovmestnoe-proizvodstvo-stroimaterialov-v-chuiskoi-oblasti
+                        title: Совместное производство стройматериалов в Чуйской области
+                      country:
+                        code: CN
+                        name: Китай
+                      file:
+                        url: http://localhost:8000/media/presentations/2026/10/zavod-stroimaterialov-v-chuiskoi-oblasti-investitsionnoe-predlozhenie.pdf
+                        size: 162972
+                        pages: 4
+                        ext: pdf
+                      published_at: '2026-10-21T10:00:00+06:00'
+                      is_translated: true
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+  /api/v1/presentations/{slug}/:
+    get:
+      operationId: presentations_retrieve
+      description: '`file` — PDF для просмотра на сайте (iframe или pdf.js), `source_file`
+        — PPTX для скачивания или null. Поиск по slug на любом языке. Без перевода
+        на `lang` — 200, переводимые поля null, `is_translated: false`.'
+      summary: Презентация
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      - in: path
+        name: slug
+        schema:
+          type: string
+        description: slug записи на любом из трёх языков (ru, en или zh)
+        required: true
+      tags:
+      - Презентации
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresentationDetail'
+              examples:
+                Пример(seed-данные):
+                  value:
+                    id: 2
+                    slug: lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia
+                    title: 'Локализация сборки тракторов: этапы и требования'
+                    description: <p>Как устроена сборка из машинокомплектов и что
+                      требуется от площадки.</p>
+                    cover:
+                      small: http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/d02bc5e477d093f7f59dc05dcea99c02.webp
+                      large: http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/923c64d9a4ad8d43857f40f211b96282.webp
+                    sector:
+                      slug: promyshlennost
+                      name: Промышленность
+                    project:
+                      slug: lokalizatsiia-sborki-selkhoztekhniki
+                      title: Локализация сборки сельхозтехники
+                    country:
+                      code: CN
+                      name: Китай
+                    file:
+                      url: http://localhost:8000/media/presentations/2026/10/lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia.pdf
+                      size: 124425
+                      pages: 3
+                      ext: pdf
+                    source_file:
+                      url: http://localhost:8000/media/presentations/2026/10/lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia.pptx
+                      size: 322
+                      ext: pptx
+                    published_at: '2026-10-11T10:00:00+06:00'
+                    is_translated: true
+                    seo:
+                      meta_title: 'Локализация сборки тракторов: этапы и требования'
+                      meta_description: Как устроена сборка из машинокомплектов и
+                        что требуется от площадки.
+                      og_image: http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/923c64d9a4ad8d43857f40f211b96282.webp
+                      alternates:
+                        ru: lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia
+                        en: localizing-tractor-assembly-stages-and-requirements
+                        zh: tuo-la-ji-zu-zhuang-ben-di-hua-jie-duan-yu-yao-qiu
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailError'
+          description: Запись не найдена или не опубликована
   /api/v1/projects/:
     get:
       operationId: projects_list
@@ -1233,6 +1416,26 @@ paths:
                       large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_UjcmiyV/82c90ed5354eee7d179243f03df98ad8.webp
                       caption: 洽谈
                     attachments: []
+                    presentations:
+                    - id: 1
+                      slug: chu-he-zhou-jian-cai-chang-tou-zi-jian-yi-shu
+                      title: 楚河州建材厂：投资建议书
+                      cover:
+                        small: http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/dac4678d340cca6ffc9f92447d5eb492.webp
+                        large: http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/ca69a5ba9adcd1d6008a33343362da53.webp
+                      sector:
+                        slug: gong-ye
+                        name: 工业
+                      country:
+                        code: CN
+                        name: 中国
+                      file:
+                        url: http://localhost:8000/media/presentations/2026/10/zavod-stroimaterialov-v-chuiskoi-oblasti-investitsionnoe-predlozhenie.pdf
+                        size: 162972
+                        pages: 4
+                        ext: pdf
+                      published_at: '2026-10-21T10:00:00+06:00'
+                      is_translated: true
                     is_translated: true
                     seo:
                       meta_title: 楚河州建材合资生产
@@ -1256,6 +1459,48 @@ paths:
               schema:
                 $ref: '#/components/schemas/DetailError'
           description: Запись не найдена или не опубликована
+  /api/v1/sectors/:
+    get:
+      operationId: sectors_list
+      description: Сферы, переведённые на `lang`, по порядку — для фильтра `sector`.
+      summary: Сферы презентаций
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      tags:
+      - Презентации
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sector'
+              examples:
+                Пример(seed-данные):
+                  value:
+                  - slug: promyshlennost
+                    name: Промышленность
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
   /api/v1/services/:
     get:
       operationId: services_list
@@ -2331,6 +2576,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/NewsList'
+    PaginatedPresentationListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PresentationList'
     PaginatedProjectListList:
       type: object
       required:
@@ -2404,6 +2672,224 @@ components:
       required:
       - label
       - number
+    PresentationDetail:
+      type: object
+      description: Элемент списка презентаций внутри проекта (без ссылки на сам проект).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        description:
+          type: string
+          nullable: true
+          description: Безопасный HTML
+          readOnly: true
+        cover:
+          allOf:
+          - $ref: '#/components/schemas/ImageVersions'
+          nullable: true
+          readOnly: true
+        sector:
+          allOf:
+          - $ref: '#/components/schemas/Sector'
+          nullable: true
+          readOnly: true
+        project:
+          allOf:
+          - $ref: '#/components/schemas/ProjectRef'
+          nullable: true
+          readOnly: true
+        country:
+          allOf:
+          - $ref: '#/components/schemas/CountryShort'
+          readOnly: true
+          nullable: true
+        file:
+          allOf:
+          - $ref: '#/components/schemas/PresentationFile'
+          readOnly: true
+        source_file:
+          allOf:
+          - $ref: '#/components/schemas/PresentationSource'
+          nullable: true
+          readOnly: true
+        published_at:
+          type: string
+          format: date-time
+          title: Дата публикации
+        is_translated:
+          type: boolean
+          readOnly: true
+        seo:
+          allOf:
+          - $ref: '#/components/schemas/Seo'
+          readOnly: true
+      required:
+      - country
+      - cover
+      - description
+      - file
+      - id
+      - is_translated
+      - project
+      - sector
+      - seo
+      - slug
+      - source_file
+      - title
+    PresentationFile:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+          description: Абсолютный URL PDF — для iframe или pdf.js
+        size:
+          type: integer
+          description: Размер, байт
+        pages:
+          type: integer
+          nullable: true
+          description: Число страниц; null — не удалось посчитать
+        ext:
+          type: string
+          description: Всегда pdf
+      required:
+      - ext
+      - pages
+      - size
+      - url
+    PresentationList:
+      type: object
+      description: Элемент списка презентаций внутри проекта (без ссылки на сам проект).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        cover:
+          allOf:
+          - $ref: '#/components/schemas/ImageVersions'
+          nullable: true
+          readOnly: true
+        sector:
+          allOf:
+          - $ref: '#/components/schemas/Sector'
+          nullable: true
+          readOnly: true
+        project:
+          allOf:
+          - $ref: '#/components/schemas/ProjectRef'
+          nullable: true
+          readOnly: true
+        country:
+          allOf:
+          - $ref: '#/components/schemas/CountryShort'
+          readOnly: true
+          nullable: true
+        file:
+          allOf:
+          - $ref: '#/components/schemas/PresentationFile'
+          readOnly: true
+        published_at:
+          type: string
+          format: date-time
+          title: Дата публикации
+        is_translated:
+          type: boolean
+          readOnly: true
+      required:
+      - country
+      - cover
+      - file
+      - id
+      - is_translated
+      - project
+      - sector
+      - slug
+      - title
+    PresentationShort:
+      type: object
+      description: Элемент списка презентаций внутри проекта (без ссылки на сам проект).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        cover:
+          allOf:
+          - $ref: '#/components/schemas/ImageVersions'
+          nullable: true
+          readOnly: true
+        sector:
+          allOf:
+          - $ref: '#/components/schemas/Sector'
+          nullable: true
+          readOnly: true
+        country:
+          allOf:
+          - $ref: '#/components/schemas/CountryShort'
+          readOnly: true
+          nullable: true
+        file:
+          allOf:
+          - $ref: '#/components/schemas/PresentationFile'
+          readOnly: true
+        published_at:
+          type: string
+          format: date-time
+          title: Дата публикации
+        is_translated:
+          type: boolean
+          readOnly: true
+      required:
+      - country
+      - cover
+      - file
+      - id
+      - is_translated
+      - sector
+      - slug
+      - title
+    PresentationSource:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+          description: Абсолютный URL PPTX — только для скачивания
+        size:
+          type: integer
+          description: Размер, байт
+        ext:
+          type: string
+          description: Всегда pptx
+      required:
+      - ext
+      - size
+      - url
     ProjectDetail:
       type: object
       properties:
@@ -2456,6 +2942,12 @@ components:
           items:
             $ref: '#/components/schemas/Attachment'
           readOnly: true
+        presentations:
+          type: array
+          items:
+            $ref: '#/components/schemas/PresentationShort'
+          readOnly: true
+          description: Опубликованные и переведённые на `lang` презентации проекта
         is_translated:
           type: boolean
           readOnly: true
@@ -2473,6 +2965,7 @@ components:
       - id
       - is_translated
       - partners
+      - presentations
       - seo
       - slug
       - title
@@ -2518,6 +3011,30 @@ components:
       - is_translated
       - slug
       - title
+    ProjectRef:
+      type: object
+      properties:
+        slug:
+          type: string
+        title:
+          type: string
+      required:
+      - slug
+      - title
+    Sector:
+      type: object
+      properties:
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+        name:
+          type: string
+          nullable: true
+          readOnly: true
+      required:
+      - name
+      - slug
     Seo:
       type: object
       properties:

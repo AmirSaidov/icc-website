@@ -13,13 +13,14 @@
 
 ## Важно для интеграции
 
-Сверено с `frontend/` в `main` (коммит `06caa08`). Чтобы данные с бэка пришли правильно:
+Сверено с `frontend/` в `main` (коммит `7d8f7dd`). Язык (`?lang=`) и поля формы (`full_name`, `lang`) фронт уже передаёт так, как ждёт бэк. Осталось:
 
 | Где во фронте | Сейчас | Что ждёт бэк |
 |---|---|---|
-| `lib/api.ts` — язык запроса | заголовок `Accept-Language` (`zh-hans`) | параметр **`?lang=ru\|en\|zh`**. Заголовок бэк не читает: без `lang` всё придёт на русском |
-| `lib/api-types.ts` — `FeedbackPayload` | поля `name`, `locale` | поля **`full_name`**, **`lang`** (`ru` / `en` / `zh`). Иначе каждый `POST /feedback/` получит `400` |
 | `app/api/feedback/route.ts` | прокси через Next.js с `X-Forwarded-For` | так и задумано; от схемы прокси зависит `NUM_PROXIES` на сервере — см. [DEPLOY.md](DEPLOY.md), раздел 6 |
+| `lib/api-types.ts` — `PresentationListItem`, `Presentation` (описаны вручную) | `category: "projects" \| "industry"`, фильтр `?category=` | сферы — справочник **`/sectors/`** (`{slug, name}`), фильтр **`?sector=<slug>`**; связь с проектом — поле **`project`** (`{slug, title}` или `null`) и фильтр **`?project=<slug>`**. Вкладка «Совместные проекты» — см. раздел «Презентации» |
+| то же | `excerpt` и `content` | одно поле **`description`** (безопасный HTML), только в детальном ответе |
+| то же | `file: Attachment` (`title`, `url`, `size`, `ext`), PPTX — через Office Online | `file` — всегда PDF: `{url, size, pages, ext}`; PPTX — отдельное поле **`source_file`** `{url, size, ext}` или `null`, только для скачивания. Типы теперь есть в `openapi.yaml` — `npm run gen:types` |
 
 ## Как запустить бэкенд локально
 
@@ -147,10 +148,11 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 | Новость | `/{lang}/news/{slug}` | `/news/{slug}/` |
 | Мероприятие | `/{lang}/events/{slug}` | `/events/{slug}/` |
 | Проект | `/{lang}/cooperation/projects/{slug}` | `/projects/{slug}/` |
+| Презентация | `/{lang}/presentations/{slug}` (согласовать с фронтом) | `/presentations/{slug}/` |
 
 ### Пагинация
 
-Пагинация есть только у `/news/`, `/events/` и `/projects/`. Параметры: `page` (с 1) и `page_size` (по умолчанию 9, максимум 50; если передать больше, вернётся 50).
+Пагинация есть только у `/news/`, `/events/`, `/projects/` и `/presentations/`. Параметры: `page` (с 1) и `page_size` (по умолчанию 9, максимум 50; если передать больше, вернётся 50).
 
 ```json
 {
@@ -162,7 +164,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 ```
 `next` и `previous` — готовые URL, в которых уже сохранены `lang` и фильтры. Если запросить номер страницы больше последней, придёт `404`.
 
-Остальные списки (направления, услуги, категории, страны, партнёры, страницы меню, документы, типы мероприятий) приходят простым массивом, без пагинации.
+Остальные списки (направления, услуги, категории, страны, партнёры, страницы меню, документы, типы мероприятий, сферы презентаций) приходят простым массивом, без пагинации.
 
 ### Фильтры
 
@@ -171,7 +173,9 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 | `/news/` | `category` | slug категории на любом языке (из `/news-categories/`). Неизвестный slug даёт пустой список |
 | `/events/` | `when` | `upcoming` — предстоящие, ближайшие сверху; `past` — прошедшие, свежие сверху; без параметра — все, по убыванию даты. Другое значение даёт `400` |
 | `/events/` | `type` | `mission`, `forum`, `exhibition`, `b2b`, `other` (подписи на языке запроса — из `/event-types/`). Другое значение даёт `400` |
-| `/partners/`, `/projects/` | `country` | ISO-код страны (`CN`, `KZ`; регистр не важен) |
+| `/partners/`, `/projects/`, `/presentations/` | `country` | ISO-код страны (`CN`, `KZ`; регистр не важен) |
+| `/presentations/` | `sector` | slug сферы на любом языке (из `/sectors/`). Неизвестный slug даёт пустой список |
+| `/presentations/` | `project` | slug проекта на любом языке. Неизвестный или неопубликованный проект даёт пустой список |
 
 Мероприятие считается предстоящим, если оно ещё не закончилось. Проверяется `end_at`, а если он пуст — `start_at`. Поле `is_upcoming` уже посчитано на бэке.
 
@@ -201,7 +205,9 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 | `GET /event-types/` | Типы мероприятий с подписями |
 | `GET /countries/` | Активные страны |
 | `GET /partners/` | Партнёры с согласием на публикацию |
-| `GET /projects/`, `/projects/{slug}/` | Международные проекты; в детальном ответе есть `partners`, `gallery` и `attachments` |
+| `GET /projects/`, `/projects/{slug}/` | Международные проекты; в детальном ответе есть `partners`, `gallery`, `attachments` и `presentations` |
+| `GET /sectors/` | Сферы презентаций: `slug`, `name` |
+| `GET /presentations/`, `/presentations/{slug}/` | Презентации (PDF для просмотра + необязательный PPTX для скачивания) — см. раздел «Презентации» |
 | `GET /contacts/` | Контакты. `phones` — `[{"label", "number"}]`, подпись на языке запроса (может быть `null`); `socials` — `[{"type", "url"}]`, `type` — ключ иконки (не переводится) |
 | `GET /settings/` | `analytics_id`, `default_og_image` |
 | `GET /documents/` | Документы для раздела «Документы» |
@@ -255,11 +261,49 @@ const response = await fetch(`${API}/feedback/`, {
 
 В JSON поле `website` отправляется всегда, обычно как пустая строка.
 
+## Презентации
+
+Презентации проектов и сфер (промышленность, IT, …). На сайте они **смотрятся как PDF**, а PPTX (если есть) — только для скачивания.
+
+**Список** `GET /presentations/?lang=&sector=&project=&country=&page=&page_size=` — опубликованные и переведённые на `lang`, свежие сверху (по `published_at`), с пагинацией как у новостей. Элемент: `id`, `slug`, `title`, `cover` (`{small, large}` или `null` — тогда на карточке иконка файла), `sector` (`{slug, name}`), `project` (`{slug, title}` или `null`), `country` (`{code, name}` или `null`), `file`, `published_at`, `is_translated`.
+
+**Детальный ответ** `GET /presentations/{slug}/` — то же плюс `description` (безопасный HTML), `source_file` и `seo`:
+
+```json
+"file":        {"url": "https://api.../media/presentations/2026/10/deck.pdf", "size": 124425, "pages": 12, "ext": "pdf"},
+"source_file": {"url": "https://api.../media/presentations/2026/10/deck.pptx", "size": 5242880, "ext": "pptx"}
+```
+
+- `file` — всегда PDF, есть у каждой презентации. `pages` — число страниц (может быть `null`, если файл не удалось разобрать).
+- `source_file` — исходник PPTX или `null`. Отдаётся с `Content-Disposition: attachment`: браузер скачает его, а не откроет.
+- `project` — `null`, если проекта нет, он не опубликован или не переведён на `lang`. `sector` — `null`, если сфера не переведена на `lang`.
+- Правила языка, `is_translated`, отложенной публикации и поиска по slug на любом языке — как у новостей.
+
+**Презентации проекта** — в детальном ответе `/projects/{slug}/` поле `presentations`: опубликованные и переведённые на `lang`, в порядке, заданном в админке (поле «порядок»). Поля — как у элемента списка, без `project`.
+
+**Вкладки на странице `/presentations`.** Сферы берите из `/sectors/`: их добавляют сотрудники, список не фиксирован. «Совместные проекты» — презентации с `project != null`; отдельного фильтра для этого пока нет (вопрос к руководителю — см. SPEC.md, раздел 9).
+
+### Как показать PDF на странице
+
+Самый простой способ — `<iframe>` со ссылкой `file.url`: браузер покажет PDF встроенным просмотрщиком.
+
+```tsx
+<iframe src={`${item.file.url}#view=FitH`} title={item.title ?? ''} className="aspect-[16/10] w-full" />
+<a href={item.file.url} target="_blank" rel="noopener noreferrer">Открыть на весь экран</a>
+{item.source_file && <a href={item.source_file.url} download>Скачать PPTX</a>}
+```
+
+- Встраивать PDF во фрейм можно **только со страниц `FRONTEND_URL`** (и самого бэка): у файлов презентаций бэк отдаёт `Content-Security-Policy: frame-ancestors 'self' <FRONTEND_URL>` вместо `X-Frame-Options: DENY`. С другого домена (например, превью-деплоя Vercel) фрейм останется пустым — открывайте по ссылке.
+- PDF отдаётся с `Content-Disposition: inline`: по ссылке он открывается, а не скачивается.
+- На телефонах встроенный просмотр PDF во фрейме часто не работает — оставляйте рядом ссылку «Открыть».
+- Вариант с **pdf.js** (свой просмотрщик, листание по страницам, одинаково на всех устройствах): pdf.js загружает файл через `fetch`, поэтому у файлов презентаций включён CORS для origins из `CORS_ALLOWED_ORIGINS`. `file.pages` можно показать ещё до загрузки файла.
+- Office Online (`view.officeapps.live.com`) не нужен: на сайте показывается PDF.
+
 ## sitemap.xml и robots.txt
 
 Бэк отдаёт `/sitemap.xml` и `/robots.txt` (вне `/api/v1/`):
 
-- в sitemap — все опубликованные материалы, каждый только на тех языках, где он переведён; URL ведут на фронт (`FRONTEND_URL`) по схеме из раздела «Схема URL на фронте»; у каждого URL есть `xhtml:link hreflang` на все переводы и `x-default` на русскую версию;
+- в sitemap — все опубликованные материалы (включая презентации), каждый только на тех языках, где он переведён; URL ведут на фронт (`FRONTEND_URL`) по схеме из раздела «Схема URL на фронте»; у каждого URL есть `xhtml:link hreflang` на все переводы и `x-default` на русскую версию;
 - в robots — `Disallow: /api/` и строка `Sitemap:`. Путь админки в robots не пишется (чтобы не раскрывать её адрес): админка закрыта от индексации заголовком `X-Robots-Tag: noindex, nofollow`. Если фронт будет генерировать свой robots.txt — путь админки туда тоже не добавлять.
 
 Отдавать ли их с домена фронта (проксировать с бэка или генерировать в Next.js) — открытый вопрос (SPEC.md, раздел 9).
@@ -362,25 +406,6 @@ const response = await fetch(`${API}/feedback/`, {
   ],
   "events": [
     {
-      "id": 21,
-      "slug": "vebinar-po-eksportnym-protseduram",
-      "title": "Вебинар по экспортным процедурам",
-      "type": {
-        "code": "other",
-        "label": "Другое"
-      },
-      "start_at": "2026-10-24T10:00:00+06:00",
-      "end_at": null,
-      "location": "Онлайн",
-      "excerpt": "Таможня, сертификация, логистика.",
-      "cover": {
-        "small": "http://localhost:8000/media/CACHE/images/events/2026/10/event-5/23e55ed6f8c76970f620e022bc0f643f.webp",
-        "large": "http://localhost:8000/media/CACHE/images/events/2026/10/event-5/2d483ecbf1534a26d8dad05f0bf51c03.webp"
-      },
-      "is_upcoming": true,
-      "is_translated": true
-    },
-    {
       "id": 22,
       "slug": "biznes-missiia-v-guanchzhou",
       "title": "Бизнес-миссия в Гуанчжоу",
@@ -395,6 +420,25 @@ const response = await fetch(`${API}/feedback/`, {
       "cover": {
         "small": "http://localhost:8000/media/CACHE/images/events/2026/10/event-6/64e85e9c458c6776c919be396e7d3a96.webp",
         "large": "http://localhost:8000/media/CACHE/images/events/2026/10/event-6/878abf26973605a2e9e086cd13e5d03b.webp"
+      },
+      "is_upcoming": true,
+      "is_translated": true
+    },
+    {
+      "id": 23,
+      "slug": "investitsionnyi-forum-v-bishkeke",
+      "title": "Инвестиционный форум в Бишкеке",
+      "type": {
+        "code": "forum",
+        "label": "Форум"
+      },
+      "start_at": "2026-12-01T10:00:00+06:00",
+      "end_at": "2026-12-02T10:00:00+06:00",
+      "location": "Бишкек",
+      "excerpt": "Презентация инвестиционных проектов.",
+      "cover": {
+        "small": "http://localhost:8000/media/CACHE/images/events/2026/10/event-7/72635c5b81bbb81dbccce8d54500b6b1.webp",
+        "large": "http://localhost:8000/media/CACHE/images/events/2026/10/event-7/a775d6f995813deb882d107cf0688c68.webp"
       },
       "is_upcoming": true,
       "is_translated": true
@@ -727,29 +771,10 @@ const response = await fetch(`${API}/feedback/`, {
 
 ```json
 {
-  "count": 4,
+  "count": 3,
   "next": "http://localhost:8000/api/v1/events/?lang=ru&page=2&page_size=2&when=upcoming",
   "previous": null,
   "results": [
-    {
-      "id": 21,
-      "slug": "vebinar-po-eksportnym-protseduram",
-      "title": "Вебинар по экспортным процедурам",
-      "type": {
-        "code": "other",
-        "label": "Другое"
-      },
-      "start_at": "2026-10-24T10:00:00+06:00",
-      "end_at": null,
-      "location": "Онлайн",
-      "excerpt": "Таможня, сертификация, логистика.",
-      "cover": {
-        "small": "http://localhost:8000/media/CACHE/images/events/2026/10/event-5/23e55ed6f8c76970f620e022bc0f643f.webp",
-        "large": "http://localhost:8000/media/CACHE/images/events/2026/10/event-5/2d483ecbf1534a26d8dad05f0bf51c03.webp"
-      },
-      "is_upcoming": true,
-      "is_translated": true
-    },
     {
       "id": 22,
       "slug": "biznes-missiia-v-guanchzhou",
@@ -765,6 +790,25 @@ const response = await fetch(`${API}/feedback/`, {
       "cover": {
         "small": "http://localhost:8000/media/CACHE/images/events/2026/10/event-6/64e85e9c458c6776c919be396e7d3a96.webp",
         "large": "http://localhost:8000/media/CACHE/images/events/2026/10/event-6/878abf26973605a2e9e086cd13e5d03b.webp"
+      },
+      "is_upcoming": true,
+      "is_translated": true
+    },
+    {
+      "id": 23,
+      "slug": "investitsionnyi-forum-v-bishkeke",
+      "title": "Инвестиционный форум в Бишкеке",
+      "type": {
+        "code": "forum",
+        "label": "Форум"
+      },
+      "start_at": "2026-12-01T10:00:00+06:00",
+      "end_at": "2026-12-02T10:00:00+06:00",
+      "location": "Бишкек",
+      "excerpt": "Презентация инвестиционных проектов.",
+      "cover": {
+        "small": "http://localhost:8000/media/CACHE/images/events/2026/10/event-7/72635c5b81bbb81dbccce8d54500b6b1.webp",
+        "large": "http://localhost:8000/media/CACHE/images/events/2026/10/event-7/a775d6f995813deb882d107cf0688c68.webp"
       },
       "is_upcoming": true,
       "is_translated": true
@@ -1021,6 +1065,33 @@ const response = await fetch(`${API}/feedback/`, {
     }
   ],
   "attachments": [],
+  "presentations": [
+    {
+      "id": 1,
+      "slug": "chu-he-zhou-jian-cai-chang-tou-zi-jian-yi-shu",
+      "title": "楚河州建材厂：投资建议书",
+      "cover": {
+        "small": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/dac4678d340cca6ffc9f92447d5eb492.webp",
+        "large": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/ca69a5ba9adcd1d6008a33343362da53.webp"
+      },
+      "sector": {
+        "slug": "gong-ye",
+        "name": "工业"
+      },
+      "country": {
+        "code": "CN",
+        "name": "中国"
+      },
+      "file": {
+        "url": "http://localhost:8000/media/presentations/2026/10/zavod-stroimaterialov-v-chuiskoi-oblasti-investitsionnoe-predlozhenie.pdf",
+        "size": 162972,
+        "pages": 4,
+        "ext": "pdf"
+      },
+      "published_at": "2026-10-21T10:00:00+06:00",
+      "is_translated": true
+    }
+  ],
   "is_translated": true,
   "seo": {
     "meta_title": "楚河州建材合资生产",
@@ -1030,6 +1101,147 @@ const response = await fetch(`${API}/feedback/`, {
       "ru": "sovmestnoe-proizvodstvo-stroimaterialov-v-chuiskoi-oblasti",
       "en": "joint-production-of-building-materials-in-the-chui-region",
       "zh": "chu-he-zhou-jian-cai-he-zi-sheng-chan"
+    }
+  }
+}
+```
+
+### Сферы презентаций
+
+`GET /api/v1/sectors/?lang=ru` → 200
+
+```json
+[
+  {
+    "slug": "promyshlennost",
+    "name": "Промышленность"
+  },
+  {
+    "slug": "informatsionnye-tekhnologii",
+    "name": "Информационные технологии"
+  }
+]
+```
+
+### Презентации
+
+`GET /api/v1/presentations/?lang=ru&page_size=2` → 200
+
+```json
+{
+  "count": 5,
+  "next": "http://localhost:8000/api/v1/presentations/?lang=ru&page=2&page_size=2",
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "slug": "zavod-stroimaterialov-v-chuiskoi-oblasti-investitsionnoe-predlozhenie",
+      "title": "Завод стройматериалов в Чуйской области: инвестиционное предложение",
+      "cover": {
+        "small": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/dac4678d340cca6ffc9f92447d5eb492.webp",
+        "large": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/ca69a5ba9adcd1d6008a33343362da53.webp"
+      },
+      "sector": {
+        "slug": "promyshlennost",
+        "name": "Промышленность"
+      },
+      "project": {
+        "slug": "sovmestnoe-proizvodstvo-stroimaterialov-v-chuiskoi-oblasti",
+        "title": "Совместное производство стройматериалов в Чуйской области"
+      },
+      "country": {
+        "code": "CN",
+        "name": "Китай"
+      },
+      "file": {
+        "url": "http://localhost:8000/media/presentations/2026/10/zavod-stroimaterialov-v-chuiskoi-oblasti-investitsionnoe-predlozhenie.pdf",
+        "size": 162972,
+        "pages": 4,
+        "ext": "pdf"
+      },
+      "published_at": "2026-10-21T10:00:00+06:00",
+      "is_translated": true
+    },
+    {
+      "id": 2,
+      "slug": "lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia",
+      "title": "Локализация сборки тракторов: этапы и требования",
+      "cover": {
+        "small": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/d02bc5e477d093f7f59dc05dcea99c02.webp",
+        "large": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/923c64d9a4ad8d43857f40f211b96282.webp"
+      },
+      "sector": {
+        "slug": "promyshlennost",
+        "name": "Промышленность"
+      },
+      "project": {
+        "slug": "lokalizatsiia-sborki-selkhoztekhniki",
+        "title": "Локализация сборки сельхозтехники"
+      },
+      "country": {
+        "code": "CN",
+        "name": "Китай"
+      },
+      "file": {
+        "url": "http://localhost:8000/media/presentations/2026/10/lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia.pdf",
+        "size": 124425,
+        "pages": 3,
+        "ext": "pdf"
+      },
+      "published_at": "2026-10-11T10:00:00+06:00",
+      "is_translated": true
+    }
+  ]
+}
+```
+
+### Презентация (PDF + исходник PPTX)
+
+`GET /api/v1/presentations/lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia/?lang=ru` → 200
+
+```json
+{
+  "id": 2,
+  "slug": "lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia",
+  "title": "Локализация сборки тракторов: этапы и требования",
+  "description": "<p>Как устроена сборка из машинокомплектов и что требуется от площадки.</p>",
+  "cover": {
+    "small": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/d02bc5e477d093f7f59dc05dcea99c02.webp",
+    "large": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/923c64d9a4ad8d43857f40f211b96282.webp"
+  },
+  "sector": {
+    "slug": "promyshlennost",
+    "name": "Промышленность"
+  },
+  "project": {
+    "slug": "lokalizatsiia-sborki-selkhoztekhniki",
+    "title": "Локализация сборки сельхозтехники"
+  },
+  "country": {
+    "code": "CN",
+    "name": "Китай"
+  },
+  "file": {
+    "url": "http://localhost:8000/media/presentations/2026/10/lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia.pdf",
+    "size": 124425,
+    "pages": 3,
+    "ext": "pdf"
+  },
+  "source_file": {
+    "url": "http://localhost:8000/media/presentations/2026/10/lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia.pptx",
+    "size": 322,
+    "ext": "pptx"
+  },
+  "published_at": "2026-10-11T10:00:00+06:00",
+  "is_translated": true,
+  "seo": {
+    "meta_title": "Локализация сборки тракторов: этапы и требования",
+    "meta_description": "Как устроена сборка из машинокомплектов и что требуется от площадки.",
+    "og_image": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/923c64d9a4ad8d43857f40f211b96282.webp",
+    "alternates": {
+      "ru": "lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia",
+      "en": "localizing-tractor-assembly-stages-and-requirements",
+      "zh": "tuo-la-ji-zu-zhuang-ben-di-hua-jie-duan-yu-yao-qiu"
     }
   }
 }

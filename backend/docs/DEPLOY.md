@@ -105,7 +105,7 @@ server {
     server_name api.<домен>;
     # ssl_certificate ... — добавит certbot
 
-    client_max_body_size 25m;   # документы до 20 МБ + запас
+    client_max_body_size 110m;  # презентация: PDF до 50 МБ + PPTX до 50 МБ в одной форме + запас
 
     location /static/ { alias /srv/icc/app/backend/staticfiles/; expires 30d; }
     location /media/  {
@@ -113,6 +113,27 @@ server {
         expires 7d;
         types { image/webp webp; }
         include /etc/nginx/mime.types;
+    }
+
+    # Файлы презентаций (PDF и PPTX). PDF фронт встраивает в свою страницу, поэтому
+    # здесь — frame-ancestors с доменом фронта (= FRONTEND_URL). Только для этого пути:
+    # админка и всё остальное по-прежнему с X-Frame-Options: DENY (его ставит Django).
+    location /media/presentations/ {
+        root /srv/icc/app/backend;   # root, а не alias: его наследует вложенный location ниже
+        expires 7d;
+        include /etc/nginx/mime.types;
+        add_header Content-Security-Policy "frame-ancestors 'self' https://<домен фронта>" always;
+        add_header Content-Disposition "inline" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        # CORS нужен, только если фронт показывает PDF через pdf.js (fetch); для iframe не нужен
+        add_header Access-Control-Allow-Origin "https://<домен фронта>" always;
+        add_header Vary "Origin" always;
+
+        # PPTX — только скачивание. add_header во вложенный location не наследуется — повторяем нужные.
+        location ~* \.pptx$ {
+            add_header Content-Disposition "attachment" always;
+            add_header X-Content-Type-Options "nosniff" always;
+        }
     }
 
     location / {
@@ -123,6 +144,20 @@ server {
     }
 }
 ```
+
+Проверка заголовков презентаций после запуска (подставьте путь к любому загруженному PDF и PPTX):
+
+```bash
+curl -sI https://api.<домен>/media/presentations/<год>/<месяц>/<файл>.pdf  | grep -iE 'content-security|x-frame|disposition'
+#   Content-Security-Policy: frame-ancestors 'self' https://<домен фронта>    (X-Frame-Options быть не должно)
+#   Content-Disposition: inline
+curl -sI https://api.<домен>/media/presentations/<год>/<месяц>/<файл>.pptx | grep -i disposition
+#   Content-Disposition: attachment
+curl -sI https://api.<домен>/<ADMIN_URL>login/ | grep -i x-frame
+#   X-Frame-Options: DENY
+```
+
+В dev (`runserver`, `DEBUG=True`) media раздаёт Django с теми же заголовками (`apps/core/media.py`), домен фронта берётся из `FRONTEND_URL`, CORS — из `CORS_ALLOWED_ORIGINS`. **При смене домена фронта** поменяйте и `.env`, и обе строки с `<домен фронта>` в nginx.
 
 ```bash
 sudo ln -s /etc/nginx/sites-available/icc-backend /etc/nginx/sites-enabled/
