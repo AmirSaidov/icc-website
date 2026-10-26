@@ -6,9 +6,10 @@ import { SectionTitle } from "@/components/ui/SectionTitle";
 import { FeedbackForm } from "@/components/ui/FeedbackForm";
 import { CardLink } from "@/components/ui/Card";
 import { PartnerCard } from "@/components/ui/PartnerCard";
+import { PresentationCard } from "@/components/ui/PresentationCard";
 import { FilterSelect } from "@/components/ui/FilterSelect";
 import { CARD_IMAGE_SIZES } from "@/components/ui/NewsCard";
-import { getCountries, getPartners, getProjects, getPage } from "@/lib/api";
+import { getCountries, getPartners, getProjects, getPage, getPresentations } from "@/lib/api";
 import { buildMetadata, staticPaths } from "@/lib/seo";
 import { RichText } from "@/components/ui/RichText";
 import type { Locale } from "@/i18n/routing";
@@ -36,11 +37,12 @@ export default async function CooperationPage({ params, searchParams }: Props) {
     const { locale } = await params;
     const { country = "" } = await searchParams;
     setRequestLocale(locale);
-    const [page, countries, partners, projects, t, nav] = await Promise.all([
+    const [page, countries, partners, projects, presentations, t, nav] = await Promise.all([
         getPage(locale, "cooperation"),
         getCountries(locale),
         getPartners(locale, country || undefined),
         getProjects(locale, { country: country || undefined, pageSize: 50 }),
+        getPresentations(locale, { category: "projects", pageSize: 3 }),
         getTranslations("Cooperation"),
         getTranslations("Nav"),
     ]);
@@ -123,6 +125,25 @@ export default async function CooperationPage({ params, searchParams }: Props) {
                         <p className="text-muted">{t("noProjects")}</p>
                     )}
                 </section>
+                {presentations.results.length > 0 && (
+                    <section>
+                        <SectionTitle
+                            action={{
+                                href: "/presentations?category=projects",
+                                label: t("allPresentations"),
+                            }}
+                        >
+                            {t("presentations")}
+                        </SectionTitle>
+                        <ul data-reveal-stagger className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                            {presentations.results.map((p) => (
+                                <li key={p.id} className="flex [&>*]:flex-1">
+                                    <PresentationCard item={p} />
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
+                )}
                 <section id="form" className="scroll-mt-24">
                     <SectionTitle>{t("formTitle")}</SectionTitle>
                     <FeedbackForm type="cooperation" />

@@ -1,4 +1,4 @@
-/** 7 разделов сайта: шапка, мобильное меню, подвал. Подписи — messages: Nav.{key}. */
+/** 8 разделов сайта: шапка, мобильное меню, подвал. Подписи — messages: Nav.{key}. */
 export const NAV_ITEMS = [
   {key: 'home', href: '/', match: []},
   {key: 'about', href: '/about', match: []},
@@ -6,6 +6,7 @@ export const NAV_ITEMS = [
   {key: 'services', href: '/services', match: []},
   {key: 'news', href: '/news', match: ['/events']},
   {key: 'cooperation', href: '/cooperation', match: []},
+  {key: 'presentations', href: '/presentations', match: []},
   {key: 'contacts', href: '/contacts', match: []}
 ] as const;
 
@@ -18,7 +19,7 @@ export function isActive(item: (typeof NAV_ITEMS)[number], pathname: string) {
 }
 
 /** Разделы с детальными страницами /{section}/{slug}. */
-export const DETAIL_SECTIONS = ['directions', 'services', 'news', 'events'] as const;
+export const DETAIL_SECTIONS = ['directions', 'services', 'news', 'events', 'presentations'] as const;
 export type DetailSection = (typeof DETAIL_SECTIONS)[number];
 
 export function matchDetail(pathname: string): {section: DetailSection; slug: string} | null {

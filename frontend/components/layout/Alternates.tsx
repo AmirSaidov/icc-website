@@ -20,7 +20,7 @@ export function AlternatesProvider({children}: {children: ReactNode}) {
 export const useAlternates = () => useContext(AlternatesContext).alternates;
 
 /**
- * Ставится на каждой детальной странице (news, events, services, directions):
+ * Ставится на каждой детальной странице (news, events, services, directions, presentations):
  *
  *   <SetAlternates section="news" slugs={item.seo.alternates} />
  *

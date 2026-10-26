@@ -10,6 +10,7 @@
     "services": "服务",
     "news": "新闻与活动",
     "cooperation": "国际合作",
+    "presentations": "演示文稿",
     "contacts": "联系我们",
     "events": "活动"
   },
@@ -54,25 +55,6 @@
     "heroText": "我们共享同一座山脉——天山。我们帮助吉尔吉斯斯坦和中国企业在事业上携手：寻找合作伙伴，创办合资生产。",
     "heroApply": "提交申请",
     "heroServices": "中心服务",
-    "uniteEyebrow": "我们的共同点",
-    "uniteTitle": "同一座天山——同一个合作空间",
-    "unite": {
-      "kg": {
-        "word": "吉尔吉斯斯坦",
-        "caption": "吉方优势",
-        "text": "生产场地、原材料、进入欧亚经济联盟市场"
-      },
-      "cn": {
-        "word": "中国",
-        "caption": "中方优势",
-        "text": "技术、设备、投资与本地化经验"
-      },
-      "common": {
-        "word": "合作中心",
-        "caption": "连接双方",
-        "text": "中心连接双方，全程陪伴项目直至投产"
-      }
-    },
     "aboutEyebrow": "关于中心",
     "aboutTitle": "不是100份备忘录，而是100家运转的企业",
     "aboutText": "中心隶属于吉尔吉斯共和国工商会，致力于发展工业合作、寻找外国合作伙伴和创办合资生产。重点是与中国的合作。",
@@ -187,7 +169,24 @@
     "noProjects": "未找到项目。",
     "formTitle": "洽谈合作",
     "untranslated": "此内容暂时没有此语言版本",
-    "website": "公司网站"
+    "website": "公司网站",
+    "presentations": "项目演示文稿",
+    "allPresentations": "全部演示文稿"
+  },
+  "Presentations": {
+    "title": "演示文稿",
+    "description": "合作项目和工业企业的演示文稿，以IT领域为主。",
+    "all": "全部",
+    "categories": {
+      "projects": "合作项目",
+      "industry": "工业与IT"
+    },
+    "empty": "暂无演示文稿",
+    "viewerTitle": "演示文稿《{title}》",
+    "open": "全屏查看",
+    "download": "下载",
+    "noPreview": "该格式无法在网站上查看，请下载文件。",
+    "untranslated": "此内容暂时没有此语言版本"
   },
   "Contacts": {
     "title": "联系方式",

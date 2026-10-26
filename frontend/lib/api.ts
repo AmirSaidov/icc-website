@@ -20,6 +20,9 @@ import type {
   Page,
   Paginated,
   Partner,
+  Presentation,
+  PresentationCategory,
+  PresentationListItem,
   Project,
   ProjectListItem,
   Service,
@@ -137,6 +140,24 @@ export const getProjects = (
 
 export const getProject = (locale: Locale, slug: string) =>
   getOrNull<Project>(`/projects/${slugPath(slug)}/`, locale);
+
+// ——— Презентации ———
+
+/** Пока бэк не сделал раздел, /presentations/ отвечает 404 — показываем пустой список, а не ошибку. */
+export async function getPresentations(
+  locale: Locale,
+  {category, page = 1, pageSize = NEWS_PAGE_SIZE}: {category?: PresentationCategory; page?: number; pageSize?: number} = {}
+): Promise<Paginated<PresentationListItem>> {
+  try {
+    return await get<Paginated<PresentationListItem>>('/presentations/', locale, {category, page, page_size: pageSize});
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) return {count: 0, results: []};
+    throw error;
+  }
+}
+
+export const getPresentation = (locale: Locale, slug: string) =>
+  getOrNull<Presentation>(`/presentations/${slugPath(slug)}/`, locale);
 
 // ——— Контакты ———
 
