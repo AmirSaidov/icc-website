@@ -42,6 +42,7 @@ def test_axes_blocks_after_five_failed_logins(staff, caplog):
     assert blocked.status_code == 429
     html = blocked.content.decode()
     assert "Вход временно заблокирован" in html and "30 минут" in html
+    assert blocked["X-Robots-Tag"] == "noindex, nofollow"
     assert "Вход заблокирован после неудачных попыток" in caplog.text
     assert "manager" in caplog.text
 
@@ -99,7 +100,11 @@ def test_admin_url_default(client):
 def test_admin_url_can_be_changed(client, settings, reload_urls):
     settings.ADMIN_URL = "cpk-panel-7f3k/"
     reload_urls()
-    assert client.get("/cpk-panel-7f3k/login/").status_code == 200
+    login_page = client.get("/cpk-panel-7f3k/login/")
+    assert login_page.status_code == 200
+    # админка закрыта от индексации заголовком, а robots.txt её путь не раскрывает
+    assert login_page["X-Robots-Tag"] == "noindex, nofollow"
+    assert "cpk-panel-7f3k" not in client.get("/robots.txt").content.decode()
     assert client.get("/admin/login/").status_code == 404
     assert reverse("ckeditor-upload") == "/cpk-panel-7f3k/ckeditor/upload/"
     settings.ADMIN_URL = "admin/"
@@ -141,6 +146,35 @@ def test_production_security_settings():
         "X_FRAME_OPTIONS": "DENY",
         "SESSION_COOKIE_HTTPONLY": True,
     }
+
+
+FRAME_ANCESTORS_CODE = "import json; print(json.dumps(s.FRAME_ANCESTORS))"
+
+
+def test_frame_ancestors_default_is_frontend_url():
+    values = _settings_in_subprocess({"FRONTEND_URL": "https://icc.kg/", "FRAME_ANCESTORS": ""}, FRAME_ANCESTORS_CODE)
+    assert values == ["https://icc.kg"]
+
+
+def test_frame_ancestors_several_values_and_wildcard():
+    values = _settings_in_subprocess(
+        {"FRAME_ANCESTORS": " https://icc.kg/, https://*.vercel.app ,http://localhost:3000"}, FRAME_ANCESTORS_CODE
+    )
+    assert values == ["https://icc.kg", "https://*.vercel.app", "http://localhost:3000"]
+
+
+@pytest.mark.parametrize("value", ["icc.kg", "https://icc.kg; script-src *", "'unsafe-inline'"])
+def test_frame_ancestors_rejects_non_origins(value):
+    env = {
+        **os.environ, "FRAME_ANCESTORS": value, "DJANGO_SETTINGS_MODULE": "config.settings",
+        "PYTHONIOENCODING": "utf-8",  # сообщение об ошибке — по-русски
+    }
+    result = subprocess.run(
+        [sys.executable, "-c", "import django; django.setup()"],
+        cwd=django_settings.BASE_DIR, env=env, capture_output=True, text=True, encoding="utf-8", timeout=120,
+    )
+    assert result.returncode != 0
+    assert "FRAME_ANCESTORS" in result.stderr
 
 
 def test_debug_mode_keeps_cookies_usable_over_http():

@@ -41,8 +41,11 @@ Swagger: http://localhost:8000/api/docs/ · документация для фр
   для `content_*`), SEO — `SEO_FIELDSET`, галерея/документы — `GalleryInline` / `AttachmentInline`.
   Права по ролям — `apps/core/roles.py` (`is_admin_role`). Без django-unfold. Без CDN: jQuery UI лежит в `static/vendor/`.
 - Файлы: только `ImageUploadField` / `DocumentUploadField` (`apps/core/fields.py`) — проверка расширения, содержимого, размера.
+  Презентации — `PresentationPdfField` / `PresentationPptxField` (50 МБ); их файлы лежат в `media/presentations/`
+  и отдаются с frame-ancestors вместо DENY (`apps/core/media.py` в dev, nginx на проде — docs/DEPLOY.md).
 - Slug: в `save()` моделей со slug вызывать `fill_translated_slugs` (пустой slug_X ← title_X, конфликт → -2, -3).
-- Отложенная публикация: публичные выборки (API, sitemap) — только через `published()` (`apps/core/api.py`).
+- Отложенная публикация: публичные выборки (API, sitemap) — только через `published()` (`apps/core/api.py`);
+  для объекта в памяти (вложенная ссылка) — `is_published()`.
 - Схема URL фронта для sitemap — один словарь `FRONTEND_URL_SCHEME` в `apps/core/sitemap.py`.
 - IP клиента — только `apps.core.net.get_client_ip` (учитывает NUM_PROXIES; та же логика у throttling и axes).
 - Логи — `logs/app.log` (не в git). Тесты в файл не пишут (conftest).

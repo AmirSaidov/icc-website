@@ -13,7 +13,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.views.decorators.http import require_GET
 
-from apps.cooperation.models import Project
+from apps.cooperation.models import Presentation, Project
 from apps.news.models import Event, News
 from apps.pages.models import Direction, Page, Service
 
@@ -30,6 +30,7 @@ FRONTEND_URL_SCHEME = {
     "news": "/{lang}/news/{slug}",
     "event": "/{lang}/events/{slug}",
     "project": "/{lang}/cooperation/projects/{slug}",
+    "presentation": "/{lang}/presentations/{slug}",
 }
 
 SITEMAP_MODELS = [
@@ -39,6 +40,7 @@ SITEMAP_MODELS = [
     (News, "news"),
     (Event, "event"),
     (Project, "project"),
+    (Presentation, "presentation"),
 ]
 
 X_DEFAULT_LANG = "ru"
@@ -100,9 +102,10 @@ def sitemap_xml(request):
 
 @require_GET
 def robots_txt(request):
+    # Путь ADMIN_URL сюда не пишем — это раскрыло бы нестандартный адрес админки.
+    # Админку закрывает от индексации заголовок X-Robots-Tag (apps.core.middleware).
     lines = [
         "User-agent: *",
-        f"Disallow: /{settings.ADMIN_URL.strip('/')}/",
         "Disallow: /api/",
         "",
         f"Sitemap: {settings.BACKEND_URL}/sitemap.xml",

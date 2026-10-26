@@ -3,6 +3,8 @@
 
 Картинки: JPG / PNG / WebP до 10 МБ, содержимое проверяется Pillow verify().
 Документы: PDF / DOCX до 20 МБ; PDF — заголовок %PDF, DOCX — zip с word/document.xml.
+Презентации (только поля Presentation.file и source_file): PDF / PPTX до 50 МБ;
+PPTX — zip с ppt/presentation.xml.
 """
 import zipfile
 from pathlib import PurePath
@@ -20,8 +22,18 @@ IMAGE_FORMATS = {"jpg": "JPEG", "jpeg": "JPEG", "png": "PNG", "webp": "WEBP"}
 DOCUMENT_MAX_SIZE = 20 * MB
 DOCUMENT_EXTENSIONS = ("pdf", "docx")
 
-IMAGE_ACCEPT = ",".join(f".{ext}" for ext in IMAGE_FORMATS)
-DOCUMENT_ACCEPT = ",".join(f".{ext}" for ext in DOCUMENT_EXTENSIONS)
+PRESENTATION_MAX_SIZE = 50 * MB
+
+# Office-форматы — zip-архивы; признак формата — обязательная часть внутри архива.
+ZIP_MARKERS = {"docx": "word/document.xml", "pptx": "ppt/presentation.xml"}
+
+
+def accept(extensions):
+    return ",".join(f".{ext}" for ext in extensions)
+
+
+IMAGE_ACCEPT = accept(IMAGE_FORMATS)
+DOCUMENT_ACCEPT = accept(DOCUMENT_EXTENSIONS)
 
 
 def _is_stored(value):
@@ -72,15 +84,17 @@ def validate_image_file(value):
         )
 
 
-def validate_document_file(value):
+def check_document(value, extensions, max_size):
+    """Документ: расширение из extensions, размер до max_size, содержимое по расширению."""
     if not value or _is_stored(value):
         return
     ext = _extension(value)
-    if ext not in DOCUMENT_EXTENSIONS:
+    if ext not in extensions:
+        allowed = ", ".join(e.upper() for e in extensions)
         raise ValidationError(
-            f"Недопустимый формат «.{ext}». Разрешены: PDF, DOCX.", code="invalid_extension"
+            f"Недопустимый формат «.{ext}». Разрешены: {allowed}.", code="invalid_extension"
         )
-    _check_size(value, DOCUMENT_MAX_SIZE)
+    _check_size(value, max_size)
     file = _open(value)
     try:
         if ext == "pdf":
@@ -90,7 +104,7 @@ def validate_document_file(value):
             if valid:
                 file.seek(0)
                 with zipfile.ZipFile(file) as archive:
-                    valid = "word/document.xml" in archive.namelist()
+                    valid = ZIP_MARKERS[ext] in archive.namelist()
     except Exception:
         valid = False
     finally:
@@ -99,3 +113,15 @@ def validate_document_file(value):
         raise ValidationError(
             f"Содержимое файла не является документом {ext.upper()}.", code="invalid_document"
         )
+
+
+def validate_document_file(value):
+    check_document(value, DOCUMENT_EXTENSIONS, DOCUMENT_MAX_SIZE)
+
+
+def validate_presentation_pdf(value):
+    check_document(value, ("pdf",), PRESENTATION_MAX_SIZE)
+
+
+def validate_presentation_pptx(value):
+    check_document(value, ("pptx",), PRESENTATION_MAX_SIZE)

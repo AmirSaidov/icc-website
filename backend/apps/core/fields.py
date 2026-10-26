@@ -1,7 +1,15 @@
 from django.conf import settings
 from django.db import models
 
-from .validators import DOCUMENT_ACCEPT, IMAGE_ACCEPT, validate_document_file, validate_image_file
+from .validators import (
+    DOCUMENT_ACCEPT,
+    IMAGE_ACCEPT,
+    accept,
+    validate_document_file,
+    validate_image_file,
+    validate_presentation_pdf,
+    validate_presentation_pptx,
+)
 
 
 def unique_slug_constraints(prefix):
@@ -59,8 +67,23 @@ class DocumentUploadField(models.FileField):
     """Документ: PDF / DOCX до 20 МБ, расширение + содержимое (SPEC.md, 4.1)."""
 
     default_validators = [validate_document_file]
+    accept_attr = DOCUMENT_ACCEPT
 
     def formfield(self, **kwargs):
         field = super().formfield(**kwargs)
-        field.widget.attrs.setdefault("accept", DOCUMENT_ACCEPT)
+        field.widget.attrs.setdefault("accept", self.accept_attr)
         return field
+
+
+class PresentationPdfField(DocumentUploadField):
+    """Презентация для просмотра на сайте: только PDF, до 50 МБ."""
+
+    default_validators = [validate_presentation_pdf]
+    accept_attr = accept(["pdf"])
+
+
+class PresentationPptxField(DocumentUploadField):
+    """Исходник презентации для скачивания: только PPTX, до 50 МБ."""
+
+    default_validators = [validate_presentation_pptx]
+    accept_attr = accept(["pptx"])

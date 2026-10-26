@@ -5,8 +5,11 @@
 from datetime import timedelta
 from pathlib import Path
 
+import re
+
 import environ
 from django.conf.locale import LANG_INFO
+from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -17,6 +20,7 @@ env = environ.Env(
     CSRF_TRUSTED_ORIGINS=(list, []),
     ADMIN_URL=(str, "admin/"),
     FRONTEND_URL=(str, "http://localhost:3000"),
+    FRAME_ANCESTORS=(str, ""),
     BACKEND_URL=(str, "http://localhost:8000"),
     NUM_PROXIES=(int, 0),
     EMAIL_HOST=(str, ""),
@@ -36,6 +40,16 @@ CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS")
 
 ADMIN_URL = env("ADMIN_URL")
 FRONTEND_URL = env("FRONTEND_URL").rstrip("/")
+# Кому можно встраивать PDF презентаций во фрейм (CSP frame-ancestors, apps/core/media.py):
+# origins через запятую, допускается маска поддомена (https://*.vercel.app). Пусто — FRONTEND_URL.
+FRAME_ANCESTORS = [
+    origin.strip().rstrip("/") for origin in env("FRAME_ANCESTORS").split(",") if origin.strip()
+] or [FRONTEND_URL]
+for _origin in FRAME_ANCESTORS:
+    if not re.fullmatch(r"https?://(\*\.)?[A-Za-z0-9.-]+(:\d+)?", _origin):
+        raise ImproperlyConfigured(
+            f"FRAME_ANCESTORS: «{_origin}» — нужен origin вида https://site.kg или https://*.vercel.app"
+        )
 # Публичный адрес бэкенда — для ссылок на админку в письмах.
 BACKEND_URL = env("BACKEND_URL").rstrip("/")
 # Сколько обратных прокси перед Django (dev — 0, прод за nginx — 1). От этого зависит,
@@ -70,6 +84,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    # снаружи остальных: заголовок получают и ответы, созданные middleware (блокировка axes)
+    "apps.core.middleware.AdminNoIndexMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -191,7 +207,9 @@ MEDIA_ROOT = BASE_DIR / "media"
 # --- CORS ---------------------------------------------------------------------
 
 CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS")
-CORS_URLS_REGEX = r"^/api/.*$"
+# API и файлы презентаций (их PDF фронт может читать через pdf.js). На проде media
+# отдаёт nginx — те же заголовки для /media/presentations/ описаны в docs/DEPLOY.md.
+CORS_URLS_REGEX = r"^/(api|media/presentations)/.*$"
 
 # --- Почта --------------------------------------------------------------------
 # Если EMAIL_HOST пустой — console backend (письма печатаются в консоль).

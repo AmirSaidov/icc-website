@@ -356,6 +356,53 @@ PROJECTS = [
       "根据长期合同供应蔬菜和水果。")),
 ]
 
+# Сферы презентаций: «Промышленность» и «IT» создаёт миграция cooperation/0004 — seed их только находит
+# (или создаёт, если их удалили). (slug_ru, название)
+SECTORS = [
+    ("promyshlennost", ("Промышленность", "Industry", "工业")),
+    ("informatsionnye-tekhnologii", ("Информационные технологии", "Information technology", "信息技术")),
+]
+
+# (сфера, индекс проекта или None, код страны или None, дней назад, страниц PDF, есть PPTX,
+#  заголовок, анонс). Заголовок zh = None — презентация без китайского перевода.
+PRESENTATIONS = [
+    ("promyshlennost", 0, "CN", 5, 4, False,
+     ("Завод стройматериалов в Чуйской области: инвестиционное предложение",
+      "Building materials plant in the Chui region: investment proposal",
+      "楚河州建材厂：投资建议书"),
+     ("Мощности, сроки строительства и условия участия партнёров.",
+      "Capacity, construction timeline and terms for partners.",
+      "产能、建设周期及合作伙伴参与条件。")),
+    ("promyshlennost", 1, "CN", 15, 3, True,
+     ("Локализация сборки тракторов: этапы и требования",
+      "Localizing tractor assembly: stages and requirements",
+      "拖拉机组装本地化：阶段与要求"),
+     ("Как устроена сборка из машинокомплектов и что требуется от площадки.",
+      "How kit assembly works and what the site needs.",
+      "散件组装流程及对场地的要求。")),
+    ("informatsionnye-tekhnologii", None, "CN", 25, 5, False,
+     ("Цифровые сервисы для экспортёров",
+      "Digital services for exporters",
+      "面向出口商的数字服务"),
+     ("Электронные площадки, логистика и документооборот для выхода на рынок Китая.",
+      "E-commerce platforms, logistics and paperwork for entering the Chinese market.",
+      "进入中国市场的电商平台、物流和单证服务。")),
+    ("informatsionnye-tekhnologii", None, "KZ", 35, 3, False,
+     ("IT-аутсорсинг: возможности Кыргызстана",
+      "IT outsourcing: opportunities in Kyrgyzstan",
+      None),
+     ("Компании, компетенции и налоговый режим Парка высоких технологий.",
+      "Companies, skills and the High Technology Park tax regime.",
+      None)),
+    ("promyshlennost", None, None, 45, 4, False,
+     ("Промышленные зоны Кыргызстана",
+      "Industrial zones of Kyrgyzstan",
+      "吉尔吉斯斯坦工业园区"),
+     ("Свободные экономические зоны, инфраструктура и льготы для инвесторов.",
+      "Free economic zones, infrastructure and incentives for investors.",
+      "自由经济区、基础设施及投资优惠。")),
+]
+
 GALLERY_CAPTIONS = [
     ("Открытие встречи", "Opening of the meeting", "会议开幕"),
     ("Переговоры", "Negotiations", "洽谈"),

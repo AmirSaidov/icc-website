@@ -95,7 +95,7 @@ paths:
               examples:
                 Пример(seed-данные):
                   value:
-                  - id: 5
+                  - id: 7
                     code: CN
                     name: Китай
                     description: Ключевой партнёр Кыргызстана в промышленной кооперации.
@@ -144,7 +144,7 @@ paths:
               examples:
                 Пример(seed-данные):
                   value:
-                  - id: 17
+                  - id: 25
                     slug: promyshlennaia-kooperatsiia
                     title: Промышленная кооперация
                     short_text: Связываем производителей для совместной работы.
@@ -195,7 +195,7 @@ paths:
               examples:
                 Пример(seed-данные):
                   value:
-                    id: 17
+                    id: 25
                     slug: promyshlennaia-kooperatsiia
                     title: Промышленная кооперация
                     short_text: Связываем производителей для совместной работы.
@@ -208,7 +208,7 @@ paths:
                     seo:
                       meta_title: Промышленная кооперация
                       meta_description: Связываем производителей для совместной работы.
-                      og_image: http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp
+                      og_image: http://localhost:8000/media/CACHE/images/seo/factory/23d9754c91701b35c6e0d8f93c3443fd.webp
                       alternates:
                         ru: promyshlennaia-kooperatsiia
                         en: industrial-cooperation
@@ -381,19 +381,19 @@ paths:
                     next: http://api.example.org/accounts/?page=4
                     previous: http://api.example.org/accounts/?page=2
                     results:
-                    - id: 21
+                    - id: 29
                       slug: vebinar-po-eksportnym-protseduram
                       title: Вебинар по экспортным процедурам
                       type:
                         code: other
                         label: Другое
-                      start_at: '2026-10-24T10:00:00+06:00'
+                      start_at: '2026-11-02T10:00:00+06:00'
                       end_at: null
                       location: Онлайн
                       excerpt: Таможня, сертификация, логистика.
                       cover:
-                        small: http://localhost:8000/media/CACHE/images/events/2026/10/event-5/23e55ed6f8c76970f620e022bc0f643f.webp
-                        large: http://localhost:8000/media/CACHE/images/events/2026/10/event-5/2d483ecbf1534a26d8dad05f0bf51c03.webp
+                        small: http://localhost:8000/media/CACHE/images/events/2026/10/webinar/36ea2b53abc7b98188d0aa92a05bb5bd.webp
+                        large: http://localhost:8000/media/CACHE/images/events/2026/10/webinar/f8a1fade672f28ef2a8688fe7382379f.webp
                       is_upcoming: true
                       is_translated: true
                   summary: Пример (seed-данные)
@@ -441,36 +441,36 @@ paths:
               examples:
                 Пример(seed-данные):
                   value:
-                    id: 17
+                    id: 25
                     slug: business-mission-to-xinjiang
                     title: Business mission to Xinjiang
                     type:
                       code: mission
                       label: Business mission
-                    start_at: '2026-08-18T10:00:00+06:00'
-                    end_at: '2026-08-21T10:00:00+06:00'
+                    start_at: '2026-08-27T10:00:00+06:00'
+                    end_at: '2026-08-30T10:00:00+06:00'
                     location: Urumqi
                     excerpt: Company visits and negotiations.
                     content: <p>Company visits and negotiations.</p><p>The Industrial
                       Cooperation Centre helps Kyrgyz companies find partners, enter
                       new markets and develop joint production.</p>
                     cover:
-                      small: http://localhost:8000/media/CACHE/images/events/2026/10/event-1/0dd78e7373ae6d2000b6f19a4904b7e7.webp
-                      large: http://localhost:8000/media/CACHE/images/events/2026/10/event-1/a510160fb27adf0dbad59cdb0183a770.webp
+                      small: http://localhost:8000/media/CACHE/images/events/2026/10/mountain-road/83c1c5f7026def9f44fd50df348ccb49.webp
+                      large: http://localhost:8000/media/CACHE/images/events/2026/10/mountain-road/aefbd2bbc7955f8a663f1f55b5defeff.webp
                     is_upcoming: false
                     gallery:
-                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_36J5oXL/1052edca0ef98ab40469df6750c4015f.webp
-                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_36J5oXL/37275bf6f80a26d1fc57a4440653a0a4.webp
+                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/conference_yc6iKh0/7f912da71b7fd19289009c6de5f4e648.webp
+                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/conference_yc6iKh0/1e55ec6568f50b95fd84873193179498.webp
                       caption: Opening of the meeting
-                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_qlX79ne/376505789d67531cd0df75fdda210bd2.webp
-                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_qlX79ne/c76ee863dfd4b1ca7f1ead3ade1e72f4.webp
+                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/meeting_nDmfUma/cea31d7b9df2ed6bcbcfa681faed4494.webp
+                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/meeting_nDmfUma/536de65eeeedf0630a3ebaac42b4a0e9.webp
                       caption: Negotiations
                     attachments: []
                     is_translated: true
                     seo:
                       meta_title: Business mission to Xinjiang
                       meta_description: Company visits and negotiations.
-                      og_image: http://localhost:8000/media/CACHE/images/events/2026/10/event-1/a510160fb27adf0dbad59cdb0183a770.webp
+                      og_image: http://localhost:8000/media/CACHE/images/events/2026/10/mountain-road/aefbd2bbc7955f8a663f1f55b5defeff.webp
                       alternates:
                         ru: biznes-missiia-v-sintszian
                         en: business-mission-to-xinjiang
@@ -592,39 +592,39 @@ paths:
                 Пример(seed-данные):
                   value:
                     blocks:
-                    - id: 11
+                    - id: 16
                       type: hero
                       title: Центр промышленной кооперации
                       text: Помогаем предприятиям Кыргызстана находить партнёров за
                         рубежом
                       image:
-                        small: http://localhost:8000/media/CACHE/images/home/hero/7c97cbbd6910903db6d8984ec0a61b83.webp
-                        large: http://localhost:8000/media/CACHE/images/home/hero/d31d418e7647766cabfc160f31597949.webp
+                        small: http://localhost:8000/media/CACHE/images/home/factory/5a79c9e2eb68c19c44989e2c774c8135.webp
+                        large: http://localhost:8000/media/CACHE/images/home/factory/2a513006aef7645bcebbb8117cfe5735.webp
                       button_text: Наши услуги
                       button_link: /services
                       order: 0
                       is_translated: true
-                    - id: 12
+                    - id: 17
                       type: about
                       title: О Центре
                       text: Центр создан при Торгово-промышленной палате для развития
                         промышленной кооперации.
                       image:
-                        small: http://localhost:8000/media/CACHE/images/home/about/89df32e7302812723bbe2f5c9187f575.webp
-                        large: http://localhost:8000/media/CACHE/images/home/about/f61f513eb35923254e5db4428bc300c9.webp
+                        small: http://localhost:8000/media/CACHE/images/home/meeting/8b7410ef3d7ceca7786da84d776e0db5.webp
+                        large: http://localhost:8000/media/CACHE/images/home/meeting/ca4afb0087125efb7187b59616da7199.webp
                       button_text: Подробнее
                       button_link: /about
                       order: 1
                       is_translated: true
                     directions:
-                    - id: 17
+                    - id: 25
                       slug: promyshlennaia-kooperatsiia
                       title: Промышленная кооперация
                       short_text: Связываем производителей для совместной работы.
                       icon: cooperation
                       order: 0
                       is_translated: true
-                    - id: 18
+                    - id: 26
                       slug: poisk-partnerov
                       title: Поиск партнёров
                       short_text: Подбираем надёжных партнёров за рубежом.
@@ -632,68 +632,68 @@ paths:
                       order: 1
                       is_translated: true
                     news:
-                    - id: 25
+                    - id: 38
                       slug: delovaia-missiia-v-urumchi
                       title: Деловая миссия в Урумчи
                       excerpt: Предприниматели Кыргызстана провели переговоры с компаниями
                         Синьцзяна.
                       cover:
-                        small: http://localhost:8000/media/CACHE/images/news/2026/10/news-1/180f0002dfa5cacc94a2a51ef9efc6a6.webp
-                        large: http://localhost:8000/media/CACHE/images/news/2026/10/news-1/8d061b86952d98a3aab9a4c50f4b83c2.webp
+                        small: http://localhost:8000/media/CACHE/images/news/2026/10/airplane/bbcf58e3629bee6038ab5f581c86907a.webp
+                        large: http://localhost:8000/media/CACHE/images/news/2026/10/airplane/843bb73b124bfa5afce45f7633854892.webp
                       category:
                         slug: missions
                         name: Деловые миссии
-                      published_at: '2026-10-15T10:00:00+06:00'
+                      published_at: '2026-10-24T10:00:00+06:00'
                       is_translated: true
-                    - id: 26
+                    - id: 39
                       slug: tsentr-podpisal-memorandum-s-torgovoi-palatoi-sintsziana
                       title: Центр подписал меморандум с торговой палатой Синьцзяна
                       excerpt: Стороны договорились о совместной работе по поиску
                         партнёров.
                       cover:
-                        small: http://localhost:8000/media/CACHE/images/news/2026/10/news-2/6a636923db5281d95aa52c724a0461cd.webp
-                        large: http://localhost:8000/media/CACHE/images/news/2026/10/news-2/7642e9d4216d1ccb43996ec0f78b7d12.webp
+                        small: http://localhost:8000/media/CACHE/images/news/2026/10/signing/1ffff9a15a587674337d2c603d238ff4.webp
+                        large: http://localhost:8000/media/CACHE/images/news/2026/10/signing/9dd5c9ce2a611c956f6f849742f9898a.webp
                       category:
                         slug: partnership
                         name: Партнёрство
-                      published_at: '2026-10-11T10:00:00+06:00'
+                      published_at: '2026-10-20T10:00:00+06:00'
                       is_translated: true
                     events:
-                    - id: 21
+                    - id: 29
                       slug: vebinar-po-eksportnym-protseduram
                       title: Вебинар по экспортным процедурам
                       type:
                         code: other
                         label: Другое
-                      start_at: '2026-10-24T10:00:00+06:00'
+                      start_at: '2026-11-02T10:00:00+06:00'
                       end_at: null
                       location: Онлайн
                       excerpt: Таможня, сертификация, логистика.
                       cover:
-                        small: http://localhost:8000/media/CACHE/images/events/2026/10/event-5/23e55ed6f8c76970f620e022bc0f643f.webp
-                        large: http://localhost:8000/media/CACHE/images/events/2026/10/event-5/2d483ecbf1534a26d8dad05f0bf51c03.webp
+                        small: http://localhost:8000/media/CACHE/images/events/2026/10/webinar/36ea2b53abc7b98188d0aa92a05bb5bd.webp
+                        large: http://localhost:8000/media/CACHE/images/events/2026/10/webinar/f8a1fade672f28ef2a8688fe7382379f.webp
                       is_upcoming: true
                       is_translated: true
-                    - id: 22
+                    - id: 30
                       slug: biznes-missiia-v-guanchzhou
                       title: Бизнес-миссия в Гуанчжоу
                       type:
                         code: mission
                         label: Деловая миссия
-                      start_at: '2026-11-06T10:00:00+06:00'
-                      end_at: '2026-11-11T10:00:00+06:00'
+                      start_at: '2026-11-15T10:00:00+06:00'
+                      end_at: '2026-11-20T10:00:00+06:00'
                       location: Гуанчжоу
                       excerpt: Участие в выставке и деловые встречи.
                       cover:
-                        small: http://localhost:8000/media/CACHE/images/events/2026/10/event-6/64e85e9c458c6776c919be396e7d3a96.webp
-                        large: http://localhost:8000/media/CACHE/images/events/2026/10/event-6/878abf26973605a2e9e086cd13e5d03b.webp
+                        small: http://localhost:8000/media/CACHE/images/events/2026/10/port/02bd6d6e11227eb99127b0a09640fe4e.webp
+                        large: http://localhost:8000/media/CACHE/images/events/2026/10/port/b99273f1ead714f91d25e8f307fabca8.webp
                       is_upcoming: true
                       is_translated: true
                     seo:
                       meta_title: Центр промышленной кооперации при ТПП КР
                       meta_description: Поиск партнёров, деловые миссии и промышленная
                         кооперация с Китаем и другими странами.
-                      og_image: http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp
+                      og_image: http://localhost:8000/media/CACHE/images/seo/factory/23d9754c91701b35c6e0d8f93c3443fd.webp
                       alternates:
                         ru: home
                         en: home
@@ -758,18 +758,18 @@ paths:
                     next: http://api.example.org/accounts/?page=4
                     previous: http://api.example.org/accounts/?page=2
                     results:
-                    - id: 25
+                    - id: 38
                       slug: delovaia-missiia-v-urumchi
                       title: Деловая миссия в Урумчи
                       excerpt: Предприниматели Кыргызстана провели переговоры с компаниями
                         Синьцзяна.
                       cover:
-                        small: http://localhost:8000/media/CACHE/images/news/2026/10/news-1/180f0002dfa5cacc94a2a51ef9efc6a6.webp
-                        large: http://localhost:8000/media/CACHE/images/news/2026/10/news-1/8d061b86952d98a3aab9a4c50f4b83c2.webp
+                        small: http://localhost:8000/media/CACHE/images/news/2026/10/airplane/bbcf58e3629bee6038ab5f581c86907a.webp
+                        large: http://localhost:8000/media/CACHE/images/news/2026/10/airplane/843bb73b124bfa5afce45f7633854892.webp
                       category:
                         slug: missions
                         name: Деловые миссии
-                      published_at: '2026-10-15T10:00:00+06:00'
+                      published_at: '2026-10-24T10:00:00+06:00'
                       is_translated: true
                   summary: Пример (seed-данные)
           description: ''
@@ -859,7 +859,7 @@ paths:
               examples:
                 Пример(seed-данные):
                   value:
-                    id: 25
+                    id: 38
                     slug: delovaia-missiia-v-urumchi
                     title: Деловая миссия в Урумчи
                     excerpt: Предприниматели Кыргызстана провели переговоры с компаниями
@@ -869,18 +869,18 @@ paths:
                       Кыргызстана находить партнёров, выходить на новые рынки и развивать
                       совместные производства.</p>
                     cover:
-                      small: http://localhost:8000/media/CACHE/images/news/2026/10/news-1/180f0002dfa5cacc94a2a51ef9efc6a6.webp
-                      large: http://localhost:8000/media/CACHE/images/news/2026/10/news-1/8d061b86952d98a3aab9a4c50f4b83c2.webp
+                      small: http://localhost:8000/media/CACHE/images/news/2026/10/airplane/bbcf58e3629bee6038ab5f581c86907a.webp
+                      large: http://localhost:8000/media/CACHE/images/news/2026/10/airplane/843bb73b124bfa5afce45f7633854892.webp
                     category:
                       slug: missions
                       name: Деловые миссии
-                    published_at: '2026-10-15T10:00:00+06:00'
+                    published_at: '2026-10-24T10:00:00+06:00'
                     gallery:
-                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1/3fbeb4c9d36df2f3914fb2e5d015c9ce.webp
-                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1/09142fef4aba283b8a0d640e15a313e2.webp
+                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/conference/b4dabe05cb8b3185c54ecefda771082f.webp
+                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/conference/3bd53d7e976e5fd761d5800efe37bd98.webp
                       caption: Открытие встречи
-                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2/27934dff64ad428503edb6fb41d9c026.webp
-                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2/747c2e80015e11af58c01a46b7a27a34.webp
+                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/meeting/546397b0616d8de6cc567852e3759c47.webp
+                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/meeting/deb1e5109af02394ef2cba1518aa59ad.webp
                       caption: Переговоры
                     attachments:
                     - title: Программа
@@ -892,7 +892,7 @@ paths:
                       meta_title: Деловая миссия в Урумчи — ЦПК
                       meta_description: Предприниматели Кыргызстана провели переговоры
                         с компаниями Синьцзяна.
-                      og_image: http://localhost:8000/media/CACHE/images/news/2026/10/news-1/8d061b86952d98a3aab9a4c50f4b83c2.webp
+                      og_image: http://localhost:8000/media/CACHE/images/news/2026/10/airplane/843bb73b124bfa5afce45f7633854892.webp
                       alternates:
                         ru: delovaia-missiia-v-urumchi
                         en: business-mission-to-urumqi
@@ -1006,7 +1006,7 @@ paths:
                     seo:
                       meta_title: About the Centre
                       meta_description: null
-                      og_image: http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp
+                      og_image: http://localhost:8000/media/CACHE/images/seo/factory/23d9754c91701b35c6e0d8f93c3443fd.webp
                       alternates:
                         ru: about
                         en: about
@@ -1062,11 +1062,11 @@ paths:
               examples:
                 Пример(seed-данные):
                   value:
-                  - id: 9
+                  - id: 13
                     name: Торговая компания «Шёлковый путь» (демо)
                     logo:
-                      small: http://localhost:8000/media/CACHE/images/partners/logo-1/4102341f8ee4cfc88052f5d4bba63378.webp
-                      large: http://localhost:8000/media/CACHE/images/partners/logo-1/de558907b3fdb77063a7219c781a54b4.webp
+                      small: http://localhost:8000/media/CACHE/images/partners/logo-32/f83228973b81584c8d298049ef47f002.webp
+                      large: http://localhost:8000/media/CACHE/images/partners/logo-32/bde39ccc74ddce843ee85607d6097b39.webp
                     country:
                       code: CN
                       name: Китай
@@ -1081,6 +1081,205 @@ paths:
               schema:
                 $ref: '#/components/schemas/ValidationError'
           description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+  /api/v1/presentations/:
+    get:
+      operationId: presentations_list
+      description: Опубликованные и переведённые на `lang` презентации, свежие сверху
+        (по `published_at`). `category=projects` — презентации опубликованных проектов,
+        `industry` — остальные; другое значение → 400. Неизвестные `sector` / `project`
+        / `country` → пустой список.
+      summary: Презентации
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: string
+          enum:
+          - industry
+          - projects
+        description: 'Раздел: projects или industry'
+      - in: query
+        name: country
+        schema:
+          type: string
+        description: Код страны ISO 3166-1 alpha-2, например CN
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: project
+        schema:
+          type: string
+        description: slug проекта на любом языке
+      - in: query
+        name: sector
+        schema:
+          type: string
+        description: slug сферы на любом языке
+      tags:
+      - Презентации
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPresentationListList'
+              examples:
+                Пример(seed-данные):
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - id: 6
+                      slug: zavod-stroimaterialov-v-chuiskoi-oblasti-investitsionnoe-predlozhenie
+                      title: 'Завод стройматериалов в Чуйской области: инвестиционное
+                        предложение'
+                      excerpt: Мощности, сроки строительства и условия участия партнёров.
+                      category: projects
+                      cover:
+                        small: http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/dac4678d340cca6ffc9f92447d5eb492.webp
+                        large: http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/ca69a5ba9adcd1d6008a33343362da53.webp
+                      sector:
+                        slug: promyshlennost
+                        name: Промышленность
+                      project:
+                        slug: sovmestnoe-proizvodstvo-stroimaterialov-v-chuiskoi-oblasti
+                        title: Совместное производство стройматериалов в Чуйской области
+                      country:
+                        code: CN
+                        name: Китай
+                      file:
+                        url: http://localhost:8000/media/presentations/2026/10/zavod-stroimaterialov-v-chuiskoi-oblasti-investitsionnoe-predlozhenie.pdf
+                        size: 162972
+                        pages: 4
+                        ext: pdf
+                      published_at: '2026-10-21T10:00:00+06:00'
+                      is_translated: true
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+  /api/v1/presentations/{slug}/:
+    get:
+      operationId: presentations_retrieve
+      description: '`file` — PDF для просмотра на сайте (iframe или pdf.js), `source_file`
+        — PPTX только для скачивания или null. Поиск по slug на любом языке. Без перевода
+        на `lang` — 200, переводимые поля null, `is_translated: false`.'
+      summary: Презентация
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      - in: path
+        name: slug
+        schema:
+          type: string
+        description: slug записи на любом из трёх языков (ru, en или zh)
+        required: true
+      tags:
+      - Презентации
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresentationDetail'
+              examples:
+                Пример(seed-данные):
+                  value:
+                    id: 7
+                    slug: lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia
+                    title: 'Локализация сборки тракторов: этапы и требования'
+                    excerpt: Как устроена сборка из машинокомплектов и что требуется
+                      от площадки.
+                    content: <p>Как устроена сборка из машинокомплектов и что требуется
+                      от площадки.</p><p>Центр промышленной кооперации помогает предприятиям
+                      Кыргызстана находить партнёров, выходить на новые рынки и развивать
+                      совместные производства.</p>
+                    category: projects
+                    cover:
+                      small: http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/d02bc5e477d093f7f59dc05dcea99c02.webp
+                      large: http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/923c64d9a4ad8d43857f40f211b96282.webp
+                    sector:
+                      slug: promyshlennost
+                      name: Промышленность
+                    project:
+                      slug: lokalizatsiia-sborki-selkhoztekhniki
+                      title: Локализация сборки сельхозтехники
+                    country:
+                      code: CN
+                      name: Китай
+                    file:
+                      url: http://localhost:8000/media/presentations/2026/10/lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia.pdf
+                      size: 124425
+                      pages: 3
+                      ext: pdf
+                    source_file:
+                      url: http://localhost:8000/media/presentations/2026/10/lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia.pptx
+                      size: 322
+                      ext: pptx
+                    published_at: '2026-10-11T10:00:00+06:00'
+                    is_translated: true
+                    seo:
+                      meta_title: 'Локализация сборки тракторов: этапы и требования'
+                      meta_description: Как устроена сборка из машинокомплектов и
+                        что требуется от площадки.
+                      og_image: http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/923c64d9a4ad8d43857f40f211b96282.webp
+                      alternates:
+                        ru: lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia
+                        en: localizing-tractor-assembly-stages-and-requirements
+                        zh: tuo-la-ji-zu-zhuang-ben-di-hua-jie-duan-yu-yao-qiu
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailError'
+          description: Запись не найдена или не опубликована
   /api/v1/projects/:
     get:
       operationId: projects_list
@@ -1133,17 +1332,17 @@ paths:
                     next: http://api.example.org/accounts/?page=4
                     previous: http://api.example.org/accounts/?page=2
                     results:
-                    - id: 7
+                    - id: 10
                       slug: sovmestnoe-proizvodstvo-stroimaterialov-v-chuiskoi-oblasti
                       title: Совместное производство стройматериалов в Чуйской области
                       excerpt: Запуск завода мощностью 100 тыс. тонн в год.
                       cover:
-                        small: http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/a78f6a3c567a5b27884697aa88571959.webp
-                        large: http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/666e36e067f2ac51c7aed23fb837aa7d.webp
+                        small: http://localhost:8000/media/CACHE/images/projects/2026/10/construction/7e2c6523ae7e934b8794fc3b31865e35.webp
+                        large: http://localhost:8000/media/CACHE/images/projects/2026/10/construction/9a2d86b3d31b56c231d8f49e80e1f971.webp
                       country:
                         code: CN
                         name: Китай
-                      published_at: '2026-10-07T10:00:00+06:00'
+                      published_at: '2026-10-16T10:00:00+06:00'
                       is_translated: true
                   summary: Пример (seed-данные)
           description: ''
@@ -1190,35 +1389,35 @@ paths:
               examples:
                 Пример(seed-данные):
                   value:
-                    id: 7
+                    id: 10
                     slug: chu-he-zhou-jian-cai-he-zi-sheng-chan
                     title: 楚河州建材合资生产
                     excerpt: 建设年产10万吨的工厂。
                     content: <p>建设年产10万吨的工厂。</p><p>工业合作中心帮助吉尔吉斯斯坦企业寻找合作伙伴、开拓新市场并发展合资生产。</p>
                     cover:
-                      small: http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/a78f6a3c567a5b27884697aa88571959.webp
-                      large: http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/666e36e067f2ac51c7aed23fb837aa7d.webp
+                      small: http://localhost:8000/media/CACHE/images/projects/2026/10/construction/7e2c6523ae7e934b8794fc3b31865e35.webp
+                      large: http://localhost:8000/media/CACHE/images/projects/2026/10/construction/9a2d86b3d31b56c231d8f49e80e1f971.webp
                     country:
                       code: CN
                       name: 中国
-                    published_at: '2026-10-07T10:00:00+06:00'
+                    published_at: '2026-10-16T10:00:00+06:00'
                     partners:
-                    - id: 9
+                    - id: 13
                       name: 丝路贸易有限公司（演示）
                       logo:
-                        small: http://localhost:8000/media/CACHE/images/partners/logo-1/4102341f8ee4cfc88052f5d4bba63378.webp
-                        large: http://localhost:8000/media/CACHE/images/partners/logo-1/de558907b3fdb77063a7219c781a54b4.webp
+                        small: http://localhost:8000/media/CACHE/images/partners/logo-32/f83228973b81584c8d298049ef47f002.webp
+                        large: http://localhost:8000/media/CACHE/images/partners/logo-32/bde39ccc74ddce843ee85607d6097b39.webp
                       country:
                         code: CN
                         name: 中国
                       website: https://example.com/silkroad
                       description: 批发贸易与物流。
                       is_translated: true
-                    - id: 10
+                    - id: 14
                       name: 天山机械（演示）
                       logo:
-                        small: http://localhost:8000/media/CACHE/images/partners/logo-2/c63583e8b06cfcfc91d4176deae1956f.webp
-                        large: http://localhost:8000/media/CACHE/images/partners/logo-2/28bb25a8d42e128eadd01af0d5844f16.webp
+                        small: http://localhost:8000/media/CACHE/images/partners/logo-33/ddf280687dce28f1a07952388926c146.webp
+                        large: http://localhost:8000/media/CACHE/images/partners/logo-33/3e68ea1ddbe67135b5a613652a569b92.webp
                       country:
                         code: CN
                         name: 中国
@@ -1226,18 +1425,40 @@ paths:
                       description: 农业机械制造。
                       is_translated: true
                     gallery:
-                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_N6u0BWb/2a4e605e95a58aff12eb0e593b05e969.webp
-                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_N6u0BWb/3c9b3ec861991b8c3611abdc6c6f463b.webp
+                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/conference_bWmtfBX/9d12a19169e08915b5bbd92c9d791606.webp
+                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/conference_bWmtfBX/5b9698ac59966be4e4cfda77a0591a34.webp
                       caption: 会议开幕
-                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_UjcmiyV/fc5ffca5e52128889b64a8b2337d97f1.webp
-                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_UjcmiyV/82c90ed5354eee7d179243f03df98ad8.webp
+                    - small: http://localhost:8000/media/CACHE/images/gallery/2026/10/meeting_WOD8vu9/6930bad2611fe4fbf2589b2f33ce4fa8.webp
+                      large: http://localhost:8000/media/CACHE/images/gallery/2026/10/meeting_WOD8vu9/d72d12d066526f6c04c4fc3d83da9d88.webp
                       caption: 洽谈
                     attachments: []
+                    presentations:
+                    - id: 6
+                      slug: chu-he-zhou-jian-cai-chang-tou-zi-jian-yi-shu
+                      title: 楚河州建材厂：投资建议书
+                      excerpt: 产能、建设周期及合作伙伴参与条件。
+                      category: projects
+                      cover:
+                        small: http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/dac4678d340cca6ffc9f92447d5eb492.webp
+                        large: http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/ca69a5ba9adcd1d6008a33343362da53.webp
+                      sector:
+                        slug: gong-ye
+                        name: 工业
+                      country:
+                        code: CN
+                        name: 中国
+                      file:
+                        url: http://localhost:8000/media/presentations/2026/10/zavod-stroimaterialov-v-chuiskoi-oblasti-investitsionnoe-predlozhenie.pdf
+                        size: 162972
+                        pages: 4
+                        ext: pdf
+                      published_at: '2026-10-21T10:00:00+06:00'
+                      is_translated: true
                     is_translated: true
                     seo:
                       meta_title: 楚河州建材合资生产
                       meta_description: 建设年产10万吨的工厂。
-                      og_image: http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/666e36e067f2ac51c7aed23fb837aa7d.webp
+                      og_image: http://localhost:8000/media/CACHE/images/projects/2026/10/construction/9a2d86b3d31b56c231d8f49e80e1f971.webp
                       alternates:
                         ru: sovmestnoe-proizvodstvo-stroimaterialov-v-chuiskoi-oblasti
                         en: joint-production-of-building-materials-in-the-chui-region
@@ -1256,6 +1477,48 @@ paths:
               schema:
                 $ref: '#/components/schemas/DetailError'
           description: Запись не найдена или не опубликована
+  /api/v1/sectors/:
+    get:
+      operationId: sectors_list
+      description: Сферы, переведённые на `lang`, по порядку — для фильтра `sector`.
+      summary: Сферы презентаций
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - en
+          - ru
+          - zh
+          default: ru
+        description: 'Язык ответа. По умолчанию ru. Невалидное значение → 400 `{"lang":
+          ["..."]}`.'
+      tags:
+      - Презентации
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sector'
+              examples:
+                Пример(seed-данные):
+                  value:
+                  - slug: promyshlennost
+                    name: Промышленность
+                  summary: Пример (seed-данные)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: 'Невалидный параметр: `{"<параметр>": ["ошибка"]}`'
   /api/v1/services/:
     get:
       operationId: services_list
@@ -1289,7 +1552,7 @@ paths:
               examples:
                 Пример(seed-данные):
                   value:
-                  - id: 15
+                  - id: 22
                     slug: podbor-partnerov-v-kitae
                     title: Подбор партнёров в Китае
                     short_text: Поиск и проверка производителей и поставщиков.
@@ -1340,7 +1603,7 @@ paths:
               examples:
                 Пример(seed-данные):
                   value:
-                    id: 15
+                    id: 22
                     slug: podbor-partnerov-v-kitae
                     title: Подбор партнёров в Китае
                     short_text: Поиск и проверка производителей и поставщиков.
@@ -1357,7 +1620,7 @@ paths:
                     seo:
                       meta_title: Подбор партнёров в Китае
                       meta_description: Поиск и проверка производителей и поставщиков.
-                      og_image: http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp
+                      og_image: http://localhost:8000/media/CACHE/images/seo/factory/23d9754c91701b35c6e0d8f93c3443fd.webp
                       alternates:
                         ru: podbor-partnerov-v-kitae
                         en: partner-search-in-china
@@ -1410,8 +1673,8 @@ paths:
                   value:
                     analytics_id: null
                     default_og_image:
-                      small: http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/829137d66a2b7af8d82c19ccd85a8b59.webp
-                      large: http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp
+                      small: http://localhost:8000/media/CACHE/images/seo/factory/7aa6beb1249164fbc9e0ce964f548656.webp
+                      large: http://localhost:8000/media/CACHE/images/seo/factory/23d9754c91701b35c6e0d8f93c3443fd.webp
                   summary: Пример (seed-данные)
           description: ''
         '400':
@@ -1462,6 +1725,11 @@ components:
       - size
       - title
       - url
+    CategoryEnum:
+      type: string
+      enum:
+      - projects
+      - industry
     CodeEnum:
       enum:
       - mission
@@ -2331,6 +2599,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/NewsList'
+    PaginatedPresentationListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PresentationList'
     PaginatedProjectListList:
       type: object
       required:
@@ -2404,6 +2695,260 @@ components:
       required:
       - label
       - number
+    PresentationDetail:
+      type: object
+      description: Элемент списка презентаций внутри проекта (без ссылки на сам проект).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        excerpt:
+          type: string
+          nullable: true
+          readOnly: true
+        content:
+          type: string
+          nullable: true
+          description: Безопасный HTML
+          readOnly: true
+        category:
+          allOf:
+          - $ref: '#/components/schemas/CategoryEnum'
+          description: projects — презентация опубликованного проекта, industry —
+            остальные
+          readOnly: true
+        cover:
+          allOf:
+          - $ref: '#/components/schemas/ImageVersions'
+          nullable: true
+          readOnly: true
+        sector:
+          allOf:
+          - $ref: '#/components/schemas/Sector'
+          nullable: true
+          readOnly: true
+        project:
+          allOf:
+          - $ref: '#/components/schemas/ProjectRef'
+          nullable: true
+          readOnly: true
+        country:
+          allOf:
+          - $ref: '#/components/schemas/CountryShort'
+          readOnly: true
+          nullable: true
+        file:
+          allOf:
+          - $ref: '#/components/schemas/PresentationFile'
+          readOnly: true
+        source_file:
+          allOf:
+          - $ref: '#/components/schemas/PresentationSource'
+          nullable: true
+          readOnly: true
+        published_at:
+          type: string
+          format: date-time
+          title: Дата публикации
+        is_translated:
+          type: boolean
+          readOnly: true
+        seo:
+          allOf:
+          - $ref: '#/components/schemas/Seo'
+          readOnly: true
+      required:
+      - category
+      - content
+      - country
+      - cover
+      - excerpt
+      - file
+      - id
+      - is_translated
+      - project
+      - sector
+      - seo
+      - slug
+      - source_file
+      - title
+    PresentationFile:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+          description: Абсолютный URL PDF — для iframe или pdf.js
+        size:
+          type: integer
+          description: Размер, байт
+        pages:
+          type: integer
+          nullable: true
+          description: Число страниц; null — не удалось посчитать
+        ext:
+          type: string
+          description: Всегда pdf
+      required:
+      - ext
+      - pages
+      - size
+      - url
+    PresentationList:
+      type: object
+      description: Элемент списка презентаций внутри проекта (без ссылки на сам проект).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        excerpt:
+          type: string
+          nullable: true
+          readOnly: true
+        category:
+          allOf:
+          - $ref: '#/components/schemas/CategoryEnum'
+          description: projects — презентация опубликованного проекта, industry —
+            остальные
+          readOnly: true
+        cover:
+          allOf:
+          - $ref: '#/components/schemas/ImageVersions'
+          nullable: true
+          readOnly: true
+        sector:
+          allOf:
+          - $ref: '#/components/schemas/Sector'
+          nullable: true
+          readOnly: true
+        project:
+          allOf:
+          - $ref: '#/components/schemas/ProjectRef'
+          nullable: true
+          readOnly: true
+        country:
+          allOf:
+          - $ref: '#/components/schemas/CountryShort'
+          readOnly: true
+          nullable: true
+        file:
+          allOf:
+          - $ref: '#/components/schemas/PresentationFile'
+          readOnly: true
+        published_at:
+          type: string
+          format: date-time
+          title: Дата публикации
+        is_translated:
+          type: boolean
+          readOnly: true
+      required:
+      - category
+      - country
+      - cover
+      - excerpt
+      - file
+      - id
+      - is_translated
+      - project
+      - sector
+      - slug
+      - title
+    PresentationShort:
+      type: object
+      description: Элемент списка презентаций внутри проекта (без ссылки на сам проект).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+        title:
+          type: string
+          nullable: true
+          readOnly: true
+        excerpt:
+          type: string
+          nullable: true
+          readOnly: true
+        category:
+          allOf:
+          - $ref: '#/components/schemas/CategoryEnum'
+          description: projects — презентация опубликованного проекта, industry —
+            остальные
+          readOnly: true
+        cover:
+          allOf:
+          - $ref: '#/components/schemas/ImageVersions'
+          nullable: true
+          readOnly: true
+        sector:
+          allOf:
+          - $ref: '#/components/schemas/Sector'
+          nullable: true
+          readOnly: true
+        country:
+          allOf:
+          - $ref: '#/components/schemas/CountryShort'
+          readOnly: true
+          nullable: true
+        file:
+          allOf:
+          - $ref: '#/components/schemas/PresentationFile'
+          readOnly: true
+        published_at:
+          type: string
+          format: date-time
+          title: Дата публикации
+        is_translated:
+          type: boolean
+          readOnly: true
+      required:
+      - category
+      - country
+      - cover
+      - excerpt
+      - file
+      - id
+      - is_translated
+      - sector
+      - slug
+      - title
+    PresentationSource:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+          description: Абсолютный URL PPTX — только для скачивания
+        size:
+          type: integer
+          description: Размер, байт
+        ext:
+          type: string
+          description: Всегда pptx
+      required:
+      - ext
+      - size
+      - url
     ProjectDetail:
       type: object
       properties:
@@ -2456,6 +3001,12 @@ components:
           items:
             $ref: '#/components/schemas/Attachment'
           readOnly: true
+        presentations:
+          type: array
+          items:
+            $ref: '#/components/schemas/PresentationShort'
+          readOnly: true
+          description: Опубликованные и переведённые на `lang` презентации проекта
         is_translated:
           type: boolean
           readOnly: true
@@ -2473,6 +3024,7 @@ components:
       - id
       - is_translated
       - partners
+      - presentations
       - seo
       - slug
       - title
@@ -2518,6 +3070,30 @@ components:
       - is_translated
       - slug
       - title
+    ProjectRef:
+      type: object
+      properties:
+        slug:
+          type: string
+        title:
+          type: string
+      required:
+      - slug
+      - title
+    Sector:
+      type: object
+      properties:
+        slug:
+          type: string
+          nullable: true
+          readOnly: true
+        name:
+          type: string
+          nullable: true
+          readOnly: true
+      required:
+      - name
+      - slug
     Seo:
       type: object
       properties:

@@ -9,6 +9,7 @@ python manage.py seed [--flush]
 """
 import io
 import secrets
+import zipfile
 from datetime import timedelta
 from pathlib import Path
 
@@ -20,7 +21,7 @@ from django.db.models import FileField, ProtectedError
 from django.utils import timezone, translation
 from PIL import Image, ImageDraw, ImageFont
 
-from apps.cooperation.models import Country, Partner, Project
+from apps.cooperation.models import Country, Partner, Presentation, Project, Sector
 from apps.core import seed_data as data
 from apps.core.i18n import LANGS
 from apps.core.images import image_versions
@@ -107,6 +108,35 @@ def make_pdf(label, name):
     return ContentFile(buffer.getvalue(), name=name)
 
 
+def make_slides_pdf(title, pages, index, name):
+    """PDF-презентация из pages слайдов 16:9 (Pillow): титульный слайд + разделы."""
+    color = PALETTE[index % len(PALETTE)]
+    slides = []
+    for number in range(1, pages + 1):
+        slide = Image.new("RGB", (1600, 900), (255, 255, 255))
+        draw = ImageDraw.Draw(slide)
+        draw.rectangle([0, 0, 1600, 120], fill=color)
+        draw.text((60, 60), "ICC Kyrgyzstan (seed)", fill=(255, 255, 255),
+                  font=ImageFont.load_default(size=40), anchor="lm")
+        heading = title if number == 1 else f"Section {number - 1}"
+        draw.text((800, 450), heading, fill=(26, 31, 44), font=ImageFont.load_default(size=56), anchor="mm")
+        draw.text((1540, 850), f"{number} / {pages}", fill=(120, 120, 120),
+                  font=ImageFont.load_default(size=32), anchor="rm")
+        slides.append(slide)
+    buffer = io.BytesIO()
+    slides[0].save(buffer, "PDF", save_all=True, append_images=slides[1:])
+    return ContentFile(buffer.getvalue(), name=name)
+
+
+def make_pptx_stub(name):
+    """Заглушка PPTX: zip с ppt/presentation.xml — проходит проверку формата, но открыть её нельзя."""
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as archive:
+        archive.writestr("[Content_Types].xml", '<?xml version="1.0"?><Types/>')
+        archive.writestr("ppt/presentation.xml", '<?xml version="1.0"?><p:presentation/>')
+    return ContentFile(buffer.getvalue(), name=name)
+
+
 # --- Переводимые значения ----------------------------------------------------
 
 
@@ -153,7 +183,8 @@ class Command(BaseCommand):
             self.seed_events()
             countries = self.seed_countries()
             partners = self.seed_partners(countries)
-            self.seed_projects(countries, partners)
+            projects = self.seed_projects(countries, partners)
+            self.seed_presentations(self.seed_sectors(), projects, countries)
             self.seed_documents()
             passwords = self.seed_users()
         self.warm_previews()
@@ -165,10 +196,11 @@ class Command(BaseCommand):
         self.image_index += 1
         return make_image(label, self.image_index)
 
-    def ensure(self, model, lookup, images=None, **fields):
+    def ensure(self, model, lookup, images=None, files=None, **fields):
         """
         Создаёт запись, если её ещё нет (поиск по lookup). Возвращает (obj, created).
         images: {"поле": "подпись"} — картинки-заглушки генерируются только для новых записей.
+        files: {"поле": функция без аргументов → файл} — тоже только для новых записей.
         """
         name = model._meta.verbose_name_plural
         obj = model.objects.filter(**lookup).first()
@@ -177,6 +209,8 @@ class Command(BaseCommand):
             return obj, False
         for field, label in (images or {}).items():
             fields[field] = self.next_image(label)
+        for field, factory in (files or {}).items():
+            fields[field] = factory()
         obj = model(**{**fields, **lookup})
         obj.save()
         self.created[name] = self.created.get(name, 0) + 1
@@ -219,6 +253,9 @@ class Command(BaseCommand):
         news_slugs = [make_slug(item[2][0], "ru") for item in data.NEWS]
         event_slugs = [make_slug(item[4][0], "ru") for item in data.EVENTS]
         project_slugs = [make_slug(item[3][0], "ru") for item in data.PROJECTS]
+        presentation_slugs = [make_slug(item[6][0], "ru") for item in data.PRESENTATIONS]
+        # сферы не удаляем: их создаёт миграция, на них могут ссылаться не-seed презентации
+        self.delete_with_files(Presentation.objects.filter(slug_ru__in=presentation_slugs))
         self.delete_with_files(Project.objects.filter(slug_ru__in=project_slugs))
         self.delete_with_files(Partner.objects.filter(name_ru__in=[p[3][0] for p in data.PARTNERS]))
         for code, _, _ in data.COUNTRIES:
@@ -418,6 +455,7 @@ class Command(BaseCommand):
         return partners
 
     def seed_projects(self, countries, partners):
+        projects = []
         for index, (code, days_ago, partner_indexes, title, excerpt) in enumerate(data.PROJECTS):
             fields = {
                 **tr("title", title),
@@ -431,11 +469,44 @@ class Command(BaseCommand):
             project, created = self.ensure(
                 Project, {"slug_ru": make_slug(title[0], "ru")}, images={"cover": f"Project {index + 1}"}, **fields
             )
+            projects.append(project)
             if not created:
                 continue
             project.partners.set([partners[i] for i in partner_indexes])
             if index == 0:
                 self.add_gallery(project, 2)
+        return projects
+
+    def seed_sectors(self):
+        sectors = {}
+        for order, (key, name) in enumerate(data.SECTORS):
+            sector, _ = self.ensure(Sector, {"slug_ru": key}, **tr("name", name), order=order)
+            sectors[key] = sector
+        return sectors
+
+    def seed_presentations(self, sectors, projects, countries):
+        last = len(data.PRESENTATIONS) - 1
+        for index, item in enumerate(data.PRESENTATIONS):
+            sector, project_index, code, days_ago, pages, with_pptx, title, excerpt = item
+            slug_ru = make_slug(title[0], "ru")
+            fields = {
+                **tr("title", title),
+                **slugs(title),
+                **tr("excerpt", excerpt),
+                **tr("content", tuple(None if e is None else f"<p>{e}</p>" + data.LOREM[i] for i, e in enumerate(excerpt))),
+                "sector": sectors[sector],
+                "project": None if project_index is None else projects[project_index],
+                "country": countries.get(code),
+                "published_at": at_10(-days_ago),
+                "order": index,
+                "status": PUBLISHED,
+            }
+            files = {"file": lambda t=title[1], n=pages, i=index, s=slug_ru: make_slides_pdf(t, n, i, f"{s}.pdf")}
+            if with_pptx:
+                files["source_file"] = lambda s=slug_ru: make_pptx_stub(f"{s}.pptx")
+            # у последней нет обложки — фронт показывает иконку файла
+            images = {"cover": f"Presentation {index + 1}"} if index < last else None
+            self.ensure(Presentation, {"slug_ru": slug_ru}, images=images, files=files, **fields)
 
     def seed_documents(self):
         self.ensure(
@@ -470,7 +541,7 @@ class Command(BaseCommand):
     def warm_previews(self):
         """Заранее генерирует WebP-превью, чтобы первый запрос к API не ждал."""
         targets = [
-            (HomeBlock, "image"), (News, "cover"), (Event, "cover"), (Project, "cover"),
+            (HomeBlock, "image"), (News, "cover"), (Event, "cover"), (Project, "cover"), (Presentation, "cover"),
             (Country, "flag"), (Partner, "logo"), (GalleryImage, "image"),
         ]
         for model, field in targets:

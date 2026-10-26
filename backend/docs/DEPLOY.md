@@ -33,6 +33,8 @@ CORS_ALLOWED_ORIGINS=https://<домен фронта>
 CSRF_TRUSTED_ORIGINS=https://api.<домен>
 ADMIN_URL=<нестандартный путь, например cpk-7f3k9q/>
 FRONTEND_URL=https://<домен фронта>
+# пусто = FRONTEND_URL; на проде — только настоящий домен фронта (комментарий — отдельной строкой)
+FRAME_ANCESTORS=
 BACKEND_URL=https://api.<домен>
 NUM_PROXIES=1
 EMAIL_HOST=<SMTP заказчика>
@@ -45,6 +47,8 @@ FEEDBACK_EMAIL=<куда слать заявки, если в админке н�
 ```
 
 При `DEBUG=False` автоматически включаются HSTS (1 год), secure-cookies, `SECURE_PROXY_SSL_HEADER`, nosniff, `X-Frame-Options: DENY`.
+
+`ADMIN_URL` нигде не публикуется: в `/robots.txt` его нет, админку от индексации закрывает заголовок `X-Robots-Tag: noindex, nofollow`, который Django ставит на все её ответы (включая страницу входа). Не добавляйте путь админки в robots.txt ни на бэке, ни на фронте. Проверка после запуска: `curl -sI https://api.<домен>/<ADMIN_URL>login/ | grep -i x-robots-tag`.
 
 ## 3. Подготовка базы и статики
 
@@ -103,7 +107,7 @@ server {
     server_name api.<домен>;
     # ssl_certificate ... — добавит certbot
 
-    client_max_body_size 25m;   # документы до 20 МБ + запас
+    client_max_body_size 110m;  # презентация: PDF до 50 МБ + PPTX до 50 МБ в одной форме + запас
 
     location /static/ { alias /srv/icc/app/backend/staticfiles/; expires 30d; }
     location /media/  {
@@ -111,6 +115,28 @@ server {
         expires 7d;
         types { image/webp webp; }
         include /etc/nginx/mime.types;
+    }
+
+    # Файлы презентаций (PDF и PPTX). PDF фронт встраивает в свою страницу, поэтому
+    # здесь — frame-ancestors с доменом фронта (= FRONTEND_URL). Только для этого пути:
+    # админка и всё остальное по-прежнему с X-Frame-Options: DENY (его ставит Django).
+    location /media/presentations/ {
+        root /srv/icc/app/backend;   # root, а не alias: его наследует вложенный location ниже
+        expires 7d;
+        include /etc/nginx/mime.types;
+        # то же, что FRAME_ANCESTORS в .env (по умолчанию — FRONTEND_URL), через пробел
+        add_header Content-Security-Policy "frame-ancestors 'self' https://<домен фронта>" always;
+        add_header Content-Disposition "inline" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        # CORS нужен, только если фронт показывает PDF через pdf.js (fetch); для iframe не нужен
+        add_header Access-Control-Allow-Origin "https://<домен фронта>" always;
+        add_header Vary "Origin" always;
+
+        # PPTX — только скачивание. add_header во вложенный location не наследуется — повторяем нужные.
+        location ~* \.pptx$ {
+            add_header Content-Disposition "attachment" always;
+            add_header X-Content-Type-Options "nosniff" always;
+        }
     }
 
     location / {
@@ -121,6 +147,22 @@ server {
     }
 }
 ```
+
+Проверка заголовков презентаций после запуска (подставьте путь к любому загруженному PDF и PPTX):
+
+```bash
+curl -sI https://api.<домен>/media/presentations/<год>/<месяц>/<файл>.pdf  | grep -iE 'content-security|x-frame|disposition'
+#   Content-Security-Policy: frame-ancestors 'self' https://<домен фронта>    (X-Frame-Options быть не должно)
+#   Content-Disposition: inline
+curl -sI https://api.<домен>/media/presentations/<год>/<месяц>/<файл>.pptx | grep -i disposition
+#   Content-Disposition: attachment
+curl -sI https://api.<домен>/<ADMIN_URL>login/ | grep -i x-frame
+#   X-Frame-Options: DENY
+```
+
+В dev (`runserver`, `DEBUG=True`) media раздаёт Django с теми же заголовками (`apps/core/media.py`): frame-ancestors — из `FRAME_ANCESTORS` (пусто — `FRONTEND_URL`), CORS — из `CORS_ALLOWED_ORIGINS`. nginx `.env` не читает: **при смене домена фронта** поменяйте и `.env`, и обе строки с `<домен фронта>` в nginx.
+
+**Тестовое окружение** (фронт на превью-деплоях Vercel): `FRAME_ANCESTORS=https://<тестовый домен фронта>,https://*.vercel.app`, а в nginx — `frame-ancestors 'self' https://<тестовый домен фронта> https://*.vercel.app`. На проде маску не добавлять: встраивать PDF сможет любой сайт на vercel.app.
 
 ```bash
 sudo ln -s /etc/nginx/sites-available/icc-backend /etc/nginx/sites-enabled/

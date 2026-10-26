@@ -28,6 +28,14 @@ def published(queryset):
     return queryset
 
 
+def is_published(obj):
+    """То же правило, что published(), но для объекта в памяти (вложенные ссылки в ответах)."""
+    if obj.status != PublishableModel.Status.PUBLISHED:
+        return False
+    published_at = getattr(obj, "published_at", None)
+    return published_at is None or published_at <= timezone.now()
+
+
 def gallery_and_attachments_prefetch(lang):
     """Для News / Event / Project: галерея целиком, вложения — только переведённые на lang."""
     return (

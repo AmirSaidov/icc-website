@@ -1,0 +1,69 @@
+{
+  "count": 5,
+  "next": "http://localhost:8000/api/v1/presentations/?lang=ru&page=2&page_size=2",
+  "previous": null,
+  "results": [
+    {
+      "id": 6,
+      "slug": "zavod-stroimaterialov-v-chuiskoi-oblasti-investitsionnoe-predlozhenie",
+      "title": "Завод стройматериалов в Чуйской области: инвестиционное предложение",
+      "excerpt": "Мощности, сроки строительства и условия участия партнёров.",
+      "category": "projects",
+      "cover": {
+        "small": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/dac4678d340cca6ffc9f92447d5eb492.webp",
+        "large": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/ca69a5ba9adcd1d6008a33343362da53.webp"
+      },
+      "sector": {
+        "slug": "promyshlennost",
+        "name": "Промышленность"
+      },
+      "project": {
+        "slug": "sovmestnoe-proizvodstvo-stroimaterialov-v-chuiskoi-oblasti",
+        "title": "Совместное производство стройматериалов в Чуйской области"
+      },
+      "country": {
+        "code": "CN",
+        "name": "Китай"
+      },
+      "file": {
+        "url": "http://localhost:8000/media/presentations/2026/10/zavod-stroimaterialov-v-chuiskoi-oblasti-investitsionnoe-predlozhenie.pdf",
+        "size": 162972,
+        "pages": 4,
+        "ext": "pdf"
+      },
+      "published_at": "2026-10-21T10:00:00+06:00",
+      "is_translated": true
+    },
+    {
+      "id": 7,
+      "slug": "lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia",
+      "title": "Локализация сборки тракторов: этапы и требования",
+      "excerpt": "Как устроена сборка из машинокомплектов и что требуется от площадки.",
+      "category": "projects",
+      "cover": {
+        "small": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/d02bc5e477d093f7f59dc05dcea99c02.webp",
+        "large": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/923c64d9a4ad8d43857f40f211b96282.webp"
+      },
+      "sector": {
+        "slug": "promyshlennost",
+        "name": "Промышленность"
+      },
+      "project": {
+        "slug": "lokalizatsiia-sborki-selkhoztekhniki",
+        "title": "Локализация сборки сельхозтехники"
+      },
+      "country": {
+        "code": "CN",
+        "name": "Китай"
+      },
+      "file": {
+        "url": "http://localhost:8000/media/presentations/2026/10/lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia.pdf",
+        "size": 124425,
+        "pages": 3,
+        "ext": "pdf"
+      },
+      "published_at": "2026-10-11T10:00:00+06:00",
+      "is_translated": true
+    }
+  ]
+}

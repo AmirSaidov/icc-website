@@ -1,5 +1,5 @@
 {
-  "id": 17,
+  "id": 25,
   "slug": "promyshlennaia-kooperatsiia",
   "title": "Промышленная кооперация",
   "short_text": "Связываем производителей для совместной работы.",
@@ -10,7 +10,7 @@
   "seo": {
     "meta_title": "Промышленная кооперация",
     "meta_description": "Связываем производителей для совместной работы.",
-    "og_image": "http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp",
+    "og_image": "http://localhost:8000/media/CACHE/images/seo/factory/23d9754c91701b35c6e0d8f93c3443fd.webp",
     "alternates": {
       "ru": "promyshlennaia-kooperatsiia",
       "en": "industrial-cooperation",

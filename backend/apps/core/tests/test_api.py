@@ -3,6 +3,7 @@ from django.apps import apps
 from django.contrib.auth.models import User
 from django.core.management import call_command
 
+from apps.cooperation.models import Presentation
 from apps.core.models import Attachment, ContactInfo, SiteSettings
 from apps.core.tests.factories import add_pdf, image_file
 
@@ -20,6 +21,8 @@ ENDPOINTS = [
     "/api/v1/countries/",
     "/api/v1/partners/",
     "/api/v1/projects/",
+    "/api/v1/sectors/",
+    "/api/v1/presentations/",
     "/api/v1/contacts/",
     "/api/v1/settings/",
     "/api/v1/documents/",
@@ -99,6 +102,7 @@ def test_seed_is_idempotent_and_flush_recreates(api):
     first = _counts()
     assert first["News"] == 12 and first["Event"] == 8 and first["Direction"] == 8
     assert first["Service"] == 7 and first["HomeBlock"] == 5 and first["Partner"] == 4
+    assert first["Presentation"] == 5 and first["Sector"] == 2  # сферы — из миграции, seed не дублирует
     assert User.objects.get(username="admin").groups.filter(name="Администратор").exists()
     assert User.objects.get(username="editor").groups.filter(name="Редактор").exists()
 
@@ -111,8 +115,16 @@ def test_seed_is_idempotent_and_flush_recreates(api):
     # минимум 2 записи без китайского перевода и опубликованные системные страницы
     untranslated = sum(
         api.get(url, {"lang": "zh"}).json()["count"] < api.get(url).json()["count"]
-        for url in ("/api/v1/news/", "/api/v1/projects/", "/api/v1/events/")
+        for url in ("/api/v1/news/", "/api/v1/projects/", "/api/v1/events/", "/api/v1/presentations/")
     ) + (len(api.get("/api/v1/services/", {"lang": "zh"}).json()) < 7)
     assert untranslated >= 2
     assert api.get("/api/v1/pages/about/", {"lang": "zh"}).json()["is_translated"] is True
     assert len(api.get("/api/v1/documents/", {"lang": "zh"}).json()) == 1
+
+    # презентации: разные сферы, 2 привязаны к проектам, 1 с PPTX, 1 без zh, PDF на 3–5 страниц
+    presentations = list(Presentation.objects.all())
+    assert len({p.sector_id for p in presentations}) == 2
+    assert sum(p.project_id is not None for p in presentations) == 2
+    assert sum(bool(p.source_file) for p in presentations) == 1
+    assert sum(not p.title_zh for p in presentations) == 1
+    assert all(3 <= p.pages <= 5 for p in presentations)

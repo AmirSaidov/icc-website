@@ -18,7 +18,7 @@
 | 10 | `/events/?when=upcoming` и `?when=past` правильно делят и сортируют | `apps/news/tests/test_api.py::test_events_when_upcoming_and_past_split_and_sort` | ✅ |
 | 11 | Черновики (`draft`, `review`) не видны в API | `apps/news/tests/test_api.py::test_drafts_and_review_are_hidden[draft/review]`; также `apps/pages/tests/test_api.py::test_drafts_hidden_in_directions_and_services`, `apps/core/tests/test_seo.py::test_drafts_not_in_sitemap` | ✅ |
 | 12 | Партнёр без `consent_to_publish` не виден в API | `apps/cooperation/tests/test_api.py::test_partner_without_consent_is_hidden` | ✅ |
-| 13 | `/sitemap.xml` содержит hreflang; `/robots.txt` закрывает `/api/` | `apps/core/tests/test_seo.py::test_sitemap_has_hreflang_alternates_and_robots_closes_api` | ✅ |
+| 13 | `/sitemap.xml` содержит hreflang; `/robots.txt` закрывает `/api/` и не раскрывает путь админки (её закрывает `X-Robots-Tag`) | `apps/core/tests/test_seo.py::test_sitemap_has_hreflang_alternates_and_robots_closes_api`, `::test_robots_does_not_reveal_admin_url`, `::test_admin_responses_have_x_robots_tag` | ✅ |
 | 14 | HTML с `<script>` в `content` вырезается при сохранении | `apps/news/tests/test_admin.py::test_script_is_removed_on_save`; разметка CKEditor проходит без поломок — `::test_ckeditor_markup_survives_sanitizer` | ✅ |
 
 Запуск только этих тестов:
@@ -56,3 +56,21 @@ pytest apps/news/tests/test_api.py::test_news_with_three_translations_photo_and_
 4. В клоне: `python manage.py check` — без ошибок, `pytest` — 163 passed; `git status` после всех команд пуст (`db.sqlite3`, `.env`, `media/`, `logs/`, `.venv/` в git не попадают).
 
 Результат: проект поднимается по README без правок.
+
+## После MVP: раздел «Презентации»
+
+Все тесты — `apps/cooperation/tests/test_presentations.py` (seed — `apps/core/tests/test_api.py::test_seed_is_idempotent_and_flush_recreates`).
+
+| Что проверяется | Тест(ы) |
+|---|---|
+| Список, свежие сверху, фильтры `sector` / `project` / `country`, пагинация, без N+1 | `test_list_fresh_first_with_file_info`, `test_list_filters`, `test_list_pagination`, `test_list_has_no_n_plus_1` |
+| `category` (`projects` / `industry`) и фильтр `?category=`; `excerpt` до 300 символов | `test_category_field_and_filter`, `test_excerpt_limited_to_300_chars` |
+| Миграция `description` → `content` + `excerpt` | `test_description_migrates_to_excerpt_and_content` |
+| Детальный ответ: `file`, `source_file`, `sector`, `project`, `country`, `seo` | `test_detail_full`, `test_detail_nulls_without_pptx_project_and_country`, `test_project_ref_is_null_when_project_unpublished_or_untranslated` |
+| Черновики и отложенная публикация скрыты (список, детальный, проект, sitemap) | `test_drafts_hidden`, `test_scheduled_presentation_hidden_until_published_at` |
+| Без zh-перевода: нет в списке, детальный — 200 и `is_translated: false` | `test_presentation_without_zh` |
+| `presentations` в `/projects/{slug}/` | `test_project_detail_contains_published_translated_presentations` |
+| Отказ: PPTX в поле PDF, подделки, файл > 50 МБ; лимит 50, а не 20 МБ | `test_pptx_in_pdf_field_rejected`, `test_fake_pdf_and_fake_pptx_rejected`, `test_files_over_50mb_rejected`, `test_presentation_limit_is_50mb_not_20mb`, `test_admin_form_rejects_pptx_as_main_file` |
+| Подсчёт страниц и размеров; битый PDF сохраняется с `pages: null` | `test_pages_and_size_counted_on_save`, `test_unreadable_pdf_saves_with_null_pages` |
+| PDF — `frame-ancestors` из `FRAME_ANCESTORS` (несколько значений, маска) без `X-Frame-Options`; PPTX — attachment; админка и прочее — `DENY` | `test_pdf_can_be_framed_by_frontend_only`, `test_frame_ancestors_with_several_origins_and_wildcard`, `test_pptx_is_downloaded`, `test_other_media_and_admin_stay_deny`; разбор настройки — `apps/core/tests/test_security.py::test_frame_ancestors_*` |
+| Права Редактора и Администратора, создание через админку, inline в проекте | `test_roles_have_full_access_to_presentations_and_sectors`, `test_editor_creates_presentation_via_admin`, `test_editor_adds_sector`, `test_project_form_shows_presentations_read_only_with_edit_links` |

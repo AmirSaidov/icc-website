@@ -4,35 +4,35 @@
   "previous": null,
   "results": [
     {
-      "id": 7,
+      "id": 10,
       "slug": "sovmestnoe-proizvodstvo-stroimaterialov-v-chuiskoi-oblasti",
       "title": "Совместное производство стройматериалов в Чуйской области",
       "excerpt": "Запуск завода мощностью 100 тыс. тонн в год.",
       "cover": {
-        "small": "http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/a78f6a3c567a5b27884697aa88571959.webp",
-        "large": "http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/666e36e067f2ac51c7aed23fb837aa7d.webp"
+        "small": "http://localhost:8000/media/CACHE/images/projects/2026/10/construction/7e2c6523ae7e934b8794fc3b31865e35.webp",
+        "large": "http://localhost:8000/media/CACHE/images/projects/2026/10/construction/9a2d86b3d31b56c231d8f49e80e1f971.webp"
       },
       "country": {
         "code": "CN",
         "name": "Китай"
       },
-      "published_at": "2026-10-07T10:00:00+06:00",
+      "published_at": "2026-10-16T10:00:00+06:00",
       "is_translated": true
     },
     {
-      "id": 8,
+      "id": 11,
       "slug": "lokalizatsiia-sborki-selkhoztekhniki",
       "title": "Локализация сборки сельхозтехники",
       "excerpt": "Сборка тракторов из машинокомплектов.",
       "cover": {
-        "small": "http://localhost:8000/media/CACHE/images/projects/2026/10/project-2/b6d3c524062c951d457356f24aca2141.webp",
-        "large": "http://localhost:8000/media/CACHE/images/projects/2026/10/project-2/933fa97af6e8edb7ef3830ff18feb5f5.webp"
+        "small": "http://localhost:8000/media/CACHE/images/projects/2026/10/tractor/cd658784c1318cd4773746f430541ec6.webp",
+        "large": "http://localhost:8000/media/CACHE/images/projects/2026/10/tractor/745962c7539d952b1ae852a9182fe8ec.webp"
       },
       "country": {
         "code": "CN",
         "name": "Китай"
       },
-      "published_at": "2026-09-07T10:00:00+06:00",
+      "published_at": "2026-09-16T10:00:00+06:00",
       "is_translated": true
     }
   ]

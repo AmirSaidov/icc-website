@@ -1,10 +1,10 @@
 from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 from apps.core.admin_views import ckeditor_upload
+from apps.core.media import media_urlpatterns
 from apps.core.sitemap import robots_txt, sitemap_xml
 
 admin.site.site_header = "ЦПК при ТПП КР — управление сайтом"
@@ -31,4 +31,5 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # media в dev; файлам презентаций — frame-ancestors вместо DENY (apps/core/media.py)
+    urlpatterns += media_urlpatterns()

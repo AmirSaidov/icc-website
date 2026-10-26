@@ -1,27 +1,27 @@
 {
-  "id": 25,
+  "id": 38,
   "slug": "delovaia-missiia-v-urumchi",
   "title": "Деловая миссия в Урумчи",
   "excerpt": "Предприниматели Кыргызстана провели переговоры с компаниями Синьцзяна.",
   "content": "<p>Предприниматели Кыргызстана провели переговоры с компаниями Синьцзяна.</p><p>Центр промышленной кооперации помогает предприятиям Кыргызстана находить партнёров, выходить на новые рынки и развивать совместные производства.</p>",
   "cover": {
-    "small": "http://localhost:8000/media/CACHE/images/news/2026/10/news-1/180f0002dfa5cacc94a2a51ef9efc6a6.webp",
-    "large": "http://localhost:8000/media/CACHE/images/news/2026/10/news-1/8d061b86952d98a3aab9a4c50f4b83c2.webp"
+    "small": "http://localhost:8000/media/CACHE/images/news/2026/10/airplane/bbcf58e3629bee6038ab5f581c86907a.webp",
+    "large": "http://localhost:8000/media/CACHE/images/news/2026/10/airplane/843bb73b124bfa5afce45f7633854892.webp"
   },
   "category": {
     "slug": "missions",
     "name": "Деловые миссии"
   },
-  "published_at": "2026-10-15T10:00:00+06:00",
+  "published_at": "2026-10-24T10:00:00+06:00",
   "gallery": [
     {
-      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1/3fbeb4c9d36df2f3914fb2e5d015c9ce.webp",
-      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1/09142fef4aba283b8a0d640e15a313e2.webp",
+      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/conference/b4dabe05cb8b3185c54ecefda771082f.webp",
+      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/conference/3bd53d7e976e5fd761d5800efe37bd98.webp",
       "caption": "Открытие встречи"
     },
     {
-      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2/27934dff64ad428503edb6fb41d9c026.webp",
-      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2/747c2e80015e11af58c01a46b7a27a34.webp",
+      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/meeting/546397b0616d8de6cc567852e3759c47.webp",
+      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/meeting/deb1e5109af02394ef2cba1518aa59ad.webp",
       "caption": "Переговоры"
     }
   ],
@@ -37,7 +37,7 @@
   "seo": {
     "meta_title": "Деловая миссия в Урумчи — ЦПК",
     "meta_description": "Предприниматели Кыргызстана провели переговоры с компаниями Синьцзяна.",
-    "og_image": "http://localhost:8000/media/CACHE/images/news/2026/10/news-1/8d061b86952d98a3aab9a4c50f4b83c2.webp",
+    "og_image": "http://localhost:8000/media/CACHE/images/news/2026/10/airplane/843bb73b124bfa5afce45f7633854892.webp",
     "alternates": {
       "ru": "delovaia-missiia-v-urumchi",
       "en": "business-mission-to-urumqi",
