@@ -10,6 +10,7 @@
     "services": "Services",
     "news": "News & events",
     "cooperation": "Cooperation",
+    "presentations": "Presentations",
     "contacts": "Contacts",
     "events": "Events"
   },
@@ -54,25 +55,6 @@
     "heroText": "We share the same mountains — the Tian Shan. We help companies from Kyrgyzstan and China join forces in business too: find partners and launch joint production.",
     "heroApply": "Submit a request",
     "heroServices": "Our services",
-    "uniteEyebrow": "What unites us",
-    "uniteTitle": "The Heavenly Mountains in three languages — one shared space",
-    "unite": {
-      "kg": {
-        "word": "Teñir-Too",
-        "caption": "in Kyrgyz",
-        "text": "Production sites, raw materials, access to the EAEU market"
-      },
-      "cn": {
-        "word": "天山",
-        "caption": "in Chinese",
-        "text": "Technology, equipment, investment and localization experience"
-      },
-      "common": {
-        "word": "Tian Shan",
-        "caption": "our common working language",
-        "text": "The Center connects the parties and supports the project through to launch"
-      }
-    },
     "aboutEyebrow": "About the Center",
     "aboutTitle": "Not 100 memorandums, but 100 working enterprises",
     "aboutText": "The Center was established under the Chamber of Commerce and Industry of the Kyrgyz Republic to develop industrial cooperation, find foreign partners and create joint production. Our priority is cooperation with China.",
@@ -187,7 +169,24 @@
     "noProjects": "No projects found.",
     "formTitle": "Discuss cooperation",
     "untranslated": "This content is not available in this language yet",
-    "website": "Company website"
+    "website": "Company website",
+    "presentations": "Project presentations",
+    "allPresentations": "All presentations"
+  },
+  "Presentations": {
+    "title": "Presentations",
+    "description": "Presentations of joint projects and industrial companies, with a focus on IT.",
+    "all": "All",
+    "categories": {
+      "projects": "Joint projects",
+      "industry": "Industry & IT"
+    },
+    "empty": "No presentations yet",
+    "viewerTitle": "Presentation “{title}”",
+    "open": "Open full screen",
+    "download": "Download",
+    "noPreview": "This format can't be viewed on the site — please download the file.",
+    "untranslated": "This content is not available in this language yet"
   },
   "Contacts": {
     "title": "Contacts",

@@ -6,7 +6,7 @@
  * Брейкпоинты стандартные: sm 640 / md 768 / lg 1024 / xl 1280.
  */
 @theme {
-  /* Редизайн «Тянь-Шань»: синий ТПП, тёмно-синий «ночные горы», красная печать. */
+  /* Синий ТПП, тёмно-синий, красная печать. */
   --color-primary: #1f4f9f;
   --color-primary-hover: #183f82;
   --color-primary-light: #e2e8f3;
@@ -35,24 +35,13 @@
 
   --container-page: 1200px;
 
-  /* Анимации первого экрана: motion-safe:animate-fade-up, motion-safe:animate-zoom-in */
+  /* Анимация первого экрана: motion-safe:animate-fade-up */
   --animate-fade-up: fade-up 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  --animate-zoom-in: zoom-in 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 
   @keyframes fade-up {
     from {
       opacity: 0;
       transform: translateY(24px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-  @keyframes zoom-in {
-    from {
-      opacity: 0;
-      transform: scale(1.06);
     }
     to {
       opacity: 1;

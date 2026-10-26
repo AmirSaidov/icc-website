@@ -35,7 +35,7 @@ const notoSerif = Noto_Serif({
   display: 'swap'
 });
 
-// Иероглифы в заголовках и декоре (天山, 合作, 一…八). Как и Noto Sans SC, качается кусками.
+// Иероглифы в заголовках китайской версии. Как и Noto Sans SC, качается кусками.
 const notoSerifSC = Noto_Serif_SC({
   weight: ['500', '700'],
   variable: '--font-noto-serif-sc',

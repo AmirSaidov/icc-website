@@ -6,7 +6,7 @@ import {MobileMenu} from './MobileMenu';
 import {NavLinks} from './NavLinks';
 
 /**
- * ≥1280 px: логотип, 7 пунктов, язык, «Подать заявку».
+ * ≥1280 px: логотип, 8 пунктов, язык, «Подать заявку».
  * <1280 px: логотип, язык, «Подать заявку» (от 768 px), бургер.
  * Без backdrop-filter: он ломает position: fixed у панели бургер-меню.
  */

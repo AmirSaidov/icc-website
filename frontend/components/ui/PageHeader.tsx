@@ -1,8 +1,7 @@
 import type {ReactNode} from 'react';
-import {Mountains} from '@/components/sections/Mountains';
 import {Breadcrumbs, type Crumb} from './Breadcrumbs';
 
-/** Шапка внутренней страницы: хлебные крошки, единственный h1, вводный текст; горы справа, орнамент снизу. */
+/** Шапка внутренней страницы: хлебные крошки, единственный h1, вводный текст; орнамент снизу. */
 export function PageHeader({
   title,
   lead,
@@ -15,13 +14,8 @@ export function PageHeader({
   children?: ReactNode;
 }) {
   return (
-    <section className="relative overflow-hidden">
-      <Mountains
-        id="page-mtn"
-        sun={false}
-        className="absolute bottom-[22px] right-0 hidden h-[92%] w-auto opacity-60 md:block"
-      />
-      <div className="container-page relative py-10 md:py-14">
+    <section>
+      <div className="container-page py-10 md:py-14">
         <Breadcrumbs items={breadcrumbs} />
         <h1 className="mt-4 max-w-3xl text-3xl font-bold leading-tight text-navy motion-safe:animate-fade-up md:text-[40px]">
           {title}
@@ -29,7 +23,7 @@ export function PageHeader({
         {lead && <p className="mt-4 max-w-2xl text-lg text-muted motion-safe:animate-fade-up motion-safe:[animation-delay:100ms]">{lead}</p>}
         {children}
       </div>
-      <div aria-hidden className="ornament-band relative" />
+      <div aria-hidden className="ornament-band" />
     </section>
   );
 }

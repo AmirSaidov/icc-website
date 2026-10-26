@@ -44,12 +44,6 @@ export async function Footer({locale}: {locale: Locale}) {
         <div>
           <p className="font-serif text-lg font-bold text-white">{tHeader('logoTitle')}</p>
           <p className="mt-1 text-sm">{tHeader('logoSubtitle')}</p>
-          {/* Название по-китайски — часть фирменного стиля; на китайской версии оно уже в строке выше. */}
-          {locale !== 'zh' && (
-            <p lang="zh-Hans" className="mt-1 text-sm text-white/60">
-              工业合作中心
-            </p>
-          )}
         </div>
 
         <nav aria-labelledby="footer-menu">
