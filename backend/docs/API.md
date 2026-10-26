@@ -18,9 +18,17 @@
 | Где во фронте | Сейчас | Что ждёт бэк |
 |---|---|---|
 | `app/api/feedback/route.ts` | прокси через Next.js с `X-Forwarded-For` | так и задумано; от схемы прокси зависит `NUM_PROXIES` на сервере — см. [DEPLOY.md](DEPLOY.md), раздел 6 |
-| `lib/api-types.ts` — `PresentationListItem`, `Presentation` (описаны вручную) | `category: "projects" \| "industry"`, фильтр `?category=` | сферы — справочник **`/sectors/`** (`{slug, name}`), фильтр **`?sector=<slug>`**; связь с проектом — поле **`project`** (`{slug, title}` или `null`) и фильтр **`?project=<slug>`**. Вкладка «Совместные проекты» — см. раздел «Презентации» |
-| то же | `excerpt` и `content` | одно поле **`description`** (безопасный HTML), только в детальном ответе |
-| то же | `file: Attachment` (`title`, `url`, `size`, `ext`), PPTX — через Office Online | `file` — всегда PDF: `{url, size, pages, ext}`; PPTX — отдельное поле **`source_file`** `{url, size, ext}` или `null`, только для скачивания. Типы теперь есть в `openapi.yaml` — `npm run gen:types` |
+Презентации бэк отдаёт в форме, которую уже читает фронт (`category`, `excerpt`, `content`, `cover`, `file.url` / `file.size` / `file.ext`, `seo`). Что поменять во фронте:
+
+| Где во фронте | Сейчас | Что поменять |
+|---|---|---|
+| `components/ui/PresentationViewer.tsx` | PPT/PPTX показываются через Office Online (`view.officeapps.live.com`) | **Office Online не поддерживаем.** `file` — всегда PDF: показывать только его (iframe или pdf.js). Ветку `OFFICE_EXT` / `officeUrl` и `noPreview` можно убрать |
+| то же — кнопка «Скачать» | скачивает `file.url` (PDF) | если есть **`source_file`** (`{url, size, ext: "pptx"}`) — добавить кнопку «Скачать PPTX» по `source_file.url`. Учтите: атрибут `download` у ссылки на другой домен браузеры игнорируют — PDF по такой кнопке откроется (он отдаётся `inline`), PPTX скачается (`attachment`) |
+| `lib/api-types.ts` — `PresentationListItem`, `Presentation` (описаны вручную) | `file: Attachment` | типы есть в `openapi.yaml`: `npm run gen:types` и `S['PresentationList']` / `S['PresentationDetail']`. `file` — это `PresentationFile` `{url, size, pages, ext}`, без `title` (фронт его и не читает); `published_at` приходит всегда |
+| `lib/api.ts` — `getPresentations` | 404 → пустой список (эндпоинта не было) | эндпоинт есть; обработку 404 можно убрать |
+| деплой фронта на Vercel | — | PDF встраивается во фрейм только на доменах из `FRAME_ANCESTORS` бэка (по умолчанию — `FRONTEND_URL`). Для превью-деплоев на тестовом бэке нужно `FRAME_ANCESTORS=...,https://*.vercel.app` |
+
+Новое в API, что фронт пока не использует (не обязательно): `sector` (`{slug, name}`) и справочник `/sectors/` — для подвкладок внутри «Промышленность и IT» (`?category=industry&sector=<slug>`); `project`, `country`, `file.pages`, фильтры `?project=`, `?country=`.
 
 ## Как запустить бэкенд локально
 
@@ -148,7 +156,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 | Новость | `/{lang}/news/{slug}` | `/news/{slug}/` |
 | Мероприятие | `/{lang}/events/{slug}` | `/events/{slug}/` |
 | Проект | `/{lang}/cooperation/projects/{slug}` | `/projects/{slug}/` |
-| Презентация | `/{lang}/presentations/{slug}` (согласовать с фронтом) | `/presentations/{slug}/` |
+| Презентация | `/{lang}/presentations/{slug}` | `/presentations/{slug}/` |
 
 ### Пагинация
 
@@ -174,6 +182,7 @@ function switchLanguage(target: "ru" | "en" | "zh") {
 | `/events/` | `when` | `upcoming` — предстоящие, ближайшие сверху; `past` — прошедшие, свежие сверху; без параметра — все, по убыванию даты. Другое значение даёт `400` |
 | `/events/` | `type` | `mission`, `forum`, `exhibition`, `b2b`, `other` (подписи на языке запроса — из `/event-types/`). Другое значение даёт `400` |
 | `/partners/`, `/projects/`, `/presentations/` | `country` | ISO-код страны (`CN`, `KZ`; регистр не важен) |
+| `/presentations/` | `category` | `projects` — презентации опубликованных проектов, `industry` — остальные. Другое значение даёт `400` |
 | `/presentations/` | `sector` | slug сферы на любом языке (из `/sectors/`). Неизвестный slug даёт пустой список |
 | `/presentations/` | `project` | slug проекта на любом языке. Неизвестный или неопубликованный проект даёт пустой список |
 
@@ -263,25 +272,35 @@ const response = await fetch(`${API}/feedback/`, {
 
 ## Презентации
 
-Презентации проектов и сфер (промышленность, IT, …). На сайте они **смотрятся как PDF**, а PPTX (если есть) — только для скачивания.
+Презентации совместных проектов и отраслей (промышленность, IT, …). На сайте они **смотрятся как PDF**; PPTX (если есть) — только для скачивания.
 
-**Список** `GET /presentations/?lang=&sector=&project=&country=&page=&page_size=` — опубликованные и переведённые на `lang`, свежие сверху (по `published_at`), с пагинацией как у новостей. Элемент: `id`, `slug`, `title`, `cover` (`{small, large}` или `null` — тогда на карточке иконка файла), `sector` (`{slug, name}`), `project` (`{slug, title}` или `null`), `country` (`{code, name}` или `null`), `file`, `published_at`, `is_translated`.
+**Список** `GET /presentations/?lang=&category=&sector=&project=&country=&page=&page_size=` — опубликованные и переведённые на `lang`, свежие сверху (по `published_at`), с пагинацией как у новостей. Элемент:
 
-**Детальный ответ** `GET /presentations/{slug}/` — то же плюс `description` (безопасный HTML), `source_file` и `seo`:
+| Поле | Что это |
+|---|---|
+| `id`, `slug`, `title`, `excerpt` | как у новости; `excerpt` — короткий текст без HTML (до 300 символов) |
+| `category` | `projects` — презентация опубликованного проекта, `industry` — все остальные. Вычисляется, не зависит от языка |
+| `cover` | `{small, large}` или `null` — тогда на карточке иконка файла |
+| `sector` | `{slug, name}` — сфера («Промышленность», «Информационные технологии», …); `null`, если не переведена на `lang` |
+| `project` | `{slug, title}` или `null` (нет проекта, он не опубликован или не переведён на `lang`) |
+| `country` | `{code, name}` или `null` |
+| `file` | PDF: `{url, size, pages, ext: "pdf"}` |
+| `published_at`, `is_translated` | как у новости |
+
+**Детальный ответ** `GET /presentations/{slug}/` — то же плюс `content` (безопасный HTML), `source_file` и `seo` (`meta_description` по умолчанию — `excerpt`):
 
 ```json
 "file":        {"url": "https://api.../media/presentations/2026/10/deck.pdf", "size": 124425, "pages": 12, "ext": "pdf"},
 "source_file": {"url": "https://api.../media/presentations/2026/10/deck.pptx", "size": 5242880, "ext": "pptx"}
 ```
 
-- `file` — всегда PDF, есть у каждой презентации. `pages` — число страниц (может быть `null`, если файл не удалось разобрать).
-- `source_file` — исходник PPTX или `null`. Отдаётся с `Content-Disposition: attachment`: браузер скачает его, а не откроет.
-- `project` — `null`, если проекта нет, он не опубликован или не переведён на `lang`. `sector` — `null`, если сфера не переведена на `lang`.
+- `file` — всегда PDF, есть у каждой презентации. `pages` может быть `null`, если файл не удалось разобрать.
+- `source_file` — исходник PPTX или `null`. Отдаётся с `Content-Disposition: attachment`: браузер его скачает. **Показывать PPTX на сайте (Office Online и т.п.) не нужно.**
 - Правила языка, `is_translated`, отложенной публикации и поиска по slug на любом языке — как у новостей.
 
-**Презентации проекта** — в детальном ответе `/projects/{slug}/` поле `presentations`: опубликованные и переведённые на `lang`, в порядке, заданном в админке (поле «порядок»). Поля — как у элемента списка, без `project`.
+**Вкладки на странице `/presentations`:** «Совместные проекты» — `?category=projects`, «Промышленность и IT» — `?category=industry`, без параметра — все. Другое значение `category` → `400`. Внутри `industry` можно уточнять сферой: `?category=industry&sector=<slug>` (сферы — из `/sectors/`, их добавляют сотрудники).
 
-**Вкладки на странице `/presentations`.** Сферы берите из `/sectors/`: их добавляют сотрудники, список не фиксирован. «Совместные проекты» — презентации с `project != null`; отдельного фильтра для этого пока нет (вопрос к руководителю — см. SPEC.md, раздел 9).
+**Презентации проекта** — в детальном ответе `/projects/{slug}/` поле `presentations`: опубликованные и переведённые на `lang`, в порядке, заданном в админке (поле «порядок»). Поля — как у элемента списка, без `project` (`category` у них всегда `projects`).
 
 ### Как показать PDF на странице
 
@@ -290,14 +309,13 @@ const response = await fetch(`${API}/feedback/`, {
 ```tsx
 <iframe src={`${item.file.url}#view=FitH`} title={item.title ?? ''} className="aspect-[16/10] w-full" />
 <a href={item.file.url} target="_blank" rel="noopener noreferrer">Открыть на весь экран</a>
-{item.source_file && <a href={item.source_file.url} download>Скачать PPTX</a>}
+{item.source_file && <a href={item.source_file.url}>Скачать PPTX</a>}
 ```
 
-- Встраивать PDF во фрейм можно **только со страниц `FRONTEND_URL`** (и самого бэка): у файлов презентаций бэк отдаёт `Content-Security-Policy: frame-ancestors 'self' <FRONTEND_URL>` вместо `X-Frame-Options: DENY`. С другого домена (например, превью-деплоя Vercel) фрейм останется пустым — открывайте по ссылке.
+- Встраивать PDF во фрейм можно **только со страниц из `FRAME_ANCESTORS`** бэка (по умолчанию — `FRONTEND_URL`) и с самого бэка: у файлов презентаций бэк отдаёт `Content-Security-Policy: frame-ancestors 'self' <FRAME_ANCESTORS>` вместо `X-Frame-Options: DENY`. С другого домена фрейм останется пустым — открывайте по ссылке. Для превью-деплоев Vercel на тестовом бэке добавляют `https://*.vercel.app`.
 - PDF отдаётся с `Content-Disposition: inline`: по ссылке он открывается, а не скачивается.
 - На телефонах встроенный просмотр PDF во фрейме часто не работает — оставляйте рядом ссылку «Открыть».
-- Вариант с **pdf.js** (свой просмотрщик, листание по страницам, одинаково на всех устройствах): pdf.js загружает файл через `fetch`, поэтому у файлов презентаций включён CORS для origins из `CORS_ALLOWED_ORIGINS`. `file.pages` можно показать ещё до загрузки файла.
-- Office Online (`view.officeapps.live.com`) не нужен: на сайте показывается PDF.
+- Вариант с **pdf.js** (свой просмотрщик, листание по страницам, одинаково на всех устройствах): pdf.js загружает файл через `fetch`, поэтому у файлов презентаций включён CORS для origins из `CORS_ALLOWED_ORIGINS` (маски `*.vercel.app` там нет — для превью нужен iframe или ссылка). `file.pages` можно показать ещё до загрузки файла.
 
 ## sitemap.xml и robots.txt
 
@@ -322,13 +340,13 @@ const response = await fetch(`${API}/feedback/`, {
 {
   "blocks": [
     {
-      "id": 11,
+      "id": 16,
       "type": "hero",
       "title": "Центр промышленной кооперации",
       "text": "Помогаем предприятиям Кыргызстана находить партнёров за рубежом",
       "image": {
-        "small": "http://localhost:8000/media/CACHE/images/home/hero/7c97cbbd6910903db6d8984ec0a61b83.webp",
-        "large": "http://localhost:8000/media/CACHE/images/home/hero/d31d418e7647766cabfc160f31597949.webp"
+        "small": "http://localhost:8000/media/CACHE/images/home/factory/5a79c9e2eb68c19c44989e2c774c8135.webp",
+        "large": "http://localhost:8000/media/CACHE/images/home/factory/2a513006aef7645bcebbb8117cfe5735.webp"
       },
       "button_text": "Наши услуги",
       "button_link": "/services",
@@ -336,13 +354,13 @@ const response = await fetch(`${API}/feedback/`, {
       "is_translated": true
     },
     {
-      "id": 12,
+      "id": 17,
       "type": "about",
       "title": "О Центре",
       "text": "Центр создан при Торгово-промышленной палате для развития промышленной кооперации.",
       "image": {
-        "small": "http://localhost:8000/media/CACHE/images/home/about/89df32e7302812723bbe2f5c9187f575.webp",
-        "large": "http://localhost:8000/media/CACHE/images/home/about/f61f513eb35923254e5db4428bc300c9.webp"
+        "small": "http://localhost:8000/media/CACHE/images/home/meeting/8b7410ef3d7ceca7786da84d776e0db5.webp",
+        "large": "http://localhost:8000/media/CACHE/images/home/meeting/ca4afb0087125efb7187b59616da7199.webp"
       },
       "button_text": "Подробнее",
       "button_link": "/about",
@@ -352,7 +370,7 @@ const response = await fetch(`${API}/feedback/`, {
   ],
   "directions": [
     {
-      "id": 17,
+      "id": 25,
       "slug": "promyshlennaia-kooperatsiia",
       "title": "Промышленная кооперация",
       "short_text": "Связываем производителей для совместной работы.",
@@ -361,7 +379,7 @@ const response = await fetch(`${API}/feedback/`, {
       "is_translated": true
     },
     {
-      "id": 18,
+      "id": 26,
       "slug": "poisk-partnerov",
       "title": "Поиск партнёров",
       "short_text": "Подбираем надёжных партнёров за рубежом.",
@@ -372,73 +390,73 @@ const response = await fetch(`${API}/feedback/`, {
   ],
   "news": [
     {
-      "id": 25,
+      "id": 38,
       "slug": "delovaia-missiia-v-urumchi",
       "title": "Деловая миссия в Урумчи",
       "excerpt": "Предприниматели Кыргызстана провели переговоры с компаниями Синьцзяна.",
       "cover": {
-        "small": "http://localhost:8000/media/CACHE/images/news/2026/10/news-1/180f0002dfa5cacc94a2a51ef9efc6a6.webp",
-        "large": "http://localhost:8000/media/CACHE/images/news/2026/10/news-1/8d061b86952d98a3aab9a4c50f4b83c2.webp"
+        "small": "http://localhost:8000/media/CACHE/images/news/2026/10/airplane/bbcf58e3629bee6038ab5f581c86907a.webp",
+        "large": "http://localhost:8000/media/CACHE/images/news/2026/10/airplane/843bb73b124bfa5afce45f7633854892.webp"
       },
       "category": {
         "slug": "missions",
         "name": "Деловые миссии"
       },
-      "published_at": "2026-10-15T10:00:00+06:00",
+      "published_at": "2026-10-24T10:00:00+06:00",
       "is_translated": true
     },
     {
-      "id": 26,
+      "id": 39,
       "slug": "tsentr-podpisal-memorandum-s-torgovoi-palatoi-sintsziana",
       "title": "Центр подписал меморандум с торговой палатой Синьцзяна",
       "excerpt": "Стороны договорились о совместной работе по поиску партнёров.",
       "cover": {
-        "small": "http://localhost:8000/media/CACHE/images/news/2026/10/news-2/6a636923db5281d95aa52c724a0461cd.webp",
-        "large": "http://localhost:8000/media/CACHE/images/news/2026/10/news-2/7642e9d4216d1ccb43996ec0f78b7d12.webp"
+        "small": "http://localhost:8000/media/CACHE/images/news/2026/10/signing/1ffff9a15a587674337d2c603d238ff4.webp",
+        "large": "http://localhost:8000/media/CACHE/images/news/2026/10/signing/9dd5c9ce2a611c956f6f849742f9898a.webp"
       },
       "category": {
         "slug": "partnership",
         "name": "Партнёрство"
       },
-      "published_at": "2026-10-11T10:00:00+06:00",
+      "published_at": "2026-10-20T10:00:00+06:00",
       "is_translated": true
     }
   ],
   "events": [
     {
-      "id": 22,
+      "id": 29,
+      "slug": "vebinar-po-eksportnym-protseduram",
+      "title": "Вебинар по экспортным процедурам",
+      "type": {
+        "code": "other",
+        "label": "Другое"
+      },
+      "start_at": "2026-11-02T10:00:00+06:00",
+      "end_at": null,
+      "location": "Онлайн",
+      "excerpt": "Таможня, сертификация, логистика.",
+      "cover": {
+        "small": "http://localhost:8000/media/CACHE/images/events/2026/10/webinar/36ea2b53abc7b98188d0aa92a05bb5bd.webp",
+        "large": "http://localhost:8000/media/CACHE/images/events/2026/10/webinar/f8a1fade672f28ef2a8688fe7382379f.webp"
+      },
+      "is_upcoming": true,
+      "is_translated": true
+    },
+    {
+      "id": 30,
       "slug": "biznes-missiia-v-guanchzhou",
       "title": "Бизнес-миссия в Гуанчжоу",
       "type": {
         "code": "mission",
         "label": "Деловая миссия"
       },
-      "start_at": "2026-11-06T10:00:00+06:00",
-      "end_at": "2026-11-11T10:00:00+06:00",
+      "start_at": "2026-11-15T10:00:00+06:00",
+      "end_at": "2026-11-20T10:00:00+06:00",
       "location": "Гуанчжоу",
       "excerpt": "Участие в выставке и деловые встречи.",
       "cover": {
-        "small": "http://localhost:8000/media/CACHE/images/events/2026/10/event-6/64e85e9c458c6776c919be396e7d3a96.webp",
-        "large": "http://localhost:8000/media/CACHE/images/events/2026/10/event-6/878abf26973605a2e9e086cd13e5d03b.webp"
-      },
-      "is_upcoming": true,
-      "is_translated": true
-    },
-    {
-      "id": 23,
-      "slug": "investitsionnyi-forum-v-bishkeke",
-      "title": "Инвестиционный форум в Бишкеке",
-      "type": {
-        "code": "forum",
-        "label": "Форум"
-      },
-      "start_at": "2026-12-01T10:00:00+06:00",
-      "end_at": "2026-12-02T10:00:00+06:00",
-      "location": "Бишкек",
-      "excerpt": "Презентация инвестиционных проектов.",
-      "cover": {
-        "small": "http://localhost:8000/media/CACHE/images/events/2026/10/event-7/72635c5b81bbb81dbccce8d54500b6b1.webp",
-        "large": "http://localhost:8000/media/CACHE/images/events/2026/10/event-7/a775d6f995813deb882d107cf0688c68.webp"
+        "small": "http://localhost:8000/media/CACHE/images/events/2026/10/port/02bd6d6e11227eb99127b0a09640fe4e.webp",
+        "large": "http://localhost:8000/media/CACHE/images/events/2026/10/port/b99273f1ead714f91d25e8f307fabca8.webp"
       },
       "is_upcoming": true,
       "is_translated": true
@@ -447,7 +465,7 @@ const response = await fetch(`${API}/feedback/`, {
   "seo": {
     "meta_title": "Центр промышленной кооперации при ТПП КР",
     "meta_description": "Поиск партнёров, деловые миссии и промышленная кооперация с Китаем и другими странами.",
-    "og_image": "http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp",
+    "og_image": "http://localhost:8000/media/CACHE/images/seo/factory/23d9754c91701b35c6e0d8f93c3443fd.webp",
     "alternates": {
       "ru": "home",
       "en": "home",
@@ -493,7 +511,7 @@ const response = await fetch(`${API}/feedback/`, {
   "seo": {
     "meta_title": "About the Centre",
     "meta_description": null,
-    "og_image": "http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp",
+    "og_image": "http://localhost:8000/media/CACHE/images/seo/factory/23d9754c91701b35c6e0d8f93c3443fd.webp",
     "alternates": {
       "ru": "about",
       "en": "about",
@@ -510,7 +528,7 @@ const response = await fetch(`${API}/feedback/`, {
 ```json
 [
   {
-    "id": 17,
+    "id": 25,
     "slug": "promyshlennaia-kooperatsiia",
     "title": "Промышленная кооперация",
     "short_text": "Связываем производителей для совместной работы.",
@@ -519,7 +537,7 @@ const response = await fetch(`${API}/feedback/`, {
     "is_translated": true
   },
   {
-    "id": 18,
+    "id": 26,
     "slug": "poisk-partnerov",
     "title": "Поиск партнёров",
     "short_text": "Подбираем надёжных партнёров за рубежом.",
@@ -536,7 +554,7 @@ const response = await fetch(`${API}/feedback/`, {
 
 ```json
 {
-  "id": 17,
+  "id": 25,
   "slug": "promyshlennaia-kooperatsiia",
   "title": "Промышленная кооперация",
   "short_text": "Связываем производителей для совместной работы.",
@@ -547,7 +565,7 @@ const response = await fetch(`${API}/feedback/`, {
   "seo": {
     "meta_title": "Промышленная кооперация",
     "meta_description": "Связываем производителей для совместной работы.",
-    "og_image": "http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp",
+    "og_image": "http://localhost:8000/media/CACHE/images/seo/factory/23d9754c91701b35c6e0d8f93c3443fd.webp",
     "alternates": {
       "ru": "promyshlennaia-kooperatsiia",
       "en": "industrial-cooperation",
@@ -564,7 +582,7 @@ const response = await fetch(`${API}/feedback/`, {
 ```json
 [
   {
-    "id": 15,
+    "id": 22,
     "slug": "podbor-partnerov-v-kitae",
     "title": "Подбор партнёров в Китае",
     "short_text": "Поиск и проверка производителей и поставщиков.",
@@ -572,7 +590,7 @@ const response = await fetch(`${API}/feedback/`, {
     "is_translated": true
   },
   {
-    "id": 16,
+    "id": 23,
     "slug": "organizatsiia-delovykh-missii",
     "title": "Организация деловых миссий",
     "short_text": "Программа визитов, встречи, сопровождение.",
@@ -588,7 +606,7 @@ const response = await fetch(`${API}/feedback/`, {
 
 ```json
 {
-  "id": 15,
+  "id": 22,
   "slug": "podbor-partnerov-v-kitae",
   "title": "Подбор партнёров в Китае",
   "short_text": "Поиск и проверка производителей и поставщиков.",
@@ -602,7 +620,7 @@ const response = await fetch(`${API}/feedback/`, {
   "seo": {
     "meta_title": "Подбор партнёров в Китае",
     "meta_description": "Поиск и проверка производителей и поставщиков.",
-    "og_image": "http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp",
+    "og_image": "http://localhost:8000/media/CACHE/images/seo/factory/23d9754c91701b35c6e0d8f93c3443fd.webp",
     "alternates": {
       "ru": "podbor-partnerov-v-kitae",
       "en": "partner-search-in-china",
@@ -640,35 +658,35 @@ const response = await fetch(`${API}/feedback/`, {
   "previous": null,
   "results": [
     {
-      "id": 25,
+      "id": 38,
       "slug": "delovaia-missiia-v-urumchi",
       "title": "Деловая миссия в Урумчи",
       "excerpt": "Предприниматели Кыргызстана провели переговоры с компаниями Синьцзяна.",
       "cover": {
-        "small": "http://localhost:8000/media/CACHE/images/news/2026/10/news-1/180f0002dfa5cacc94a2a51ef9efc6a6.webp",
-        "large": "http://localhost:8000/media/CACHE/images/news/2026/10/news-1/8d061b86952d98a3aab9a4c50f4b83c2.webp"
+        "small": "http://localhost:8000/media/CACHE/images/news/2026/10/airplane/bbcf58e3629bee6038ab5f581c86907a.webp",
+        "large": "http://localhost:8000/media/CACHE/images/news/2026/10/airplane/843bb73b124bfa5afce45f7633854892.webp"
       },
       "category": {
         "slug": "missions",
         "name": "Деловые миссии"
       },
-      "published_at": "2026-10-15T10:00:00+06:00",
+      "published_at": "2026-10-24T10:00:00+06:00",
       "is_translated": true
     },
     {
-      "id": 26,
+      "id": 39,
       "slug": "tsentr-podpisal-memorandum-s-torgovoi-palatoi-sintsziana",
       "title": "Центр подписал меморандум с торговой палатой Синьцзяна",
       "excerpt": "Стороны договорились о совместной работе по поиску партнёров.",
       "cover": {
-        "small": "http://localhost:8000/media/CACHE/images/news/2026/10/news-2/6a636923db5281d95aa52c724a0461cd.webp",
-        "large": "http://localhost:8000/media/CACHE/images/news/2026/10/news-2/7642e9d4216d1ccb43996ec0f78b7d12.webp"
+        "small": "http://localhost:8000/media/CACHE/images/news/2026/10/signing/1ffff9a15a587674337d2c603d238ff4.webp",
+        "large": "http://localhost:8000/media/CACHE/images/news/2026/10/signing/9dd5c9ce2a611c956f6f849742f9898a.webp"
       },
       "category": {
         "slug": "partnership",
         "name": "Партнёрство"
       },
-      "published_at": "2026-10-11T10:00:00+06:00",
+      "published_at": "2026-10-20T10:00:00+06:00",
       "is_translated": true
     }
   ]
@@ -681,29 +699,29 @@ const response = await fetch(`${API}/feedback/`, {
 
 ```json
 {
-  "id": 25,
+  "id": 38,
   "slug": "delovaia-missiia-v-urumchi",
   "title": "Деловая миссия в Урумчи",
   "excerpt": "Предприниматели Кыргызстана провели переговоры с компаниями Синьцзяна.",
   "content": "<p>Предприниматели Кыргызстана провели переговоры с компаниями Синьцзяна.</p><p>Центр промышленной кооперации помогает предприятиям Кыргызстана находить партнёров, выходить на новые рынки и развивать совместные производства.</p>",
   "cover": {
-    "small": "http://localhost:8000/media/CACHE/images/news/2026/10/news-1/180f0002dfa5cacc94a2a51ef9efc6a6.webp",
-    "large": "http://localhost:8000/media/CACHE/images/news/2026/10/news-1/8d061b86952d98a3aab9a4c50f4b83c2.webp"
+    "small": "http://localhost:8000/media/CACHE/images/news/2026/10/airplane/bbcf58e3629bee6038ab5f581c86907a.webp",
+    "large": "http://localhost:8000/media/CACHE/images/news/2026/10/airplane/843bb73b124bfa5afce45f7633854892.webp"
   },
   "category": {
     "slug": "missions",
     "name": "Деловые миссии"
   },
-  "published_at": "2026-10-15T10:00:00+06:00",
+  "published_at": "2026-10-24T10:00:00+06:00",
   "gallery": [
     {
-      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1/3fbeb4c9d36df2f3914fb2e5d015c9ce.webp",
-      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1/09142fef4aba283b8a0d640e15a313e2.webp",
+      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/conference/b4dabe05cb8b3185c54ecefda771082f.webp",
+      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/conference/3bd53d7e976e5fd761d5800efe37bd98.webp",
       "caption": "Открытие встречи"
     },
     {
-      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2/27934dff64ad428503edb6fb41d9c026.webp",
-      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2/747c2e80015e11af58c01a46b7a27a34.webp",
+      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/meeting/546397b0616d8de6cc567852e3759c47.webp",
+      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/meeting/deb1e5109af02394ef2cba1518aa59ad.webp",
       "caption": "Переговоры"
     }
   ],
@@ -719,7 +737,7 @@ const response = await fetch(`${API}/feedback/`, {
   "seo": {
     "meta_title": "Деловая миссия в Урумчи — ЦПК",
     "meta_description": "Предприниматели Кыргызстана провели переговоры с компаниями Синьцзяна.",
-    "og_image": "http://localhost:8000/media/CACHE/images/news/2026/10/news-1/8d061b86952d98a3aab9a4c50f4b83c2.webp",
+    "og_image": "http://localhost:8000/media/CACHE/images/news/2026/10/airplane/843bb73b124bfa5afce45f7633854892.webp",
     "alternates": {
       "ru": "delovaia-missiia-v-urumchi",
       "en": "business-mission-to-urumqi",
@@ -735,27 +753,27 @@ const response = await fetch(`${API}/feedback/`, {
 
 ```json
 {
-  "id": 35,
+  "id": 48,
   "slug": null,
   "title": null,
   "excerpt": null,
   "content": null,
   "cover": {
-    "small": "http://localhost:8000/media/CACHE/images/news/2026/10/news-11/227783ae5c441677d1ff66dc67bef39e.webp",
-    "large": "http://localhost:8000/media/CACHE/images/news/2026/10/news-11/9510921bb2c8029ebe63babeddbae2e8.webp"
+    "small": "http://localhost:8000/media/CACHE/images/news/2026/10/conference/b49b364dac47936ba2f00cb867c6f37e.webp",
+    "large": "http://localhost:8000/media/CACHE/images/news/2026/10/conference/7dba2af1bd6433414bce6ce093e54240.webp"
   },
   "category": {
     "slug": "center",
     "name": "中心新闻"
   },
-  "published_at": "2026-08-08T10:00:00+06:00",
+  "published_at": "2026-08-17T10:00:00+06:00",
   "gallery": [],
   "attachments": [],
   "is_translated": false,
   "seo": {
     "meta_title": null,
     "meta_description": null,
-    "og_image": "http://localhost:8000/media/CACHE/images/news/2026/10/news-11/9510921bb2c8029ebe63babeddbae2e8.webp",
+    "og_image": "http://localhost:8000/media/CACHE/images/news/2026/10/conference/7dba2af1bd6433414bce6ce093e54240.webp",
     "alternates": {
       "ru": "vstrecha-s-predprinimateliami-osha",
       "en": "meeting-with-osh-entrepreneurs",
@@ -771,44 +789,44 @@ const response = await fetch(`${API}/feedback/`, {
 
 ```json
 {
-  "count": 3,
+  "count": 4,
   "next": "http://localhost:8000/api/v1/events/?lang=ru&page=2&page_size=2&when=upcoming",
   "previous": null,
   "results": [
     {
-      "id": 22,
+      "id": 29,
+      "slug": "vebinar-po-eksportnym-protseduram",
+      "title": "Вебинар по экспортным процедурам",
+      "type": {
+        "code": "other",
+        "label": "Другое"
+      },
+      "start_at": "2026-11-02T10:00:00+06:00",
+      "end_at": null,
+      "location": "Онлайн",
+      "excerpt": "Таможня, сертификация, логистика.",
+      "cover": {
+        "small": "http://localhost:8000/media/CACHE/images/events/2026/10/webinar/36ea2b53abc7b98188d0aa92a05bb5bd.webp",
+        "large": "http://localhost:8000/media/CACHE/images/events/2026/10/webinar/f8a1fade672f28ef2a8688fe7382379f.webp"
+      },
+      "is_upcoming": true,
+      "is_translated": true
+    },
+    {
+      "id": 30,
       "slug": "biznes-missiia-v-guanchzhou",
       "title": "Бизнес-миссия в Гуанчжоу",
       "type": {
         "code": "mission",
         "label": "Деловая миссия"
       },
-      "start_at": "2026-11-06T10:00:00+06:00",
-      "end_at": "2026-11-11T10:00:00+06:00",
+      "start_at": "2026-11-15T10:00:00+06:00",
+      "end_at": "2026-11-20T10:00:00+06:00",
       "location": "Гуанчжоу",
       "excerpt": "Участие в выставке и деловые встречи.",
       "cover": {
-        "small": "http://localhost:8000/media/CACHE/images/events/2026/10/event-6/64e85e9c458c6776c919be396e7d3a96.webp",
-        "large": "http://localhost:8000/media/CACHE/images/events/2026/10/event-6/878abf26973605a2e9e086cd13e5d03b.webp"
-      },
-      "is_upcoming": true,
-      "is_translated": true
-    },
-    {
-      "id": 23,
-      "slug": "investitsionnyi-forum-v-bishkeke",
-      "title": "Инвестиционный форум в Бишкеке",
-      "type": {
-        "code": "forum",
-        "label": "Форум"
-      },
-      "start_at": "2026-12-01T10:00:00+06:00",
-      "end_at": "2026-12-02T10:00:00+06:00",
-      "location": "Бишкек",
-      "excerpt": "Презентация инвестиционных проектов.",
-      "cover": {
-        "small": "http://localhost:8000/media/CACHE/images/events/2026/10/event-7/72635c5b81bbb81dbccce8d54500b6b1.webp",
-        "large": "http://localhost:8000/media/CACHE/images/events/2026/10/event-7/a775d6f995813deb882d107cf0688c68.webp"
+        "small": "http://localhost:8000/media/CACHE/images/events/2026/10/port/02bd6d6e11227eb99127b0a09640fe4e.webp",
+        "large": "http://localhost:8000/media/CACHE/images/events/2026/10/port/b99273f1ead714f91d25e8f307fabca8.webp"
       },
       "is_upcoming": true,
       "is_translated": true
@@ -840,32 +858,32 @@ const response = await fetch(`${API}/feedback/`, {
 
 ```json
 {
-  "id": 17,
+  "id": 25,
   "slug": "business-mission-to-xinjiang",
   "title": "Business mission to Xinjiang",
   "type": {
     "code": "mission",
     "label": "Business mission"
   },
-  "start_at": "2026-08-18T10:00:00+06:00",
-  "end_at": "2026-08-21T10:00:00+06:00",
+  "start_at": "2026-08-27T10:00:00+06:00",
+  "end_at": "2026-08-30T10:00:00+06:00",
   "location": "Urumqi",
   "excerpt": "Company visits and negotiations.",
   "content": "<p>Company visits and negotiations.</p><p>The Industrial Cooperation Centre helps Kyrgyz companies find partners, enter new markets and develop joint production.</p>",
   "cover": {
-    "small": "http://localhost:8000/media/CACHE/images/events/2026/10/event-1/0dd78e7373ae6d2000b6f19a4904b7e7.webp",
-    "large": "http://localhost:8000/media/CACHE/images/events/2026/10/event-1/a510160fb27adf0dbad59cdb0183a770.webp"
+    "small": "http://localhost:8000/media/CACHE/images/events/2026/10/mountain-road/83c1c5f7026def9f44fd50df348ccb49.webp",
+    "large": "http://localhost:8000/media/CACHE/images/events/2026/10/mountain-road/aefbd2bbc7955f8a663f1f55b5defeff.webp"
   },
   "is_upcoming": false,
   "gallery": [
     {
-      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_36J5oXL/1052edca0ef98ab40469df6750c4015f.webp",
-      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_36J5oXL/37275bf6f80a26d1fc57a4440653a0a4.webp",
+      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/conference_yc6iKh0/7f912da71b7fd19289009c6de5f4e648.webp",
+      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/conference_yc6iKh0/1e55ec6568f50b95fd84873193179498.webp",
       "caption": "Opening of the meeting"
     },
     {
-      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_qlX79ne/376505789d67531cd0df75fdda210bd2.webp",
-      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_qlX79ne/c76ee863dfd4b1ca7f1ead3ade1e72f4.webp",
+      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/meeting_nDmfUma/cea31d7b9df2ed6bcbcfa681faed4494.webp",
+      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/meeting_nDmfUma/536de65eeeedf0630a3ebaac42b4a0e9.webp",
       "caption": "Negotiations"
     }
   ],
@@ -874,7 +892,7 @@ const response = await fetch(`${API}/feedback/`, {
   "seo": {
     "meta_title": "Business mission to Xinjiang",
     "meta_description": "Company visits and negotiations.",
-    "og_image": "http://localhost:8000/media/CACHE/images/events/2026/10/event-1/a510160fb27adf0dbad59cdb0183a770.webp",
+    "og_image": "http://localhost:8000/media/CACHE/images/events/2026/10/mountain-road/aefbd2bbc7955f8a663f1f55b5defeff.webp",
     "alternates": {
       "ru": "biznes-missiia-v-sintszian",
       "en": "business-mission-to-xinjiang",
@@ -891,7 +909,7 @@ const response = await fetch(`${API}/feedback/`, {
 ```json
 [
   {
-    "id": 5,
+    "id": 7,
     "code": "CN",
     "name": "Китай",
     "description": "Ключевой партнёр Кыргызстана в промышленной кооперации.",
@@ -902,7 +920,7 @@ const response = await fetch(`${API}/feedback/`, {
     "is_translated": true
   },
   {
-    "id": 6,
+    "id": 8,
     "code": "KZ",
     "name": "Казахстан",
     "description": "Партнёр по Евразийскому экономическому союзу.",
@@ -922,11 +940,11 @@ const response = await fetch(`${API}/feedback/`, {
 ```json
 [
   {
-    "id": 9,
+    "id": 13,
     "name": "Торговая компания «Шёлковый путь» (демо)",
     "logo": {
-      "small": "http://localhost:8000/media/CACHE/images/partners/logo-1/4102341f8ee4cfc88052f5d4bba63378.webp",
-      "large": "http://localhost:8000/media/CACHE/images/partners/logo-1/de558907b3fdb77063a7219c781a54b4.webp"
+      "small": "http://localhost:8000/media/CACHE/images/partners/logo-32/f83228973b81584c8d298049ef47f002.webp",
+      "large": "http://localhost:8000/media/CACHE/images/partners/logo-32/bde39ccc74ddce843ee85607d6097b39.webp"
     },
     "country": {
       "code": "CN",
@@ -937,11 +955,11 @@ const response = await fetch(`${API}/feedback/`, {
     "is_translated": true
   },
   {
-    "id": 10,
+    "id": 14,
     "name": "«Тяньшань Машинери» (демо)",
     "logo": {
-      "small": "http://localhost:8000/media/CACHE/images/partners/logo-2/c63583e8b06cfcfc91d4176deae1956f.webp",
-      "large": "http://localhost:8000/media/CACHE/images/partners/logo-2/28bb25a8d42e128eadd01af0d5844f16.webp"
+      "small": "http://localhost:8000/media/CACHE/images/partners/logo-33/ddf280687dce28f1a07952388926c146.webp",
+      "large": "http://localhost:8000/media/CACHE/images/partners/logo-33/3e68ea1ddbe67135b5a613652a569b92.webp"
     },
     "country": {
       "code": "CN",
@@ -965,35 +983,35 @@ const response = await fetch(`${API}/feedback/`, {
   "previous": null,
   "results": [
     {
-      "id": 7,
+      "id": 10,
       "slug": "sovmestnoe-proizvodstvo-stroimaterialov-v-chuiskoi-oblasti",
       "title": "Совместное производство стройматериалов в Чуйской области",
       "excerpt": "Запуск завода мощностью 100 тыс. тонн в год.",
       "cover": {
-        "small": "http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/a78f6a3c567a5b27884697aa88571959.webp",
-        "large": "http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/666e36e067f2ac51c7aed23fb837aa7d.webp"
+        "small": "http://localhost:8000/media/CACHE/images/projects/2026/10/construction/7e2c6523ae7e934b8794fc3b31865e35.webp",
+        "large": "http://localhost:8000/media/CACHE/images/projects/2026/10/construction/9a2d86b3d31b56c231d8f49e80e1f971.webp"
       },
       "country": {
         "code": "CN",
         "name": "Китай"
       },
-      "published_at": "2026-10-07T10:00:00+06:00",
+      "published_at": "2026-10-16T10:00:00+06:00",
       "is_translated": true
     },
     {
-      "id": 8,
+      "id": 11,
       "slug": "lokalizatsiia-sborki-selkhoztekhniki",
       "title": "Локализация сборки сельхозтехники",
       "excerpt": "Сборка тракторов из машинокомплектов.",
       "cover": {
-        "small": "http://localhost:8000/media/CACHE/images/projects/2026/10/project-2/b6d3c524062c951d457356f24aca2141.webp",
-        "large": "http://localhost:8000/media/CACHE/images/projects/2026/10/project-2/933fa97af6e8edb7ef3830ff18feb5f5.webp"
+        "small": "http://localhost:8000/media/CACHE/images/projects/2026/10/tractor/cd658784c1318cd4773746f430541ec6.webp",
+        "large": "http://localhost:8000/media/CACHE/images/projects/2026/10/tractor/745962c7539d952b1ae852a9182fe8ec.webp"
       },
       "country": {
         "code": "CN",
         "name": "Китай"
       },
-      "published_at": "2026-09-07T10:00:00+06:00",
+      "published_at": "2026-09-16T10:00:00+06:00",
       "is_translated": true
     }
   ]
@@ -1006,27 +1024,27 @@ const response = await fetch(`${API}/feedback/`, {
 
 ```json
 {
-  "id": 7,
+  "id": 10,
   "slug": "chu-he-zhou-jian-cai-he-zi-sheng-chan",
   "title": "楚河州建材合资生产",
   "excerpt": "建设年产10万吨的工厂。",
   "content": "<p>建设年产10万吨的工厂。</p><p>工业合作中心帮助吉尔吉斯斯坦企业寻找合作伙伴、开拓新市场并发展合资生产。</p>",
   "cover": {
-    "small": "http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/a78f6a3c567a5b27884697aa88571959.webp",
-    "large": "http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/666e36e067f2ac51c7aed23fb837aa7d.webp"
+    "small": "http://localhost:8000/media/CACHE/images/projects/2026/10/construction/7e2c6523ae7e934b8794fc3b31865e35.webp",
+    "large": "http://localhost:8000/media/CACHE/images/projects/2026/10/construction/9a2d86b3d31b56c231d8f49e80e1f971.webp"
   },
   "country": {
     "code": "CN",
     "name": "中国"
   },
-  "published_at": "2026-10-07T10:00:00+06:00",
+  "published_at": "2026-10-16T10:00:00+06:00",
   "partners": [
     {
-      "id": 9,
+      "id": 13,
       "name": "丝路贸易有限公司（演示）",
       "logo": {
-        "small": "http://localhost:8000/media/CACHE/images/partners/logo-1/4102341f8ee4cfc88052f5d4bba63378.webp",
-        "large": "http://localhost:8000/media/CACHE/images/partners/logo-1/de558907b3fdb77063a7219c781a54b4.webp"
+        "small": "http://localhost:8000/media/CACHE/images/partners/logo-32/f83228973b81584c8d298049ef47f002.webp",
+        "large": "http://localhost:8000/media/CACHE/images/partners/logo-32/bde39ccc74ddce843ee85607d6097b39.webp"
       },
       "country": {
         "code": "CN",
@@ -1037,11 +1055,11 @@ const response = await fetch(`${API}/feedback/`, {
       "is_translated": true
     },
     {
-      "id": 10,
+      "id": 14,
       "name": "天山机械（演示）",
       "logo": {
-        "small": "http://localhost:8000/media/CACHE/images/partners/logo-2/c63583e8b06cfcfc91d4176deae1956f.webp",
-        "large": "http://localhost:8000/media/CACHE/images/partners/logo-2/28bb25a8d42e128eadd01af0d5844f16.webp"
+        "small": "http://localhost:8000/media/CACHE/images/partners/logo-33/ddf280687dce28f1a07952388926c146.webp",
+        "large": "http://localhost:8000/media/CACHE/images/partners/logo-33/3e68ea1ddbe67135b5a613652a569b92.webp"
       },
       "country": {
         "code": "CN",
@@ -1054,22 +1072,24 @@ const response = await fetch(`${API}/feedback/`, {
   ],
   "gallery": [
     {
-      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_N6u0BWb/2a4e605e95a58aff12eb0e593b05e969.webp",
-      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-1_N6u0BWb/3c9b3ec861991b8c3611abdc6c6f463b.webp",
+      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/conference_bWmtfBX/9d12a19169e08915b5bbd92c9d791606.webp",
+      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/conference_bWmtfBX/5b9698ac59966be4e4cfda77a0591a34.webp",
       "caption": "会议开幕"
     },
     {
-      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_UjcmiyV/fc5ffca5e52128889b64a8b2337d97f1.webp",
-      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/photo-2_UjcmiyV/82c90ed5354eee7d179243f03df98ad8.webp",
+      "small": "http://localhost:8000/media/CACHE/images/gallery/2026/10/meeting_WOD8vu9/6930bad2611fe4fbf2589b2f33ce4fa8.webp",
+      "large": "http://localhost:8000/media/CACHE/images/gallery/2026/10/meeting_WOD8vu9/d72d12d066526f6c04c4fc3d83da9d88.webp",
       "caption": "洽谈"
     }
   ],
   "attachments": [],
   "presentations": [
     {
-      "id": 1,
+      "id": 6,
       "slug": "chu-he-zhou-jian-cai-chang-tou-zi-jian-yi-shu",
       "title": "楚河州建材厂：投资建议书",
+      "excerpt": "产能、建设周期及合作伙伴参与条件。",
+      "category": "projects",
       "cover": {
         "small": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/dac4678d340cca6ffc9f92447d5eb492.webp",
         "large": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/ca69a5ba9adcd1d6008a33343362da53.webp"
@@ -1096,7 +1116,7 @@ const response = await fetch(`${API}/feedback/`, {
   "seo": {
     "meta_title": "楚河州建材合资生产",
     "meta_description": "建设年产10万吨的工厂。",
-    "og_image": "http://localhost:8000/media/CACHE/images/projects/2026/10/project-1/666e36e067f2ac51c7aed23fb837aa7d.webp",
+    "og_image": "http://localhost:8000/media/CACHE/images/projects/2026/10/construction/9a2d86b3d31b56c231d8f49e80e1f971.webp",
     "alternates": {
       "ru": "sovmestnoe-proizvodstvo-stroimaterialov-v-chuiskoi-oblasti",
       "en": "joint-production-of-building-materials-in-the-chui-region",
@@ -1134,9 +1154,11 @@ const response = await fetch(`${API}/feedback/`, {
   "previous": null,
   "results": [
     {
-      "id": 1,
+      "id": 6,
       "slug": "zavod-stroimaterialov-v-chuiskoi-oblasti-investitsionnoe-predlozhenie",
       "title": "Завод стройматериалов в Чуйской области: инвестиционное предложение",
+      "excerpt": "Мощности, сроки строительства и условия участия партнёров.",
+      "category": "projects",
       "cover": {
         "small": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/dac4678d340cca6ffc9f92447d5eb492.webp",
         "large": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-1/ca69a5ba9adcd1d6008a33343362da53.webp"
@@ -1163,9 +1185,11 @@ const response = await fetch(`${API}/feedback/`, {
       "is_translated": true
     },
     {
-      "id": 2,
+      "id": 7,
       "slug": "lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia",
       "title": "Локализация сборки тракторов: этапы и требования",
+      "excerpt": "Как устроена сборка из машинокомплектов и что требуется от площадки.",
+      "category": "projects",
       "cover": {
         "small": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/d02bc5e477d093f7f59dc05dcea99c02.webp",
         "large": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/923c64d9a4ad8d43857f40f211b96282.webp"
@@ -1201,10 +1225,12 @@ const response = await fetch(`${API}/feedback/`, {
 
 ```json
 {
-  "id": 2,
+  "id": 7,
   "slug": "lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia",
   "title": "Локализация сборки тракторов: этапы и требования",
-  "description": "<p>Как устроена сборка из машинокомплектов и что требуется от площадки.</p>",
+  "excerpt": "Как устроена сборка из машинокомплектов и что требуется от площадки.",
+  "content": "<p>Как устроена сборка из машинокомплектов и что требуется от площадки.</p><p>Центр промышленной кооперации помогает предприятиям Кыргызстана находить партнёров, выходить на новые рынки и развивать совместные производства.</p>",
+  "category": "projects",
   "cover": {
     "small": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/d02bc5e477d093f7f59dc05dcea99c02.webp",
     "large": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/923c64d9a4ad8d43857f40f211b96282.webp"
@@ -1290,8 +1316,8 @@ const response = await fetch(`${API}/feedback/`, {
 {
   "analytics_id": null,
   "default_og_image": {
-    "small": "http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/829137d66a2b7af8d82c19ccd85a8b59.webp",
-    "large": "http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp"
+    "small": "http://localhost:8000/media/CACHE/images/seo/factory/7aa6beb1249164fbc9e0ce964f548656.webp",
+    "large": "http://localhost:8000/media/CACHE/images/seo/factory/23d9754c91701b35c6e0d8f93c3443fd.webp"
   }
 }
 ```

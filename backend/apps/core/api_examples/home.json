@@ -1,13 +1,13 @@
 {
   "blocks": [
     {
-      "id": 11,
+      "id": 16,
       "type": "hero",
       "title": "Центр промышленной кооперации",
       "text": "Помогаем предприятиям Кыргызстана находить партнёров за рубежом",
       "image": {
-        "small": "http://localhost:8000/media/CACHE/images/home/hero/7c97cbbd6910903db6d8984ec0a61b83.webp",
-        "large": "http://localhost:8000/media/CACHE/images/home/hero/d31d418e7647766cabfc160f31597949.webp"
+        "small": "http://localhost:8000/media/CACHE/images/home/factory/5a79c9e2eb68c19c44989e2c774c8135.webp",
+        "large": "http://localhost:8000/media/CACHE/images/home/factory/2a513006aef7645bcebbb8117cfe5735.webp"
       },
       "button_text": "Наши услуги",
       "button_link": "/services",
@@ -15,13 +15,13 @@
       "is_translated": true
     },
     {
-      "id": 12,
+      "id": 17,
       "type": "about",
       "title": "О Центре",
       "text": "Центр создан при Торгово-промышленной палате для развития промышленной кооперации.",
       "image": {
-        "small": "http://localhost:8000/media/CACHE/images/home/about/89df32e7302812723bbe2f5c9187f575.webp",
-        "large": "http://localhost:8000/media/CACHE/images/home/about/f61f513eb35923254e5db4428bc300c9.webp"
+        "small": "http://localhost:8000/media/CACHE/images/home/meeting/8b7410ef3d7ceca7786da84d776e0db5.webp",
+        "large": "http://localhost:8000/media/CACHE/images/home/meeting/ca4afb0087125efb7187b59616da7199.webp"
       },
       "button_text": "Подробнее",
       "button_link": "/about",
@@ -31,7 +31,7 @@
   ],
   "directions": [
     {
-      "id": 17,
+      "id": 25,
       "slug": "promyshlennaia-kooperatsiia",
       "title": "Промышленная кооперация",
       "short_text": "Связываем производителей для совместной работы.",
@@ -40,7 +40,7 @@
       "is_translated": true
     },
     {
-      "id": 18,
+      "id": 26,
       "slug": "poisk-partnerov",
       "title": "Поиск партнёров",
       "short_text": "Подбираем надёжных партнёров за рубежом.",
@@ -51,73 +51,73 @@
   ],
   "news": [
     {
-      "id": 25,
+      "id": 38,
       "slug": "delovaia-missiia-v-urumchi",
       "title": "Деловая миссия в Урумчи",
       "excerpt": "Предприниматели Кыргызстана провели переговоры с компаниями Синьцзяна.",
       "cover": {
-        "small": "http://localhost:8000/media/CACHE/images/news/2026/10/news-1/180f0002dfa5cacc94a2a51ef9efc6a6.webp",
-        "large": "http://localhost:8000/media/CACHE/images/news/2026/10/news-1/8d061b86952d98a3aab9a4c50f4b83c2.webp"
+        "small": "http://localhost:8000/media/CACHE/images/news/2026/10/airplane/bbcf58e3629bee6038ab5f581c86907a.webp",
+        "large": "http://localhost:8000/media/CACHE/images/news/2026/10/airplane/843bb73b124bfa5afce45f7633854892.webp"
       },
       "category": {
         "slug": "missions",
         "name": "Деловые миссии"
       },
-      "published_at": "2026-10-15T10:00:00+06:00",
+      "published_at": "2026-10-24T10:00:00+06:00",
       "is_translated": true
     },
     {
-      "id": 26,
+      "id": 39,
       "slug": "tsentr-podpisal-memorandum-s-torgovoi-palatoi-sintsziana",
       "title": "Центр подписал меморандум с торговой палатой Синьцзяна",
       "excerpt": "Стороны договорились о совместной работе по поиску партнёров.",
       "cover": {
-        "small": "http://localhost:8000/media/CACHE/images/news/2026/10/news-2/6a636923db5281d95aa52c724a0461cd.webp",
-        "large": "http://localhost:8000/media/CACHE/images/news/2026/10/news-2/7642e9d4216d1ccb43996ec0f78b7d12.webp"
+        "small": "http://localhost:8000/media/CACHE/images/news/2026/10/signing/1ffff9a15a587674337d2c603d238ff4.webp",
+        "large": "http://localhost:8000/media/CACHE/images/news/2026/10/signing/9dd5c9ce2a611c956f6f849742f9898a.webp"
       },
       "category": {
         "slug": "partnership",
         "name": "Партнёрство"
       },
-      "published_at": "2026-10-11T10:00:00+06:00",
+      "published_at": "2026-10-20T10:00:00+06:00",
       "is_translated": true
     }
   ],
   "events": [
     {
-      "id": 22,
+      "id": 29,
+      "slug": "vebinar-po-eksportnym-protseduram",
+      "title": "Вебинар по экспортным процедурам",
+      "type": {
+        "code": "other",
+        "label": "Другое"
+      },
+      "start_at": "2026-11-02T10:00:00+06:00",
+      "end_at": null,
+      "location": "Онлайн",
+      "excerpt": "Таможня, сертификация, логистика.",
+      "cover": {
+        "small": "http://localhost:8000/media/CACHE/images/events/2026/10/webinar/36ea2b53abc7b98188d0aa92a05bb5bd.webp",
+        "large": "http://localhost:8000/media/CACHE/images/events/2026/10/webinar/f8a1fade672f28ef2a8688fe7382379f.webp"
+      },
+      "is_upcoming": true,
+      "is_translated": true
+    },
+    {
+      "id": 30,
       "slug": "biznes-missiia-v-guanchzhou",
       "title": "Бизнес-миссия в Гуанчжоу",
       "type": {
         "code": "mission",
         "label": "Деловая миссия"
       },
-      "start_at": "2026-11-06T10:00:00+06:00",
-      "end_at": "2026-11-11T10:00:00+06:00",
+      "start_at": "2026-11-15T10:00:00+06:00",
+      "end_at": "2026-11-20T10:00:00+06:00",
       "location": "Гуанчжоу",
       "excerpt": "Участие в выставке и деловые встречи.",
       "cover": {
-        "small": "http://localhost:8000/media/CACHE/images/events/2026/10/event-6/64e85e9c458c6776c919be396e7d3a96.webp",
-        "large": "http://localhost:8000/media/CACHE/images/events/2026/10/event-6/878abf26973605a2e9e086cd13e5d03b.webp"
-      },
-      "is_upcoming": true,
-      "is_translated": true
-    },
-    {
-      "id": 23,
-      "slug": "investitsionnyi-forum-v-bishkeke",
-      "title": "Инвестиционный форум в Бишкеке",
-      "type": {
-        "code": "forum",
-        "label": "Форум"
-      },
-      "start_at": "2026-12-01T10:00:00+06:00",
-      "end_at": "2026-12-02T10:00:00+06:00",
-      "location": "Бишкек",
-      "excerpt": "Презентация инвестиционных проектов.",
-      "cover": {
-        "small": "http://localhost:8000/media/CACHE/images/events/2026/10/event-7/72635c5b81bbb81dbccce8d54500b6b1.webp",
-        "large": "http://localhost:8000/media/CACHE/images/events/2026/10/event-7/a775d6f995813deb882d107cf0688c68.webp"
+        "small": "http://localhost:8000/media/CACHE/images/events/2026/10/port/02bd6d6e11227eb99127b0a09640fe4e.webp",
+        "large": "http://localhost:8000/media/CACHE/images/events/2026/10/port/b99273f1ead714f91d25e8f307fabca8.webp"
       },
       "is_upcoming": true,
       "is_translated": true
@@ -126,7 +126,7 @@
   "seo": {
     "meta_title": "Центр промышленной кооперации при ТПП КР",
     "meta_description": "Поиск партнёров, деловые миссии и промышленная кооперация с Китаем и другими странами.",
-    "og_image": "http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp",
+    "og_image": "http://localhost:8000/media/CACHE/images/seo/factory/23d9754c91701b35c6e0d8f93c3443fd.webp",
     "alternates": {
       "ru": "home",
       "en": "home",

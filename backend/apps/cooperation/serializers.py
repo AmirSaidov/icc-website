@@ -145,11 +145,27 @@ class PresentationSourceField(_RefField):
         }
 
 
+@extend_schema_field({
+    "type": "string",
+    "enum": list(Presentation.CATEGORIES),
+    "description": "projects — презентация опубликованного проекта, industry — остальные",
+})
+class PresentationCategoryField(_RefField):
+    def __init__(self, **kwargs):
+        kwargs["source"] = "*"
+        super().__init__(**kwargs)
+
+    def to_representation(self, obj):
+        return obj.category
+
+
 class PresentationShortSerializer(serializers.ModelSerializer):
     """Элемент списка презентаций внутри проекта (без ссылки на сам проект)."""
 
     slug = TranslatedField()
     title = TranslatedField()
+    excerpt = TranslatedField()
+    category = PresentationCategoryField()
     cover = ImageVersionsField()
     sector = SectorField()
     country = CountryShortSerializer(read_only=True, allow_null=True)
@@ -158,7 +174,10 @@ class PresentationShortSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Presentation
-        fields = ["id", "slug", "title", "cover", "sector", "country", "file", "published_at", "is_translated"]
+        fields = [
+            "id", "slug", "title", "excerpt", "category", "cover", "sector", "country", "file",
+            "published_at", "is_translated",
+        ]
 
 
 class PresentationListSerializer(PresentationShortSerializer):
@@ -166,22 +185,24 @@ class PresentationListSerializer(PresentationShortSerializer):
 
     class Meta(PresentationShortSerializer.Meta):
         fields = [
-            "id", "slug", "title", "cover", "sector", "project", "country", "file", "published_at",
-            "is_translated",
+            "id", "slug", "title", "excerpt", "category", "cover", "sector", "project", "country", "file",
+            "published_at", "is_translated",
         ]
 
 
 class PresentationDetailSerializer(PresentationListSerializer):
-    description = HtmlField()
+    content = HtmlField()
     source_file = PresentationSourceField()
-    seo = SeoField(description_field="description", image_field="cover", description_is_html=True)
+    seo = SeoField(description_field="excerpt", image_field="cover")
 
     class Meta(PresentationListSerializer.Meta):
         fields = [
             "id",
             "slug",
             "title",
-            "description",
+            "excerpt",
+            "content",
+            "category",
             "cover",
             "sector",
             "project",

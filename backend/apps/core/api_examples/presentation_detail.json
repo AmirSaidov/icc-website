@@ -1,8 +1,10 @@
 {
-  "id": 2,
+  "id": 7,
   "slug": "lokalizatsiia-sborki-traktorov-etapy-i-trebovaniia",
   "title": "Локализация сборки тракторов: этапы и требования",
-  "description": "<p>Как устроена сборка из машинокомплектов и что требуется от площадки.</p>",
+  "excerpt": "Как устроена сборка из машинокомплектов и что требуется от площадки.",
+  "content": "<p>Как устроена сборка из машинокомплектов и что требуется от площадки.</p><p>Центр промышленной кооперации помогает предприятиям Кыргызстана находить партнёров, выходить на новые рынки и развивать совместные производства.</p>",
+  "category": "projects",
   "cover": {
     "small": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/d02bc5e477d093f7f59dc05dcea99c02.webp",
     "large": "http://localhost:8000/media/CACHE/images/presentation-covers/2026/10/presentation-2/923c64d9a4ad8d43857f40f211b96282.webp"

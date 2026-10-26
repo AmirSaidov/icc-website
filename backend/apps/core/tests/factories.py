@@ -91,4 +91,4 @@ def make_presentation(name, sector, langs=LANGS, pages=3, **extra):
     from apps.cooperation.models import Presentation
 
     extra.setdefault("file", slides_pdf_file(pages, f"{name}.pdf"))
-    return make(Presentation, name, langs, fields=("title", "description"), sector=sector, **extra)
+    return make(Presentation, name, langs, fields=("title", "excerpt", "content"), sector=sector, **extra)

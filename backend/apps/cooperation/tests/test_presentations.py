@@ -82,6 +82,47 @@ def test_sector_with_presentations_cannot_be_deleted(industry):
         industry.delete()
 
 
+# --- category: projects / industry ----------------------------------------------------------
+
+
+def test_category_field_and_filter(api, industry, it_sector, project, china):
+    draft_project = make(Project, "draftproj", country=china, status=PublishableModel.Status.DRAFT)
+    later_project = make(Project, "laterproj", country=china, published_at=days(1))
+    with_project = make_presentation("withproj", industry, project=project)
+    draft = make_presentation("draft", industry, project=draft_project)
+    later = make_presentation("later", it_sector, project=later_project)
+    plain = make_presentation("plain", it_sector)
+
+    def categories(**params):
+        results = api.get("/api/v1/presentations/", params).json()["results"]
+        return {item["id"]: item["category"] for item in results}
+
+    # projects — только презентации опубликованных проектов (черновик и отложенный — industry)
+    assert categories() == {
+        with_project.id: "projects", draft.id: "industry", later.id: "industry", plain.id: "industry",
+    }
+    assert set(categories(category="projects")) == {with_project.id}
+    assert set(categories(category="industry")) == {draft.id, later.id, plain.id}
+    # sector уточняет раздел industry
+    assert set(categories(category="industry", sector="xin-xi-ji-shu")) == {later.id, plain.id}
+    assert api.get("/api/v1/presentations/withproj-ru/").json()["category"] == "projects"
+    assert api.get("/api/v1/presentations/draft-ru/").json()["category"] == "industry"
+
+    response = api.get("/api/v1/presentations/", {"category": "it"})
+    assert response.status_code == 400
+    assert "category" in response.json()
+
+
+def test_excerpt_limited_to_300_chars(industry):
+    obj = Presentation(title_ru="Проверка", sector=industry, file=SimpleUploadedFile("a.pdf", b"%PDF-1.7"))
+    obj.excerpt_ru = "x" * 301
+    with pytest.raises(ValidationError) as error:
+        obj.full_clean()
+    assert "excerpt_ru" in error.value.message_dict
+    obj.excerpt_ru = "x" * 300
+    obj.full_clean()
+
+
 # --- Список и фильтры ----------------------------------------------------------------------
 
 
@@ -93,9 +134,12 @@ def test_list_fresh_first_with_file_info(api, industry):
     assert [item["id"] for item in data["results"]] == [new.id, old.id]
     item = data["results"][1]
     assert set(item) == {
-        "id", "slug", "title", "cover", "sector", "project", "country", "file", "published_at", "is_translated",
+        "id", "slug", "title", "excerpt", "category", "cover", "sector", "project", "country", "file",
+        "published_at", "is_translated",
     }
     assert item["slug"] == "old-ru" and item["title"] == "old title ru"
+    assert item["excerpt"] == "old excerpt ru" and item["category"] == "industry"
+    assert "content" not in item
     assert item["sector"] == {"slug": "promyshlennost", "name": "Промышленность"}
     assert item["file"]["url"].startswith("http://testserver/media/presentations/")
     assert item["file"]["pages"] == 4 and item["file"]["ext"] == "pdf"
@@ -155,13 +199,17 @@ def test_detail_full(api, industry, project, china):
     presentation = make_presentation(
         "full", industry, project=project, country=china, pages=5,
         source_file=pptx_file("full.pptx"), cover=image_file("cover.jpg"),
-        description_ru="<p>Описание <strong>жирным</strong> &amp; ещё</p><script>alert(1)</script>",
+        excerpt_ru="Коротко о презентации",
+        content_ru="<p>Текст <strong>жирным</strong></p><script>alert(1)</script>",
     )
     response = api.get("/api/v1/presentations/full-en/", {"lang": "ru"})
     assert response.status_code == 200
     data = response.json()
     assert data["slug"] == "full-ru" and data["title"] == "full title ru"
-    assert data["description"] == "<p>Описание <strong>жирным</strong> &amp; ещё</p>"  # nh3 при сохранении
+    assert data["excerpt"] == "Коротко о презентации"
+    assert data["content"] == "<p>Текст <strong>жирным</strong></p>"  # nh3 при сохранении
+    assert data["category"] == "projects"
+    assert "description" not in data
     assert data["sector"] == {"slug": "promyshlennost", "name": "Промышленность"}
     assert data["project"] == {"slug": "proj-ru", "title": "proj title ru"}
     assert data["country"] == {"code": "CN", "name": "china name ru"}
@@ -180,7 +228,7 @@ def test_detail_full(api, industry, project, china):
     assert data["is_translated"] is True
     seo = data["seo"]
     assert seo["meta_title"] == "full title ru"
-    assert seo["meta_description"] == "Описание жирным & ещё"  # из description, без тегов
+    assert seo["meta_description"] == "Коротко о презентации"  # из excerpt
     assert seo["og_image"] == data["cover"]["large"]
     assert seo["alternates"] == {"ru": "full-ru", "en": "full-en", "zh": "full-zh"}
 
@@ -233,7 +281,8 @@ def test_presentation_without_zh(api, industry):
     assert response.status_code == 200
     data = response.json()
     assert data["is_translated"] is False
-    assert data["title"] is None and data["slug"] is None and data["description"] is None
+    assert data["title"] is None and data["slug"] is None
+    assert data["excerpt"] is None and data["content"] is None
     assert data["sector"] == {"slug": "gong-ye", "name": "工业"}
     assert data["file"]["pages"] == 3  # файл общий для всех языков
     assert data["seo"]["alternates"] == {"ru": "ruen-ru", "en": "ruen-en", "zh": None}
@@ -255,9 +304,11 @@ def test_project_detail_contains_published_translated_presentations(api, industr
     zh = api.get("/api/v1/projects/proj-ru/", {"lang": "zh"}).json()["presentations"]
     assert [p["id"] for p in zh] == [first.id, second.id]
     assert set(zh[0]) == {
-        "id", "slug", "title", "cover", "sector", "country", "file", "published_at", "is_translated",
+        "id", "slug", "title", "excerpt", "category", "cover", "sector", "country", "file", "published_at",
+        "is_translated",
     }
     assert zh[0]["slug"] == "first-zh" and zh[0]["file"]["ext"] == "pdf"
+    assert zh[0]["category"] == "projects" and zh[0]["excerpt"] == "first excerpt zh"
 
 
 def test_project_detail_queries_do_not_grow_with_presentations(api, industry, project):
@@ -361,6 +412,7 @@ def test_unreadable_pdf_saves_with_null_pages(industry, caplog):
 def media_urls(settings):
     settings.ROOT_URLCONF = "apps.core.tests.urls_media"
     settings.FRONTEND_URL = FRONT
+    settings.FRAME_ANCESTORS = [FRONT]
     settings.CORS_ALLOWED_ORIGINS = [FRONT]
 
 
@@ -372,6 +424,16 @@ def test_pdf_can_be_framed_by_frontend_only(client, media_urls, industry):
     assert response["Content-Security-Policy"] == f"frame-ancestors 'self' {FRONT}"
     assert "X-Frame-Options" not in response
     assert response["Content-Disposition"].startswith("inline")
+
+
+def test_frame_ancestors_with_several_origins_and_wildcard(client, media_urls, settings, industry):
+    settings.FRAME_ANCESTORS = [FRONT, "https://*.vercel.app", "http://localhost:3000"]
+    obj = make_presentation("p", industry)
+    response = client.get(f"/media/{obj.file.name}")
+    assert response["Content-Security-Policy"] == (
+        f"frame-ancestors 'self' {FRONT} https://*.vercel.app http://localhost:3000"
+    )
+    assert "X-Frame-Options" not in response
 
 
 def test_pptx_is_downloaded(client, media_urls, industry):
@@ -432,14 +494,16 @@ def test_editor_creates_presentation_via_admin(editor_client, industry, project)
     assert add_page.status_code == 200
     html = add_page.content.decode()
     for lang in ("ru", "en", "zh"):
-        assert f'name="description_{lang}"' in html
-    assert html.count('class="django_ckeditor_5') == 3  # description_* — rich text
+        assert f'name="excerpt_{lang}"' in html and f'name="content_{lang}"' in html
+        assert f'name="description_{lang}"' not in html
+    assert html.count('class="django_ckeditor_5') == 3  # только content_*, excerpt — простой текст
+    assert 'maxlength="300"' in html
     assert 'accept=".pdf"' in html and 'accept=".pptx"' in html
 
     data = form_data(add_page)
     data.update({
         "title_ru": "Презентация", "title_en": "Deck", "title_zh": "演示",
-        "description_ru": "<p>Текст</p>",
+        "excerpt_ru": "Коротко", "content_ru": "<p>Текст</p>",
         "sector": industry.pk, "project": project.pk, "status": "published",
         "file": SimpleUploadedFile("deck.pdf", slides_pdf_file(4).read()),
         "source_file": SimpleUploadedFile("deck.pptx", pptx_bytes()),
@@ -514,3 +578,38 @@ def test_project_form_shows_presentations_read_only_with_edit_links(editor_clien
     assert editor_client.post(admin_url(Project, "change", project.pk), data).status_code == 302
     obj.refresh_from_db()
     assert obj.project_id == project.pk
+
+
+
+# --- Миграция description → excerpt + content ------------------------------------------------
+
+
+@pytest.mark.django_db(transaction=True, serialized_rollback=True)
+def test_description_migrates_to_excerpt_and_content():
+    from django.db.migrations.executor import MigrationExecutor
+
+    before = [("cooperation", "0006_presentation_excerpt_content")]
+    executor = MigrationExecutor(connection)
+    executor.migrate(before)
+    try:
+        old_apps = executor.loader.project_state(before).apps
+        OldSector = old_apps.get_model("cooperation", "Sector")
+        OldPresentation = old_apps.get_model("cooperation", "Presentation")
+        long_text = "Очень длинное описание. " * 20
+        html = f"<p><strong>Заводы</strong> &amp; цеха.</p><p>{long_text}</p>"
+        pk = OldPresentation.objects.create(
+            title="Старая", title_ru="Старая", sector=OldSector.objects.get(slug_ru="promyshlennost"),
+            file="presentations/old.pdf", description=html, description_ru=html, description_en="<p>Short</p>",
+        ).pk
+    finally:
+        executor = MigrationExecutor(connection)
+        executor.loader.build_graph()
+        executor.migrate(executor.loader.graph.leaf_nodes())
+
+    obj = Presentation.objects.get(pk=pk)
+    assert obj.content_ru == html and obj.content_en == "<p>Short</p>" and obj.content_zh is None
+    assert obj.excerpt_en == "Short"
+    assert obj.excerpt_zh is None
+    assert obj.excerpt_ru.startswith("Заводы & цеха. Очень длинное описание.")
+    assert len(obj.excerpt_ru) == 300 and obj.excerpt_ru.endswith("…")
+    assert "<" not in obj.excerpt_ru

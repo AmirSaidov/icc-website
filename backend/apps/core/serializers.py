@@ -143,10 +143,9 @@ def get_site_settings(context):
 
 @extend_schema_field(SeoSerializer)
 class SeoField(_ReadOnlyField):
-    def __init__(self, description_field=None, image_field=None, description_is_html=False, **kwargs):
+    def __init__(self, description_field=None, image_field=None, **kwargs):
         self.description_field = description_field
         self.image_field = image_field
-        self.description_is_html = description_is_html
         kwargs["source"] = "*"
         super().__init__(**kwargs)
 
@@ -158,7 +157,6 @@ class SeoField(_ReadOnlyField):
             get_site_settings(self.context),
             description_field=self.description_field,
             image_field=self.image_field,
-            description_is_html=self.description_is_html,
         )
 
 

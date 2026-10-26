@@ -1,5 +1,5 @@
 {
-  "id": 15,
+  "id": 22,
   "slug": "podbor-partnerov-v-kitae",
   "title": "Подбор партнёров в Китае",
   "short_text": "Поиск и проверка производителей и поставщиков.",
@@ -13,7 +13,7 @@
   "seo": {
     "meta_title": "Подбор партнёров в Китае",
     "meta_description": "Поиск и проверка производителей и поставщиков.",
-    "og_image": "http://localhost:8000/media/CACHE/images/seo/icc-kyrgyzstan/2caac81c6a38255f974b5c2fc041f7f1.webp",
+    "og_image": "http://localhost:8000/media/CACHE/images/seo/factory/23d9754c91701b35c6e0d8f93c3443fd.webp",
     "alternates": {
       "ru": "podbor-partnerov-v-kitae",
       "en": "partner-search-in-china",

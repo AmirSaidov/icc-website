@@ -487,12 +487,13 @@ class Command(BaseCommand):
     def seed_presentations(self, sectors, projects, countries):
         last = len(data.PRESENTATIONS) - 1
         for index, item in enumerate(data.PRESENTATIONS):
-            sector, project_index, code, days_ago, pages, with_pptx, title, description = item
+            sector, project_index, code, days_ago, pages, with_pptx, title, excerpt = item
             slug_ru = make_slug(title[0], "ru")
             fields = {
                 **tr("title", title),
                 **slugs(title),
-                **tr("description", tuple(None if d is None else f"<p>{d}</p>" for d in description)),
+                **tr("excerpt", excerpt),
+                **tr("content", tuple(None if e is None else f"<p>{e}</p>" + data.LOREM[i] for i, e in enumerate(excerpt))),
                 "sector": sectors[sector],
                 "project": None if project_index is None else projects[project_index],
                 "country": countries.get(code),

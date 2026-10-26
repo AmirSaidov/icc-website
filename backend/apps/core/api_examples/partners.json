@@ -1,10 +1,10 @@
 [
   {
-    "id": 9,
+    "id": 13,
     "name": "Торговая компания «Шёлковый путь» (демо)",
     "logo": {
-      "small": "http://localhost:8000/media/CACHE/images/partners/logo-1/4102341f8ee4cfc88052f5d4bba63378.webp",
-      "large": "http://localhost:8000/media/CACHE/images/partners/logo-1/de558907b3fdb77063a7219c781a54b4.webp"
+      "small": "http://localhost:8000/media/CACHE/images/partners/logo-32/f83228973b81584c8d298049ef47f002.webp",
+      "large": "http://localhost:8000/media/CACHE/images/partners/logo-32/bde39ccc74ddce843ee85607d6097b39.webp"
     },
     "country": {
       "code": "CN",
@@ -15,11 +15,11 @@
     "is_translated": true
   },
   {
-    "id": 10,
+    "id": 14,
     "name": "«Тяньшань Машинери» (демо)",
     "logo": {
-      "small": "http://localhost:8000/media/CACHE/images/partners/logo-2/c63583e8b06cfcfc91d4176deae1956f.webp",
-      "large": "http://localhost:8000/media/CACHE/images/partners/logo-2/28bb25a8d42e128eadd01af0d5844f16.webp"
+      "small": "http://localhost:8000/media/CACHE/images/partners/logo-33/ddf280687dce28f1a07952388926c146.webp",
+      "large": "http://localhost:8000/media/CACHE/images/partners/logo-33/3e68ea1ddbe67135b5a613652a569b92.webp"
     },
     "country": {
       "code": "CN",

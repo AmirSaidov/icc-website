@@ -29,5 +29,5 @@ class SectorTranslationOptions(TranslationOptions):
 
 @register(Presentation)
 class PresentationTranslationOptions(TranslationOptions):
-    fields = ("title", "slug", "description", *SEO_TRANSLATED_FIELDS)
+    fields = ("title", "slug", "excerpt", "content", *SEO_TRANSLATED_FIELDS)
     empty_values = {"slug": None}

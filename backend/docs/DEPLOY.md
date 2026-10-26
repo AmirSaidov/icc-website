@@ -33,6 +33,8 @@ CORS_ALLOWED_ORIGINS=https://<домен фронта>
 CSRF_TRUSTED_ORIGINS=https://api.<домен>
 ADMIN_URL=<нестандартный путь, например cpk-7f3k9q/>
 FRONTEND_URL=https://<домен фронта>
+# пусто = FRONTEND_URL; на проде — только настоящий домен фронта (комментарий — отдельной строкой)
+FRAME_ANCESTORS=
 BACKEND_URL=https://api.<домен>
 NUM_PROXIES=1
 EMAIL_HOST=<SMTP заказчика>
@@ -122,6 +124,7 @@ server {
         root /srv/icc/app/backend;   # root, а не alias: его наследует вложенный location ниже
         expires 7d;
         include /etc/nginx/mime.types;
+        # то же, что FRAME_ANCESTORS в .env (по умолчанию — FRONTEND_URL), через пробел
         add_header Content-Security-Policy "frame-ancestors 'self' https://<домен фронта>" always;
         add_header Content-Disposition "inline" always;
         add_header X-Content-Type-Options "nosniff" always;
@@ -157,7 +160,9 @@ curl -sI https://api.<домен>/<ADMIN_URL>login/ | grep -i x-frame
 #   X-Frame-Options: DENY
 ```
 
-В dev (`runserver`, `DEBUG=True`) media раздаёт Django с теми же заголовками (`apps/core/media.py`), домен фронта берётся из `FRONTEND_URL`, CORS — из `CORS_ALLOWED_ORIGINS`. **При смене домена фронта** поменяйте и `.env`, и обе строки с `<домен фронта>` в nginx.
+В dev (`runserver`, `DEBUG=True`) media раздаёт Django с теми же заголовками (`apps/core/media.py`): frame-ancestors — из `FRAME_ANCESTORS` (пусто — `FRONTEND_URL`), CORS — из `CORS_ALLOWED_ORIGINS`. nginx `.env` не читает: **при смене домена фронта** поменяйте и `.env`, и обе строки с `<домен фронта>` в nginx.
+
+**Тестовое окружение** (фронт на превью-деплоях Vercel): `FRAME_ANCESTORS=https://<тестовый домен фронта>,https://*.vercel.app`, а в nginx — `frame-ancestors 'self' https://<тестовый домен фронта> https://*.vercel.app`. На проде маску не добавлять: встраивать PDF сможет любой сайт на vercel.app.
 
 ```bash
 sudo ln -s /etc/nginx/sites-available/icc-backend /etc/nginx/sites-enabled/

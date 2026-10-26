@@ -4,8 +4,9 @@ docs/DEPLOY.md, раздел 5.
 
 Файлы презентаций (media/presentations/) фронт встраивает в свою страницу (iframe или pdf.js),
 поэтому для них — и только для них — вместо X-Frame-Options: DENY отдаётся
-Content-Security-Policy: frame-ancestors 'self' <FRONTEND_URL>. PDF — Content-Disposition: inline
-(просмотр), PPTX — attachment (скачивание). Админка и всё остальное — по-прежнему DENY.
+Content-Security-Policy: frame-ancestors 'self' <FRAME_ANCESTORS> (по умолчанию — FRONTEND_URL).
+PDF — Content-Disposition: inline (просмотр), PPTX — attachment (скачивание).
+Админка и всё остальное — по-прежнему DENY.
 """
 import re
 from pathlib import PurePosixPath
@@ -24,7 +25,7 @@ def is_presentation_file(path):
 
 
 def presentation_frame_ancestors():
-    return f"frame-ancestors 'self' {settings.FRONTEND_URL}"
+    return " ".join(["frame-ancestors", "'self'", *settings.FRAME_ANCESTORS])
 
 
 def add_presentation_headers(response, path):

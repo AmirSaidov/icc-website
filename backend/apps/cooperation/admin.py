@@ -103,7 +103,6 @@ class SectorAdmin(TranslationAdminBase):
 
 @admin.register(Presentation)
 class PresentationAdmin(TranslationAdminBase):
-    rich_text_fields = ("description",)
     list_display = ("title", "sector", "project", "country", "status", "published_at", "file_info")
     list_filter = ("status", "sector", "project", "country", "published_at")
     list_select_related = ("sector", "project", "country")
@@ -121,7 +120,7 @@ class PresentationAdmin(TranslationAdminBase):
             "description": "PDF обязателен: именно он показывается на сайте (браузер открывает PDF сам, "
             "PowerPoint — нет). PPTX — по желанию, только для скачивания. Каждый файл — до 50 МБ.",
         }),
-        ("Описание", {"fields": ("description",)}),
+        ("Содержимое", {"fields": ("excerpt", "content")}),
         SEO_FIELDSET,
     )
 

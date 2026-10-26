@@ -1,8 +1,9 @@
 from django.contrib.contenttypes.fields import GenericRelation
-from django.core.validators import RegexValidator
+from django.core.validators import MaxLengthValidator, RegexValidator
 from django.db import models
 from django.utils import timezone
 
+from apps.core.api import is_published
 from apps.core.fields import (
     ImageUploadField,
     NullableSlugField,
@@ -127,9 +128,23 @@ class Sector(TimeStampedModel):
 
 
 class Presentation(TimeStampedModel, PublishableModel, SeoModel):
+    # Раздел в API (поле category): «Совместные проекты» — презентации опубликованных
+    # проектов, остальные — «Промышленность и IT». Не хранится, вычисляется.
+    CATEGORY_PROJECTS = "projects"
+    CATEGORY_INDUSTRY = "industry"
+    CATEGORIES = (CATEGORY_PROJECTS, CATEGORY_INDUSTRY)
+    EXCERPT_MAX_LENGTH = 300
+
     title = models.CharField("заголовок", max_length=255)
     slug = NullableSlugField("slug")
-    description = models.TextField("описание", blank=True)
+    excerpt = models.TextField(
+        "анонс",
+        max_length=EXCERPT_MAX_LENGTH,
+        blank=True,
+        validators=[MaxLengthValidator(EXCERPT_MAX_LENGTH)],
+        help_text="Короткий текст без оформления для карточки, до 300 символов.",
+    )
+    content = models.TextField("содержимое", blank=True)
     file = PresentationPdfField(
         "файл PDF",
         upload_to=f"{PRESENTATION_FILES_DIR}/%Y/%m/",
@@ -186,9 +201,16 @@ class Presentation(TimeStampedModel, PublishableModel, SeoModel):
 
     def save(self, *args, **kwargs):
         fill_translated_slugs(self)
-        sanitize_translated_fields(self, "description")
+        sanitize_translated_fields(self, "content")
         self.update_file_info()
         super().save(*args, **kwargs)
+
+    @property
+    def category(self):
+        """projects — есть опубликованный проект (тот же фильтр, что ?category=), иначе industry."""
+        if self.project_id and is_published(self.project):
+            return self.CATEGORY_PROJECTS
+        return self.CATEGORY_INDUSTRY
 
     def update_file_info(self):
         """size и pages — по новому PDF; source_size — по PPTX (нет файла — null)."""

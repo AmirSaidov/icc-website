@@ -30,7 +30,7 @@ FRONTEND_URL_SCHEME = {
     "news": "/{lang}/news/{slug}",
     "event": "/{lang}/events/{slug}",
     "project": "/{lang}/cooperation/projects/{slug}",
-    "presentation": "/{lang}/presentations/{slug}",  # согласовать с фронтом
+    "presentation": "/{lang}/presentations/{slug}",
 }
 
 SITEMAP_MODELS = [

@@ -1,10 +1,11 @@
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 
 from apps.core.api import (
     SlugDetailAPIView,
     StandardPagination,
     TranslatedListAPIView,
     gallery_and_attachments_prefetch,
+    get_choice_param,
     published,
 )
 from apps.core.i18n import any_slug_q, translated_q
@@ -148,12 +149,14 @@ class SectorListView(TranslatedListAPIView):
 @api_doc(
     summary="Презентации",
     description="Опубликованные и переведённые на `lang` презентации, свежие сверху (по `published_at`). "
-    "Неизвестные `sector` / `project` / `country` → пустой список.",
+    "`category=projects` — презентации опубликованных проектов, `industry` — остальные; другое "
+    "значение → 400. Неизвестные `sector` / `project` / `country` → пустой список.",
     serializer=PresentationListSerializer,
     tags=PRESENTATION_TAGS,
     example="presentations_list",
     is_list=True,
     parameters=[
+        query_param("category", "Раздел: projects или industry", enum=list(Presentation.CATEGORIES)),
         query_param("sector", "slug сферы на любом языке"),
         query_param("project", "slug проекта на любом языке"),
         COUNTRY_PARAMETER,
@@ -169,6 +172,11 @@ class PresentationListView(TranslatedListAPIView):
     def get_queryset(self):
         queryset = super().get_queryset()
         params = self.request.query_params
+        category = get_choice_param(self.request, "category", Presentation.CATEGORIES)
+        if category:
+            # то же правило, что у поля category: проект есть и опубликован
+            with_project = Q(project__in=published(Project.objects.all()).values("id"))
+            queryset = queryset.filter(with_project if category == Presentation.CATEGORY_PROJECTS else ~with_project)
         if params.get("sector"):
             sectors = Sector.objects.filter(any_slug_q(params["sector"]))
             queryset = queryset.filter(sector__in=sectors.values("id"))
@@ -185,7 +193,7 @@ class PresentationListView(TranslatedListAPIView):
 @api_doc(
     summary="Презентация",
     description="`file` — PDF для просмотра на сайте (iframe или pdf.js), `source_file` — PPTX "
-    "для скачивания или null. Поиск по slug на любом языке. Без перевода на `lang` — 200, "
+    "только для скачивания или null. Поиск по slug на любом языке. Без перевода на `lang` — 200, "
     "переводимые поля null, `is_translated: false`.",
     serializer=PresentationDetailSerializer,
     tags=PRESENTATION_TAGS,

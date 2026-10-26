@@ -1,6 +1,6 @@
 [
   {
-    "id": 17,
+    "id": 25,
     "slug": "promyshlennaia-kooperatsiia",
     "title": "Промышленная кооперация",
     "short_text": "Связываем производителей для совместной работы.",
@@ -9,7 +9,7 @@
     "is_translated": true
   },
   {
-    "id": 18,
+    "id": 26,
     "slug": "poisk-partnerov",
     "title": "Поиск партнёров",
     "short_text": "Подбираем надёжных партнёров за рубежом.",

@@ -93,7 +93,7 @@ backend/                # репозиторий icc-website общий с фр�
 | **Partner** | TimeStamped | `name` [T], `logo`, `country` (FK → Country), `website`, `description` [T], `consent_to_publish` (bool), `order` |
 | **Project** — международные проекты | TimeStamped, Publishable, Seo | `title` [T], `slug` [T], `excerpt` [T], `content` [T], `country` (FK → Country), `partners` (M2M → Partner), `cover`, `published_at` |
 | **Sector** — сфера презентаций | TimeStamped | `name` [T], `slug` [T], `order`. «Промышленность» и «Информационные технологии» (ru/en/zh) создаются миграцией; сотрудники добавляют новые |
-| **Presentation** — презентации | TimeStamped, Publishable, Seo | `title` [T], `slug` [T], `description` [T] (rich text), `file` (PDF, **обязателен** — по нему просмотр на сайте, до 50 МБ), `source_file` (PPTX, необязательный, только для скачивания, до 50 МБ), `cover` (картинка, необязательна), `sector` (FK → Sector, `PROTECT`), `project` (FK → Project, `SET_NULL`, nullable), `country` (FK → Country, `SET_NULL`, nullable), `published_at` (по умолчанию now), `order`; автоматически при сохранении: `size` (байты PDF), `pages` (через `pypdf`; не посчиталось — `null`, сохранение не падает), `source_size` (байты PPTX или `null`) |
+| **Presentation** — презентации | TimeStamped, Publishable, Seo | `title` [T], `slug` [T], `excerpt` [T] (короткий текст без HTML, до 300 символов), `content` [T] (rich text), `file` (PDF, **обязателен** — по нему просмотр на сайте, до 50 МБ), `source_file` (PPTX, необязательный, только для скачивания, до 50 МБ), `cover` (картинка, необязательна), `sector` (FK → Sector, `PROTECT`), `project` (FK → Project, `SET_NULL`, nullable), `country` (FK → Country, `SET_NULL`, nullable), `published_at` (по умолчанию now), `order`; автоматически при сохранении: `size` (байты PDF), `pages` (через `pypdf`; не посчиталось — `null`, сохранение не падает), `source_size` (байты PPTX или `null`) |
 | **ContactInfo** — singleton | TimeStamped | `official_name` [T], `address` [T], `phones` (JSON: `[{"label_ru": "...", "label_en": "...", "label_zh": "...", "number": "..."}]` — подписи трёхъязычные; API отдаёт `[{"label", "number"}]` на языке запроса, пустая подпись → `null`), `email`, `work_hours` [T], `map_lat`, `map_lng`, `socials` (JSON: `[{"type": "telegram", "url": "..."}]` — не переводится, `type` — ключ иконки на фронте) |
 | **SiteSettings** — singleton | TimeStamped | `feedback_emails` (адреса для заявок через запятую), `analytics_id` (ID счётчика аналитики), `default_og_image` |
 | **Feedback** — обращения | — | `type`: `contact` / `cooperation`, `full_name`, `company`, `country` (строка), `email`, `phone` (nullable), `subject`, `message`, `consent`, `lang`, `status`: `new` / `in_progress` / `closed`, `admin_note` (внутренний комментарий), `ip`, `created_at` |
@@ -107,7 +107,7 @@ backend/                # репозиторий icc-website общий с фр�
 - Картинки (`cover`, `image`, `logo`, `og_image`): превью через django-imagekit — WebP, ширина 400 и 1200 px.
 - Singleton-модели (ContactInfo, SiteSettings): ровно одна запись, создаётся миграцией, удалить нельзя.
 - Системные страницы (с непустым `key`) создаются миграцией (статус `draft`), удалить нельзя, `key` в админке только для чтения. Адресуются по `key`, slug не нужен (см. 2.1). Команда `seed` заполняет их на трёх языках и публикует.
-- Rich text (`content`, у Presentation — `description`) санитайзится через `nh3` **при сохранении**. Разрешены: заголовки h2–h4, p, br, strong, em, u, s, ul, ol, li, a (href, target, rel), img (src, alt, width, height), blockquote, table/thead/tbody/tr/th/td, figure, figcaption.
+- Rich text (`content`) санитайзится через `nh3` **при сохранении**. Разрешены: заголовки h2–h4, p, br, strong, em, u, s, ul, ol, li, a (href, target, rel), img (src, alt, width, height), blockquote, table/thead/tbody/tr/th/td, figure, figcaption.
 
 ---
 
@@ -161,8 +161,8 @@ backend/                # репозиторий icc-website общий с фр�
 | GET | `/projects/?country=<code>&page=` | Международные проекты |
 | GET | `/projects/{slug}/` | Проект с партнёрами, `gallery` и `presentations` (опубликованные, переведённые на `lang`, по `order`) |
 | GET | `/sectors/` | Сферы презентаций: `slug`, `name` |
-| GET | `/presentations/?sector=<slug>&project=<slug>&country=<code>&page=&page_size=` | Презентации, свежие сверху (по `published_at`). `sector` и `project` — slug на любом языке; язык, `is_translated`, `published()` — как у News |
-| GET | `/presentations/{slug}/` | Презентация полностью, плюс `file: {url, size, pages, ext}`, `source_file: {url, size, ext}` или `null`, `sector`, `project` (`{slug, title}` или `null`), `country`, `seo` |
+| GET | `/presentations/?category=projects\|industry&sector=<slug>&project=<slug>&country=<code>&page=&page_size=` | Презентации, свежие сверху (по `published_at`), с `excerpt` и `category`. `category=projects` — `project` не null и проект опубликован, `industry` — остальные; невалидное значение → 400. `sector` и `project` — slug на любом языке; язык, `is_translated`, `published()` — как у News |
+| GET | `/presentations/{slug}/` | Презентация полностью (`excerpt`, `content`, `category`; `seo.meta_description` — из `excerpt`), плюс `file: {url, size, pages, ext}`, `source_file: {url, size, ext}` или `null`, `sector`, `project` (`{slug, title}` или `null`), `country`, `seo` |
 | GET | `/contacts/` | ContactInfo |
 | GET | `/settings/` | Публичные настройки: `analytics_id`, `default_og_image` |
 | GET | `/documents/` | Attachment с `show_in_documents=True` |
@@ -287,7 +287,7 @@ backend/                # репозиторий icc-website общий с фр�
 - **Админка:** путь из `ADMIN_URL` (на проде нестандартный), `django-axes` (блокировка после 5 неудачных входов на 30 минут), валидаторы паролей с минимальной длиной 10.
 - **Секреты** (`SECRET_KEY`, SMTP и т.д.) — только в `.env`, в репозитории лежит `.env.example`.
 - **Прод:** `DEBUG=False`, `SECURE_HSTS_SECONDS`, `SESSION_COOKIE_SECURE`, `CSRF_COOKIE_SECURE`, `SECURE_PROXY_SSL_HEADER`, `SECURE_CONTENT_TYPE_NOSNIFF`, `X_FRAME_OPTIONS=DENY`. Включаются флагом `DEBUG=False`.
-- **Файлы презентаций** (`media/presentations/`, и только они) встраиваются в страницу фронта: вместо `X-Frame-Options: DENY` — `Content-Security-Policy: frame-ancestors 'self' <FRONTEND_URL>`. PDF — `Content-Disposition: inline`, PPTX — `attachment`. В dev media раздаёт Django (`apps/core/media.py`), на проде — nginx с теми же заголовками (`docs/DEPLOY.md`). Админка и всё остальное — по-прежнему `DENY`.
+- **Файлы презентаций** (`media/presentations/`, и только они) встраиваются в страницу фронта: вместо `X-Frame-Options: DENY` — `Content-Security-Policy: frame-ancestors 'self' <FRAME_ANCESTORS>` (настройка в `.env`, origins через запятую, допускается маска `https://*.vercel.app`; по умолчанию — `FRONTEND_URL`). PPTX на сайте не показывается (Office Online не поддерживаем) — только скачивание. PDF — `Content-Disposition: inline`, PPTX — `attachment`. В dev media раздаёт Django (`apps/core/media.py`), на проде — nginx с теми же заголовками (`docs/DEPLOY.md`). Админка и всё остальное — по-прежнему `DENY`.
 - **Загрузки:** проверка типа и размера (раздел 4.1).
 - **Логирование** в файл `logs/app.log` + консоль: ошибки 500, неудачные входы в админку, ошибки отправки почты.
 
@@ -305,7 +305,7 @@ backend/                # репозиторий icc-website общий с фр�
   | News | `/{lang}/news/{slug}` |
   | Event | `/{lang}/events/{slug}` |
   | Project | `/{lang}/cooperation/projects/{slug}` |
-  | Presentation | `/{lang}/presentations/{slug}` — **согласовать с фронтом** |
+  | Presentation | `/{lang}/presentations/{slug}` |
 
   Схема задаётся **в одном месте** (словарь в `apps/core/sitemap.py`), потому что её ещё надо согласовать с фронтом.
 - **`/robots.txt`** — `Disallow: /api/`, строка `Sitemap: <BACKEND_URL>/sitemap.xml`. Путь из `ADMIN_URL` в robots **не пишется** (он раскрыл бы нестандартный адрес админки). Вместо этого все ответы админки — весь путь `ADMIN_URL`, включая страницу входа и страницу блокировки axes — отдают заголовок `X-Robots-Tag: noindex, nofollow`.
@@ -322,6 +322,7 @@ CORS_ALLOWED_ORIGINS=http://localhost:3000
 CSRF_TRUSTED_ORIGINS=http://localhost:8000
 ADMIN_URL=admin/
 FRONTEND_URL=http://localhost:3000
+FRAME_ANCESTORS=
 BACKEND_URL=http://localhost:8000
 NUM_PROXIES=0
 EMAIL_HOST=
@@ -332,7 +333,7 @@ EMAIL_USE_TLS=True
 DEFAULT_FROM_EMAIL=noreply@example.kg
 FEEDBACK_EMAIL=
 ```
-Если `EMAIL_HOST` пустой — используется console email backend. `BACKEND_URL` — публичный адрес бэкенда для ссылки на обращение в админке в письме.
+Если `EMAIL_HOST` пустой — используется console email backend. `FRAME_ANCESTORS` — кому можно встраивать PDF презентаций (пусто — `FRONTEND_URL`; на тестовом окружении можно добавить `https://*.vercel.app`, на проде — только настоящий домен). `BACKEND_URL` — публичный адрес бэкенда для ссылки на обращение в админке в письме.
 
 **SQLite:**
 - `OPTIONS: {"init_command": "PRAGMA journal_mode=WAL;", "transaction_mode": "IMMEDIATE"}` — чтение не блокируется записью из админки, меньше ошибок `database is locked`.
@@ -414,8 +415,7 @@ python manage.py seed && python manage.py runserver
 - Подписи типов мероприятий на en/zh (`/event-types/`) — проверить переводы носителем языка.
 - Схема URL на фронте (раздел 5.3) — согласовать с Амиром и Ариетом. (Ключи иконок направлений и URL системных страниц — решено, см. 2.3 и 5.3.)
 - Где отдавать sitemap/robots: с бэка (как сейчас) или фронт проксирует — согласовать.
-- Презентации на фронте (`frontend/` в `main`, коммит `7d8f7dd`) сделаны по черновому контракту: `category: projects|industry`, `excerpt` + `content`, PPTX через Office Online. API презентаций — по разделу 3.2 (`sector`, `project`, `description`, PDF в `file`); фронту нужно перейти на него — см. `docs/API.md`, «Важно для интеграции». Вкладка «Совместные проекты» = презентации с `project`; нужен ли отдельный фильтр (например, `?has_project=1`) — решить с фронтом.
-- URL презентаций на фронте `/{lang}/presentations/{slug}` (5.3) — согласовать с фронтом (сейчас совпадает с его маршрутом).
+- Фронт (`frontend/`, коммит `7d8f7dd`) должен убрать показ PPTX через Office Online и добавить скачивание `source_file` — см. `docs/API.md`, «Важно для интеграции».
 - Схема прокси для формы (браузер → Next.js → Django) и значение `NUM_PROXIES` на сервере — согласовать с фронтом (`docs/DEPLOY.md`, раздел 6).
 
 ## 10. Уточнения, принятые по ходу разработки
@@ -453,11 +453,14 @@ python manage.py seed && python manage.py runserver
 
 **Презентации (задача после MVP)**
 - `Sector` — `TimeStamped`, как остальные справочники. Slug сфер из миграции — те же, что дало бы автозаполнение (`promyshlennost` / `industry` / `gong-ye`, `informatsionnye-tekhnologii` / `information-technology` / `xin-xi-ji-shu`).
-- `description` — rich text: CKEditor 5 в админке, nh3 при сохранении, в API — безопасный HTML (только в детальном ответе). `seo.meta_description` без заполненного `meta_description` — текст `description` без тегов.
+- Тексты — как у News: `excerpt` (простой текст, до 300 символов, в списке и детальном) и `content` (CKEditor 5 + nh3, только в детальном). `seo.meta_description` по умолчанию — `excerpt`. Бывшее `description` перенесено миграцией: HTML → `content`, `excerpt` — тот же текст без тегов, обрезанный до 300 символов (с «…»).
+- `category` (`projects` / `industry`) — подстройка под фронт; вычисляется, а не хранится: `projects`, если у презентации есть проект и он опубликован (с учётом `published_at`), — то же правило, что у фильтра `?category=`. От языка не зависит: проект без перевода на язык запроса даёт `project: null`, но `category: projects`. `sector` остаётся — для уточнения внутри `industry`.
+- `order` — только порядок презентаций внутри проекта; общий список — по дате (подтверждено).
 - Размер PPTX хранится в поле `source_size` (как `size` у PDF): ответ API не обращается к диску. `size`, `pages`, `source_size` пересчитываются только при загрузке нового файла (и если `size` ещё пуст).
 - В объект `file` добавлено `ext: "pdf"` — для единообразия с `source_file` и `attachments` (фронт уже читает `file.ext`).
-- Элемент списка `/presentations/`: `id`, `slug`, `title`, `cover`, `sector`, `project`, `country`, `file`, `published_at`, `is_translated` (без `description`, `source_file`, `seo`). `presentations` в проекте — те же поля без `project`, сортировка по `order`, затем свежие сверху.
-- `project` во вложенных данных — `null`, если проект не опубликован (в т.ч. отложенный) или не переведён на язык запроса; `sector` без перевода → `null`. Фильтр `?project=` учитывает только опубликованные проекты; неизвестные `sector` / `project` / `country` → пустой список.
+- Элемент списка `/presentations/`: `id`, `slug`, `title`, `excerpt`, `category`, `cover`, `sector`, `project`, `country`, `file`, `published_at`, `is_translated` (без `content`, `source_file`, `seo`). `presentations` в проекте — те же поля без `project`, сортировка по `order`, затем свежие сверху.
+- `project` во вложенных данных — `null`, если проект не опубликован (в т.ч. отложенный) или не переведён на язык запроса; `sector` без перевода → `null`. Фильтр `?project=` учитывает только опубликованные проекты; неизвестные `sector` / `project` / `country` → пустой список, невалидный `category` → 400.
 - Файлы презентаций лежат в `media/presentations/` (заголовки frame-ancestors вешаются по этому пути), обложки — в `media/presentation-covers/` (обычные картинки, `DENY` как у остальных).
-- CORS включён также для `/media/presentations/` (для pdf.js). В dev — `CORS_URLS_REGEX`, на проде — `add_header` в nginx.
+- CORS включён также для `/media/presentations/` (для pdf.js). В dev — `CORS_URLS_REGEX`, на проде — `add_header` в nginx. Маски в CORS нет (`CORS_ALLOWED_ORIGINS` — точные origins), поэтому `*.vercel.app` в `FRAME_ANCESTORS` разрешает только iframe.
+- `FRAME_ANCESTORS` проверяется при старте: каждое значение — origin (`https://site.kg`, `https://*.vercel.app`, с портом или без); иначе ошибка настройки (защита от подстановки в заголовок CSP).
 - Сферы при `seed --flush` не удаляются (их создаёт миграция).

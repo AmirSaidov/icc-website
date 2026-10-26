@@ -148,6 +148,35 @@ def test_production_security_settings():
     }
 
 
+FRAME_ANCESTORS_CODE = "import json; print(json.dumps(s.FRAME_ANCESTORS))"
+
+
+def test_frame_ancestors_default_is_frontend_url():
+    values = _settings_in_subprocess({"FRONTEND_URL": "https://icc.kg/", "FRAME_ANCESTORS": ""}, FRAME_ANCESTORS_CODE)
+    assert values == ["https://icc.kg"]
+
+
+def test_frame_ancestors_several_values_and_wildcard():
+    values = _settings_in_subprocess(
+        {"FRAME_ANCESTORS": " https://icc.kg/, https://*.vercel.app ,http://localhost:3000"}, FRAME_ANCESTORS_CODE
+    )
+    assert values == ["https://icc.kg", "https://*.vercel.app", "http://localhost:3000"]
+
+
+@pytest.mark.parametrize("value", ["icc.kg", "https://icc.kg; script-src *", "'unsafe-inline'"])
+def test_frame_ancestors_rejects_non_origins(value):
+    env = {
+        **os.environ, "FRAME_ANCESTORS": value, "DJANGO_SETTINGS_MODULE": "config.settings",
+        "PYTHONIOENCODING": "utf-8",  # сообщение об ошибке — по-русски
+    }
+    result = subprocess.run(
+        [sys.executable, "-c", "import django; django.setup()"],
+        cwd=django_settings.BASE_DIR, env=env, capture_output=True, text=True, encoding="utf-8", timeout=120,
+    )
+    assert result.returncode != 0
+    assert "FRAME_ANCESTORS" in result.stderr
+
+
 def test_debug_mode_keeps_cookies_usable_over_http():
     values = _settings_in_subprocess(
         {"DEBUG": "True"},
