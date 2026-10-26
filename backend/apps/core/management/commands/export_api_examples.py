@@ -15,7 +15,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Count
 from django.test import Client
 
-from apps.cooperation.models import Project
+from apps.cooperation.models import Presentation, Project
 from apps.core.api import published
 from apps.core.schema import EXAMPLES_DIR
 from apps.news.models import Event, News
@@ -47,7 +47,8 @@ class Command(BaseCommand):
         project = published(Project.objects.annotate(photos=Count("gallery"))).order_by("-photos").first()
         direction = published(Direction.objects.order_by("order")).first()
         service = published(Service.objects.order_by("order")).first()
-        if not all([news, untranslated, event, project, direction, service]):
+        presentation = published(Presentation.objects.exclude(source_file="")).first()
+        if not all([news, untranslated, event, project, direction, service, presentation]):
             raise CommandError("Нет seed-данных. Сначала выполните: python manage.py seed")
 
         # (имя файла, заголовок в API.md, путь, параметры)
@@ -75,6 +76,14 @@ class Command(BaseCommand):
             ("partners", "Партнёры", "/api/v1/partners/", {"lang": "ru", "country": "CN"}),
             ("projects_list", "Проекты", "/api/v1/projects/", {"lang": "ru", "page_size": 2}),
             ("project_detail", "Проект", f"/api/v1/projects/{project.slug_ru}/", {"lang": "zh"}),
+            ("sectors", "Сферы презентаций", "/api/v1/sectors/", {"lang": "ru"}),
+            ("presentations_list", "Презентации", "/api/v1/presentations/", {"lang": "ru", "page_size": 2}),
+            (
+                "presentation_detail",
+                "Презентация (PDF + исходник PPTX)",
+                f"/api/v1/presentations/{presentation.slug_ru}/",
+                {"lang": "ru"},
+            ),
             ("contacts", "Контакты", "/api/v1/contacts/", {"lang": "ru"}),
             ("settings", "Публичные настройки", "/api/v1/settings/", {"lang": "ru"}),
             ("documents", "Документы", "/api/v1/documents/", {"lang": "ru"}),

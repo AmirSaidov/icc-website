@@ -52,7 +52,7 @@ python manage.py seed; python manage.py runserver
 
 | Доступ | Администратор | Редактор |
 |---|---|---|
-| Страницы, блоки главной, направления, услуги, новости, мероприятия, страны, партнёры, проекты, фото, документы | полный | полный |
+| Страницы, блоки главной, направления, услуги, новости, мероприятия, страны, партнёры, проекты, сферы и презентации, фото, документы | полный | полный |
 | Обращения из форм | полный, экспорт CSV | только статус и комментарий, экспорт CSV, без удаления |
 | Контакты, настройки сайта | да | не видит |
 | Пользователи и группы | да | не видит |
@@ -89,10 +89,11 @@ backend/
   apps/
     core/                 # миксины, ContactInfo, SiteSettings, фото, документы;
                           # язык, slug, санитайзинг, валидация файлов, превью,
-                          # seo, sitemap/robots, роли, команды seed и export_api_examples
+                          # seo, sitemap/robots, раздача media в dev, роли,
+                          # команды seed и export_api_examples
     pages/                # Page, HomeBlock, Direction, Service; /home/, /pages/
     news/                 # NewsCategory, News, Event
-    cooperation/          # Country, Partner, Project
+    cooperation/          # Country, Partner, Project, Sector, Presentation
     feedback/             # Feedback, POST /feedback/, письма
   templates/              # страница блокировки входа
   static/                 # jQuery UI (локально), скрипты и стили админки

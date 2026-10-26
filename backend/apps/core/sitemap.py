@@ -13,7 +13,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.views.decorators.http import require_GET
 
-from apps.cooperation.models import Project
+from apps.cooperation.models import Presentation, Project
 from apps.news.models import Event, News
 from apps.pages.models import Direction, Page, Service
 
@@ -30,6 +30,7 @@ FRONTEND_URL_SCHEME = {
     "news": "/{lang}/news/{slug}",
     "event": "/{lang}/events/{slug}",
     "project": "/{lang}/cooperation/projects/{slug}",
+    "presentation": "/{lang}/presentations/{slug}",  # согласовать с фронтом
 }
 
 SITEMAP_MODELS = [
@@ -39,6 +40,7 @@ SITEMAP_MODELS = [
     (News, "news"),
     (Event, "event"),
     (Project, "project"),
+    (Presentation, "presentation"),
 ]
 
 X_DEFAULT_LANG = "ru"

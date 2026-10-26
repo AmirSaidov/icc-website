@@ -10,9 +10,9 @@ from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
-from apps.cooperation.models import Country, Partner, Project
+from apps.cooperation.models import Country, Partner, Presentation, Project, Sector
 from apps.core.models import Attachment, ContactInfo, GalleryImage, SiteSettings
-from apps.core.tests.factories import add_pdf, add_photo, days, image_file, make
+from apps.core.tests.factories import add_pdf, add_photo, days, image_file, make, make_presentation
 from apps.core.validators import validate_document_file, validate_image_file
 from apps.feedback.models import Feedback
 from apps.news.models import Event, News, NewsCategory
@@ -43,6 +43,8 @@ def make_objects():
         Country: country,
         Partner: make(Partner, "partner", fields=("name",), slug=False, country=country),
         Project: make(Project, "project", country=country),
+        Sector: Sector.objects.get(slug_ru="promyshlennost"),  # создана миграцией
+        Presentation: make_presentation("pres", Sector.objects.get(slug_ru="promyshlennost")),
         GalleryImage: news.gallery.get(),
         Attachment: news.attachments.get(),
         ContactInfo: ContactInfo.load(),

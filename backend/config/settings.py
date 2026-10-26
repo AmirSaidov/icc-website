@@ -193,7 +193,9 @@ MEDIA_ROOT = BASE_DIR / "media"
 # --- CORS ---------------------------------------------------------------------
 
 CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS")
-CORS_URLS_REGEX = r"^/api/.*$"
+# API и файлы презентаций (их PDF фронт может читать через pdf.js). На проде media
+# отдаёт nginx — те же заголовки для /media/presentations/ описаны в docs/DEPLOY.md.
+CORS_URLS_REGEX = r"^/(api|media/presentations)/.*$"
 
 # --- Почта --------------------------------------------------------------------
 # Если EMAIL_HOST пустой — console backend (письма печатаются в консоль).
