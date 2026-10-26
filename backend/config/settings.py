@@ -70,6 +70,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    # снаружи остальных: заголовок получают и ответы, созданные middleware (блокировка axes)
+    "apps.core.middleware.AdminNoIndexMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",

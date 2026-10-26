@@ -42,6 +42,7 @@ def test_axes_blocks_after_five_failed_logins(staff, caplog):
     assert blocked.status_code == 429
     html = blocked.content.decode()
     assert "Вход временно заблокирован" in html and "30 минут" in html
+    assert blocked["X-Robots-Tag"] == "noindex, nofollow"
     assert "Вход заблокирован после неудачных попыток" in caplog.text
     assert "manager" in caplog.text
 
@@ -99,7 +100,11 @@ def test_admin_url_default(client):
 def test_admin_url_can_be_changed(client, settings, reload_urls):
     settings.ADMIN_URL = "cpk-panel-7f3k/"
     reload_urls()
-    assert client.get("/cpk-panel-7f3k/login/").status_code == 200
+    login_page = client.get("/cpk-panel-7f3k/login/")
+    assert login_page.status_code == 200
+    # админка закрыта от индексации заголовком, а robots.txt её путь не раскрывает
+    assert login_page["X-Robots-Tag"] == "noindex, nofollow"
+    assert "cpk-panel-7f3k" not in client.get("/robots.txt").content.decode()
     assert client.get("/admin/login/").status_code == 404
     assert reverse("ckeditor-upload") == "/cpk-panel-7f3k/ckeditor/upload/"
     settings.ADMIN_URL = "admin/"

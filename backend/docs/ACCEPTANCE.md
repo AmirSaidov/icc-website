@@ -18,7 +18,7 @@
 | 10 | `/events/?when=upcoming` и `?when=past` правильно делят и сортируют | `apps/news/tests/test_api.py::test_events_when_upcoming_and_past_split_and_sort` | ✅ |
 | 11 | Черновики (`draft`, `review`) не видны в API | `apps/news/tests/test_api.py::test_drafts_and_review_are_hidden[draft/review]`; также `apps/pages/tests/test_api.py::test_drafts_hidden_in_directions_and_services`, `apps/core/tests/test_seo.py::test_drafts_not_in_sitemap` | ✅ |
 | 12 | Партнёр без `consent_to_publish` не виден в API | `apps/cooperation/tests/test_api.py::test_partner_without_consent_is_hidden` | ✅ |
-| 13 | `/sitemap.xml` содержит hreflang; `/robots.txt` закрывает `/api/` | `apps/core/tests/test_seo.py::test_sitemap_has_hreflang_alternates_and_robots_closes_api` | ✅ |
+| 13 | `/sitemap.xml` содержит hreflang; `/robots.txt` закрывает `/api/` и не раскрывает путь админки (её закрывает `X-Robots-Tag`) | `apps/core/tests/test_seo.py::test_sitemap_has_hreflang_alternates_and_robots_closes_api`, `::test_robots_does_not_reveal_admin_url`, `::test_admin_responses_have_x_robots_tag` | ✅ |
 | 14 | HTML с `<script>` в `content` вырезается при сохранении | `apps/news/tests/test_admin.py::test_script_is_removed_on_save`; разметка CKEditor проходит без поломок — `::test_ckeditor_markup_survives_sanitizer` | ✅ |
 
 Запуск только этих тестов:

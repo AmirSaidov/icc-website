@@ -46,6 +46,8 @@ FEEDBACK_EMAIL=<куда слать заявки, если в админке н�
 
 При `DEBUG=False` автоматически включаются HSTS (1 год), secure-cookies, `SECURE_PROXY_SSL_HEADER`, nosniff, `X-Frame-Options: DENY`.
 
+`ADMIN_URL` нигде не публикуется: в `/robots.txt` его нет, админку от индексации закрывает заголовок `X-Robots-Tag: noindex, nofollow`, который Django ставит на все её ответы (включая страницу входа). Не добавляйте путь админки в robots.txt ни на бэке, ни на фронте. Проверка после запуска: `curl -sI https://api.<домен>/<ADMIN_URL>login/ | grep -i x-robots-tag`.
+
 ## 3. Подготовка базы и статики
 
 ```bash

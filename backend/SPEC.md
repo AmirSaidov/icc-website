@@ -299,7 +299,7 @@ backend/                # репозиторий icc-website общий с фр�
   | Project | `/{lang}/cooperation/projects/{slug}` |
 
   Схема задаётся **в одном месте** (словарь в `apps/core/sitemap.py`), потому что её ещё надо согласовать с фронтом.
-- **`/robots.txt`** — `Disallow:` путь из `ADMIN_URL`, `Disallow: /api/`, строка `Sitemap: <BACKEND_URL>/sitemap.xml`.
+- **`/robots.txt`** — `Disallow: /api/`, строка `Sitemap: <BACKEND_URL>/sitemap.xml`. Путь из `ADMIN_URL` в robots **не пишется** (он раскрыл бы нестандартный адрес админки). Вместо этого все ответы админки — весь путь `ADMIN_URL`, включая страницу входа и страницу блокировки axes — отдают заголовок `X-Robots-Tag: noindex, nofollow`.
 - В каждом детальном ответе API есть объект `seo` (раздел 3.1).
 
 ### 5.4 Инфраструктура и `.env`
@@ -370,7 +370,7 @@ python manage.py seed && python manage.py runserver
 10. `/events/?when=upcoming` и `?when=past` правильно делят и сортируют мероприятия.
 11. Черновики (`draft`, `review`) не видны в API.
 12. Партнёр без `consent_to_publish` не виден в API.
-13. `/sitemap.xml` содержит hreflang-ссылки; `/robots.txt` закрывает `/api/`.
+13. `/sitemap.xml` содержит hreflang-ссылки; `/robots.txt` закрывает `/api/` и не раскрывает путь админки.
 14. HTML с `<script>` в `content` вырезается при сохранении.
 
 ---
@@ -405,7 +405,6 @@ python manage.py seed && python manage.py runserver
 - Подписи типов мероприятий на en/zh (`/event-types/`) — проверить переводы носителем языка.
 - Схема URL на фронте (раздел 5.3) — согласовать с Амиром и Ариетом. (Ключи иконок направлений и URL системных страниц — решено, см. 2.3 и 5.3.)
 - Где отдавать sitemap/robots: с бэка (как сейчас) или фронт проксирует — согласовать.
-- `robots.txt` публикует путь из `ADMIN_URL` (по 5.3) — это раскрывает нестандартный адрес админки. Решить: оставить, или убрать строку и закрывать админку от индексации заголовком `X-Robots-Tag: noindex`.
 - Интеграция с фронтом (`frontend/` в `main`): язык должен передаваться параметром `?lang=` (фронт сейчас шлёт `Accept-Language`), форма — поля `full_name` и `lang` (фронт шлёт `name`, `locale`). См. `docs/API.md`, «Важно для интеграции».
 - Схема прокси для формы (браузер → Next.js → Django) и значение `NUM_PROXIES` на сервере — согласовать с фронтом (`docs/DEPLOY.md`, раздел 6).
 
@@ -440,3 +439,4 @@ python manage.py seed && python manage.py runserver
 - django-axes: 5 неудачных входов по связке username + IP → блокировка на 30 минут; успешный вход сбрасывает счётчик.
 - Кэш imagekit (отметка «превью сгенерировано») — отдельный локальный кэш, а не `DatabaseCache`: иначе по несколько SQL-запросов на каждую картинку.
 - CORS включён только для путей `/api/`.
+- `robots.txt` не содержит путь `ADMIN_URL` (решение по открытому вопросу раздела 9): админку закрывает от индексации заголовок `X-Robots-Tag: noindex, nofollow` на всех её ответах (`apps.core.middleware.AdminNoIndexMiddleware`, стоит снаружи остальных middleware, поэтому заголовок есть и у страницы блокировки axes).

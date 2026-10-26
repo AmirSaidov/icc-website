@@ -63,8 +63,9 @@ def test_sitemap_has_hreflang_alternates_and_robots_closes_api(client):
     assert robots["Content-Type"].startswith("text/plain")
     lines = robots.content.decode().splitlines()
     assert "Disallow: /api/" in lines
-    assert "Disallow: /admin/" in lines
     assert "Sitemap: https://api.icc.example.kg/sitemap.xml" in lines
+    # путь админки не раскрываем: её закрывает X-Robots-Tag (см. ниже)
+    assert not any("admin" in line for line in lines)
 
 
 # --- Схема URL и языки ----------------------------------------------------------------------
@@ -131,11 +132,28 @@ def test_draft_system_pages_not_in_sitemap(client):
 # --- robots и ADMIN_URL ------------------------------------------------------------------------
 
 
-def test_robots_follows_admin_url(client, settings):
+def test_robots_does_not_reveal_admin_url(client, settings):
     settings.ADMIN_URL = "cpk-panel-7f3k/"
-    lines = client.get("/robots.txt").content.decode().splitlines()
-    assert "Disallow: /cpk-panel-7f3k/" in lines
-    assert "Disallow: /admin/" not in lines
+    content = client.get("/robots.txt").content.decode()
+    assert "cpk-panel-7f3k" not in content
+    assert content.splitlines() == [
+        "User-agent: *",
+        "Disallow: /api/",
+        "",
+        "Sitemap: https://api.icc.example.kg/sitemap.xml",
+    ]
+
+
+@pytest.mark.parametrize("path", ["/admin/login/", "/admin/", "/admin/news/news/"])
+def test_admin_responses_have_x_robots_tag(client, path):
+    response = client.get(path)
+    assert response["X-Robots-Tag"] == "noindex, nofollow"
+
+
+def test_admin_x_robots_tag_on_logged_in_pages_and_not_on_api(admin_client, client):
+    assert admin_client.get("/admin/")["X-Robots-Tag"] == "noindex, nofollow"
+    assert "X-Robots-Tag" not in client.get("/api/v1/news/")
+    assert "X-Robots-Tag" not in client.get("/sitemap.xml")
 
 
 def test_sitemap_query_count_does_not_grow(client, django_assert_max_num_queries):
