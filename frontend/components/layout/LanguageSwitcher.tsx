@@ -70,7 +70,7 @@ export function LanguageSwitcher({variant = 'inline', className}: {variant?: 'in
                 aria-current={isCurrent ? 'true' : undefined}
                 onClick={(event) => onSwitch(event, target)}
                 className={cn(
-                  'flex min-h-10 min-w-10 items-center justify-center rounded-sm border px-3 text-sm font-medium transition-colors',
+                  'flex min-h-10 min-w-10 items-center justify-center rounded-full border px-4 text-sm font-medium transition-colors',
                   isCurrent ? 'border-primary bg-primary text-white' : 'border-border bg-surface text-text hover:border-primary hover:text-primary'
                 )}
               >
@@ -124,8 +124,8 @@ function Dropdown({className}: {className?: string}) {
         aria-label={`${t('label')}: ${NATIVE[locale]}`}
         onClick={() => setOpen((value) => !value)}
         className={cn(
-          'flex min-h-10 items-center gap-1.5 rounded-sm border bg-surface px-2.5 text-sm font-medium text-text transition-colors sm:px-3',
-          open ? 'border-primary' : 'border-border hover:border-primary/60'
+          'flex min-h-10 items-center gap-1.5 rounded-full border bg-surface px-3 text-sm font-semibold text-text transition-colors sm:px-3.5',
+          open ? 'border-navy/40' : 'border-border hover:border-navy/40'
         )}
       >
         <Globe aria-hidden className="size-4 text-muted" />
@@ -137,7 +137,7 @@ function Dropdown({className}: {className?: string}) {
       <ul
         id={listId}
         className={cn(
-          'absolute right-0 top-full z-50 mt-1.5 min-w-40 origin-top-right rounded-sm border border-border bg-surface p-1 shadow-lg transition duration-150 ease-out',
+          'absolute right-0 top-full z-50 mt-1.5 min-w-40 origin-top-right rounded-xl border border-border bg-surface p-1.5 shadow-[0_18px_40px_-18px_rgb(18_21_30/0.35)] transition duration-150 ease-out',
           open ? 'visible scale-100 opacity-100' : 'invisible scale-95 opacity-0'
         )}
       >
@@ -156,7 +156,7 @@ function Dropdown({className}: {className?: string}) {
                   onSwitch(event, target);
                 }}
                 className={cn(
-                  'flex items-center justify-between gap-3 rounded-sm px-3 py-2 text-sm transition-colors hover:bg-primary-light',
+                  'flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-page',
                   isCurrent ? 'font-semibold text-primary' : 'text-text'
                 )}
               >

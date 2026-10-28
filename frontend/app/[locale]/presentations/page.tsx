@@ -105,7 +105,7 @@ function Tabs({tabs, label, size = 'md', className}: {tabs: Tab[]; label: string
               href={tab.href}
               aria-current={tab.active ? 'page' : undefined}
               className={cn(
-                'inline-flex items-center rounded-md font-medium transition-colors',
+                'inline-flex items-center rounded-full font-medium transition-colors',
                 size === 'md' ? 'min-h-10 px-4 text-sm' : 'min-h-9 px-3 text-xs',
                 tab.active ? 'bg-primary text-white' : 'border border-primary/30 bg-surface text-primary hover:bg-primary-light'
               )}

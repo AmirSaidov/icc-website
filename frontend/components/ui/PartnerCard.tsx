@@ -24,7 +24,7 @@ export function PartnerCard({partner}: {partner: Partner}) {
   const name = partner.name ?? '';
 
   return (
-    <article className="flex h-full flex-col border border-border bg-surface transition-colors duration-300 hover:border-primary/40">
+    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-colors duration-300 hover:border-primary/40">
       <div className="flex h-28 items-center justify-center border-b border-border bg-white px-6 py-4">
         {partner.logo ? (
           <span className="relative block h-full w-full">
@@ -37,7 +37,7 @@ export function PartnerCard({partner}: {partner: Partner}) {
             />
           </span>
         ) : (
-          <span aria-hidden className="flex size-14 items-center justify-center rounded-sm bg-navy font-serif text-xl font-bold text-white">
+          <span aria-hidden className="flex size-14 items-center justify-center rounded-2xl bg-navy text-xl font-bold text-white">
             {initials(name)}
           </span>
         )}

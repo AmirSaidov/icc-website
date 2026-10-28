@@ -24,7 +24,7 @@ export function ArrowLink({href, children, className}: {href: string; children: 
   return (
     <Link
       href={href}
-      className={cn('group inline-flex shrink-0 items-center gap-1 text-[13px] font-semibold text-primary hover:underline', className)}
+      className={cn('group inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-primary hover:underline', className)}
     >
       {children}
       <ArrowRight aria-hidden className="size-4 transition-transform group-hover:translate-x-1" />
@@ -48,7 +48,7 @@ export function SectionTitle({
     <div
       data-reveal
       className={cn(
-        'mb-8 flex flex-wrap gap-x-6 gap-y-2 md:mb-10',
+        'mb-8 flex flex-wrap gap-x-6 gap-y-3 md:mb-12',
         center ? 'flex-col items-center text-center' : 'items-end justify-between',
         className
       )}
@@ -57,7 +57,7 @@ export function SectionTitle({
         {eyebrow && <p className={cn('eyebrow mb-3', inverse ? 'text-sky' : 'text-primary')}>{eyebrow}</p>}
         <Tag
           id={id}
-          className={cn('text-[26px] font-bold leading-tight md:text-[32px]', inverse ? 'text-white' : 'text-navy')}
+          className={cn('text-[28px] font-extrabold leading-[1.1] md:text-[40px]', inverse ? 'text-white' : 'text-navy')}
         >
           {children}
         </Tag>

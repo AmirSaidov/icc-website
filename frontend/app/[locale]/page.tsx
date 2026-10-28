@@ -1,10 +1,12 @@
 import type {Metadata} from 'next';
 import Image from 'next/image';
-import {ArrowDown, Handshake, Landmark, Languages, Target} from 'lucide-react';
+import {ArrowDown, ArrowRight, Handshake, Landmark, Languages, Target} from 'lucide-react';
 import {getTranslations, setRequestLocale} from 'next-intl/server';
 import {CtaBlock} from '@/components/sections/CtaBlock';
+import {HeroVisual} from '@/components/sections/HeroVisual';
+import {BrandMark, BrandStripe} from '@/components/ui/BrandMark';
 import {Button} from '@/components/ui/Button';
-import {DirectionRow} from '@/components/ui/DirectionCard';
+import {DirectionTile} from '@/components/ui/DirectionCard';
 import {EventRow} from '@/components/ui/EventCard';
 import {NewsCard} from '@/components/ui/NewsCard';
 import {ArrowLink, SectionTitle} from '@/components/ui/SectionTitle';
@@ -36,10 +38,10 @@ async function optional<T>(request: Promise<T>, label: string): Promise<T | null
 
 /** «Почему стоит обратиться»: иконка для каждого пункта. */
 const WHY = [
-  {key: 'official', Icon: Landmark},
-  {key: 'bridge', Icon: Handshake},
-  {key: 'languages', Icon: Languages},
-  {key: 'result', Icon: Target}
+  {key: 'official', Icon: Landmark, tone: 'bg-brand-blue text-white'},
+  {key: 'bridge', Icon: Handshake, tone: 'bg-seal text-white'},
+  {key: 'languages', Icon: Languages, tone: 'bg-sun text-navy'},
+  {key: 'result', Icon: Target, tone: 'bg-white text-navy'}
 ] as const;
 
 export async function generateMetadata({params}: Props): Promise<Metadata> {
@@ -77,63 +79,56 @@ export default async function HomePage({params}: Props) {
 
   return (
     <>
-      {/* 1. Первый экран: заголовок, кнопки; справа — картинка блока hero из CMS, если есть */}
-      <section className="container-page grid items-center gap-10 py-12 md:py-16 lg:min-h-[500px] lg:grid-cols-2 lg:gap-16 lg:py-20">
-        <div className="max-w-[560px] motion-safe:animate-fade-up">
-          <p className="eyebrow text-muted">{t('heroEyebrow')}</p>
-          <h1 className="mt-3 text-[40px] font-bold leading-[1.08] text-navy sm:text-5xl xl:text-[56px]">
-            {hero?.title || t('heroTitle')}
-          </h1>
-          <p className="mt-5 max-w-[500px] leading-relaxed text-muted">{hero?.text || t('heroText')}</p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button href="/contacts#form" size="lg">
-              {t('heroApply')}
-            </Button>
-            <Button href={hero?.button_link || '/services'} size="lg" variant="secondary">
-              {hero?.button_text || t('heroServices')}
-            </Button>
+      {/* 1. Первый экран: заголовок и кнопки; справа — анимация знака «CC» */}
+      <section className="overflow-hidden border-b border-border bg-surface">
+        <div className="container-page grid items-center gap-6 pb-10 pt-12 md:pt-16 lg:min-h-[620px] lg:grid-cols-[1.1fr_1fr] lg:gap-10 lg:py-16">
+          <div className="motion-safe:animate-fade-up">
+            <p className="inline-flex items-center gap-2.5 rounded-full border border-border bg-page py-1.5 pl-2.5 pr-4 text-[13px] font-semibold text-navy">
+              <BrandMark className="h-3.5 w-auto" />
+              {t('heroEyebrow')}
+            </p>
+            <h1 className="mt-6 text-[40px] font-extrabold leading-[1.02] tracking-[-0.035em] text-navy sm:text-[56px] xl:text-[68px]">
+              {hero?.title || t('heroTitle')}
+            </h1>
+            <p className="mt-6 max-w-[540px] text-lg leading-relaxed text-muted">{hero?.text || t('heroText')}</p>
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <Button href="/contacts#form" size="lg" className="group">
+                {t('heroApply')}
+                <ArrowRight aria-hidden className="size-4 transition-transform group-hover:translate-x-0.5" />
+              </Button>
+              <Button href={hero?.button_link || '/services'} size="lg" variant="secondary">
+                {hero?.button_text || t('heroServices')}
+              </Button>
+            </div>
           </div>
+          <HeroVisual className="max-w-[440px] motion-safe:animate-fade-up motion-safe:[animation-delay:150ms] lg:max-w-[540px]" />
         </div>
-        {hero?.image && (
-          <div className="border border-border bg-surface p-2 motion-safe:animate-fade-up motion-safe:[animation-delay:150ms]">
-            <div className="relative aspect-[4/3] overflow-hidden bg-primary-light">
+      </section>
+
+      {/* 2. О Центре */}
+      <section aria-labelledby="home-about" className="container-page py-16 md:py-28">
+        <div data-reveal className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-surface ring-1 ring-border">
+            {about?.image ? (
               <Image
-                src={hero.image.large}
+                src={about.image.large}
                 alt=""
                 fill
-                priority
                 sizes="(min-width: 1280px) 560px, (min-width: 1024px) 45vw, 100vw"
                 className="object-cover"
               />
-            </div>
-          </div>
-        )}
-      </section>
-      <div aria-hidden className="ornament-band" />
-
-      {/* 2. О Центре */}
-      <section aria-labelledby="home-about" className="container-page py-16 md:py-24">
-        <div data-reveal className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          <div className="border border-border bg-surface p-2">
-            <div className="relative aspect-[4/3] overflow-hidden bg-primary-light">
-              {about?.image && (
-                <Image
-                  src={about.image.large}
-                  alt=""
-                  fill
-                  sizes="(min-width: 1280px) 560px, (min-width: 1024px) 45vw, 100vw"
-                  className="object-cover"
-                />
-              )}
-            </div>
+            ) : (
+              <BrandMark className="absolute inset-0 m-auto h-2/5 w-auto" />
+            )}
           </div>
           <div>
-            <p className="eyebrow text-primary">{about?.title || t('aboutEyebrow')}</p>
-            <h2 id="home-about" className="mt-3 text-[28px] font-bold leading-tight text-navy md:text-[34px]">
+            <BrandStripe />
+            <p className="eyebrow mt-4 text-muted">{about?.title || t('aboutEyebrow')}</p>
+            <h2 id="home-about" className="mt-3 text-[30px] font-extrabold leading-[1.1] text-navy md:text-[42px]">
               {t('aboutTitle')}
             </h2>
-            <p className="mt-5 leading-relaxed text-muted">{about?.text || t('aboutText')}</p>
-            <div className="mt-8 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:gap-6">
+            <p className="mt-6 text-lg leading-relaxed text-muted">{about?.text || t('aboutText')}</p>
+            <div className="mt-9 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:gap-6">
               <Button href={about?.button_link || '/about'} size="lg" variant="secondary" className="w-full sm:w-auto">
                 {about?.button_text || t('aboutLink')}
               </Button>
@@ -141,7 +136,7 @@ export default async function HomePage({params}: Props) {
                 <a
                   href={regulation.url}
                   download
-                  className="inline-flex items-center gap-1 text-[13px] font-semibold text-primary hover:underline"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
                 >
                   {t('regulation')}
                   <ArrowDown aria-hidden className="size-4" />
@@ -154,15 +149,15 @@ export default async function HomePage({params}: Props) {
 
       {/* 3. Направления деятельности */}
       {directions.length > 0 && (
-        <section aria-labelledby="home-directions" className="border-y border-border bg-surface py-16 md:py-24">
+        <section aria-labelledby="home-directions" className="border-y border-border bg-surface py-16 md:py-28">
           <div className="container-page">
             <SectionTitle id="home-directions" action={{href: '/directions', label: tCommon('allDirections')}}>
               {t('directionsTitle')}
             </SectionTitle>
-            <ul data-reveal-stagger className="grid md:grid-cols-2 md:gap-x-10">
+            <ul data-reveal-stagger className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {directions.map((item, index) => (
                 <li key={item.id}>
-                  <DirectionRow item={item} index={index} />
+                  <DirectionTile item={item} index={index} />
                 </li>
               ))}
             </ul>
@@ -171,18 +166,20 @@ export default async function HomePage({params}: Props) {
       )}
 
       {/* 4. Почему стоит обратиться в Центр */}
-      <section aria-labelledby="home-why" className="bg-navy py-16 text-white md:py-24">
+      <section aria-labelledby="home-why" className="bg-navy py-16 text-white md:py-28">
         <div className="container-page">
-          <SectionTitle id="home-why" inverse className="max-w-md">
+          <SectionTitle id="home-why" inverse className="max-w-xl">
             {t('whyTitle')}
           </SectionTitle>
-          <ul data-reveal-stagger className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {WHY.map(({key, Icon}) => (
-              <li key={key} className="flex gap-4 lg:block">
-                <Icon aria-hidden className="size-8 shrink-0 text-sky" strokeWidth={1.5} />
-                <div className="lg:mt-4">
-                  <h3 className="font-sans text-base font-semibold text-white">{t(`why.${key}.title`)}</h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-white/65">{t(`why.${key}.text`)}</p>
+          <ul data-reveal-stagger className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {WHY.map(({key, Icon, tone}) => (
+              <li key={key} className="flex flex-col gap-10 rounded-2xl bg-white/[0.04] p-6 ring-1 ring-white/10">
+                <span className={cn('flex size-12 items-center justify-center rounded-xl', tone)}>
+                  <Icon aria-hidden className="size-6" strokeWidth={1.75} />
+                </span>
+                <div>
+                  <h3 className="text-lg font-bold text-white">{t(`why.${key}.title`)}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-white/60">{t(`why.${key}.text`)}</p>
                 </div>
               </li>
             ))}
@@ -191,7 +188,7 @@ export default async function HomePage({params}: Props) {
       </section>
 
       {/* 5. Новости и мероприятия */}
-      <div className="container-page grid gap-14 py-16 md:py-24 lg:grid-cols-[2fr_1fr] lg:gap-12">
+      <div className="container-page grid gap-14 py-16 md:py-28 lg:grid-cols-[2fr_1fr] lg:gap-12">
         <section aria-labelledby="home-news" className="min-w-0">
           <SectionTitle id="home-news" action={{href: '/news', label: tCommon('allNews')}}>
             {t('newsTitle')}

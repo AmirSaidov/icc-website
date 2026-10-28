@@ -12,7 +12,7 @@ const tones: Record<Tone, string> = {
 /** Категория новости, тип мероприятия. */
 export function Badge({tone = 'primary', className, children}: {tone?: Tone; className?: string; children: ReactNode}) {
   return (
-    <span className={cn('inline-flex items-center rounded-sm px-2 py-0.5 text-xs font-semibold', tones[tone], className)}>
+    <span className={cn('inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold', tones[tone], className)}>
       {children}
     </span>
   );

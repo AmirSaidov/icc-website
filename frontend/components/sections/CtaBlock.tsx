@@ -1,5 +1,5 @@
-import {Handshake} from 'lucide-react';
 import {useTranslations} from 'next-intl';
+import {BrandMark} from '@/components/ui/BrandMark';
 import {Button} from '@/components/ui/Button';
 
 /**
@@ -12,20 +12,19 @@ export function CtaBlock({title, text}: {title?: string | null; text?: string | 
     <section aria-labelledby="cta-title" className="container-page py-14 md:py-20">
       <div
         data-reveal
-        className="flex flex-col items-center gap-6 border border-border bg-surface px-6 py-10 text-center md:flex-row md:gap-8 md:px-10 md:py-12 md:text-left"
+        className="grid items-center gap-10 rounded-[28px] bg-navy px-6 py-12 text-white md:grid-cols-[1fr_auto] md:gap-16 md:rounded-[36px] md:px-14 md:py-16"
       >
-        <span aria-hidden className="flex size-14 shrink-0 items-center justify-center rounded-sm bg-seal text-white">
-          <Handshake className="size-7" strokeWidth={1.75} />
-        </span>
-        <div className="min-w-0 flex-1">
-          <h2 id="cta-title" className="text-2xl font-bold leading-tight text-navy md:text-[28px]">
+        <div className="max-w-2xl">
+          <h2 id="cta-title" className="text-[28px] font-extrabold leading-[1.1] md:text-[40px]">
             {title || t('title')}
           </h2>
-          <p className="mt-2 text-muted">{text || t('text')}</p>
+          <p className="mt-4 text-lg leading-relaxed text-white/65">{text || t('text')}</p>
+          <Button href="/contacts#form" size="lg" variant="inverse" className="mt-8 w-full sm:w-auto">
+            {t('apply')}
+          </Button>
         </div>
-        <Button href="/contacts#form" size="lg" className="w-full shrink-0 sm:w-auto">
-          {t('apply')}
-        </Button>
+        {/* Знак на тёмном, как в брендбуке */}
+        <BrandMark inverse className="hidden h-36 w-auto md:block lg:h-44" />
       </div>
     </section>
   );

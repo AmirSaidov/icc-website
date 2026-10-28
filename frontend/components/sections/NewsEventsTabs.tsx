@@ -21,7 +21,7 @@ export function NewsEventsTabs({current}: {current: 'news' | 'events'}) {
               href={tab.href}
               aria-current={active ? 'page' : undefined}
               className={cn(
-                'inline-flex min-h-10 items-center rounded-md px-4 text-sm font-medium transition-colors',
+                'inline-flex min-h-10 items-center rounded-full px-4 text-sm font-medium transition-colors',
                 active ? 'bg-primary text-white' : 'border border-primary/30 bg-surface text-primary hover:bg-primary-light'
               )}
             >

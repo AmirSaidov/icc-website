@@ -27,7 +27,7 @@ export function PresentationViewer({
 
   return (
     <section>
-      <div className="border border-border bg-surface p-1.5">
+      <div className="overflow-hidden rounded-2xl border border-border bg-surface">
         <iframe
           src={`${file.url}#view=FitH`}
           title={t('viewerTitle', {title})}

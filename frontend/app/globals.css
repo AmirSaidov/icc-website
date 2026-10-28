@@ -6,32 +6,35 @@
  * Брейкпоинты стандартные: sm 640 / md 768 / lg 1024 / xl 1280.
  */
 @theme {
-  /* Синий ТПП, тёмно-синий, красная печать. */
-  --color-primary: #1f4f9f;
-  --color-primary-hover: #183f82;
-  --color-primary-light: #e2e8f3;
-  --color-navy: #15284f;
-  --color-navy-soft: #1d3766;
-  --color-sky: #9db5e3;
-  --color-seal: #c93b30;
-  --color-text: #1a2847;
-  --color-muted: #5a6680;
-  --color-border: #d6ddea;
+  /* Палитра брендбука: графитовый фон, синий, красный и жёлтый из знака «CC». */
+  --color-primary: #255df0;
+  --color-primary-hover: #1a49cf;
+  --color-primary-light: #eaf0ff;
+  /* navy — исторически «тёмный» цвет заголовков и тёмных секций; теперь графит из брендбука. */
+  --color-navy: #12151e;
+  --color-navy-soft: #1c2030;
+  --color-sky: #8fb0ff;
+  --color-seal: #ff4d4d;
+  --color-sun: #ffc22e;
+  --color-brand-blue: #2f6bff;
+  --color-text: #12151e;
+  --color-muted: #5c6273;
+  --color-border: #e3e5eb;
   --color-surface: #ffffff;
-  --color-page: #f6f8fc;
+  --color-page: #f6f6f8;
   --color-danger: #b42318;
   --color-success: #067647;
 
-  --font-sans: var(--font-inter), var(--font-noto-sc), ui-sans-serif, system-ui, sans-serif;
-  /* Заголовки: кириллица/латиница — Noto Serif, иероглифы — Noto Serif SC. */
-  --font-serif: var(--font-noto-serif), var(--font-noto-serif-sc), Georgia, serif;
+  /* Manrope — гротеск брендбука; иероглифы — Noto Sans SC. */
+  --font-sans: var(--font-manrope), var(--font-noto-sc), ui-sans-serif, system-ui, sans-serif;
 
-  /* Почти прямые углы, как у печати и рамок в макете. */
-  --radius-sm: 2px;
-  --radius: 3px;
-  --radius-md: 3px;
-  --radius-lg: 4px;
-  --radius-xl: 6px;
+  --radius-sm: 8px;
+  --radius: 10px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-3xl: 32px;
 
   --container-page: 1200px;
 
@@ -81,15 +84,87 @@
 }
 
 /*
- * Кыргызский орнамент «кочкор мүйүз» (бараньи рога) — полоса под первым экраном и над подвалом.
- * Рисунок белый, фон задаёт сам элемент (bg-navy).
+ * Анимация первого экрана (components/sections/HeroVisual.tsx).
+ * Кольца въезжают с боков, планка растёт из центра; затем каждые 2,5 с кольца
+ * поворачиваются на четверть оборота навстречу друг другу (--dir: −1 / 1).
  */
-@utility ornament-band {
-  height: 22px;
-  background-color: var(--color-navy);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='22' fill='none' stroke='white' stroke-linecap='round'%3E%3Cpath stroke-width='1.3' stroke-opacity='.85' d='M18 16V9c0-4-4-5.5-6.5-4S9.5 10 12 10c1.5 0 2-1.5 1-2.2M18 9c0-4 4-5.5 6.5-4s2 5-.5 5c-1.5 0-2-1.5-1-2.2'/%3E%3Cpath stroke-opacity='.45' d='M0 19.5h36'/%3E%3C/svg%3E");
-  background-repeat: repeat-x;
-  background-position: 6px 0;
+@media (prefers-reduced-motion: no-preference) {
+  .hero-in-left {
+    animation: hero-in-left 1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .hero-in-right {
+    animation: hero-in-right 1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .hero-in-grow {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: hero-grow 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.35s both;
+  }
+  .hero-tick {
+    animation: hero-tick 10s cubic-bezier(0.65, -0.25, 0.35, 1.25) 1.6s infinite;
+  }
+  .hero-orbit {
+    animation: hero-spin 48s linear infinite;
+  }
+  .hero-orbit-reverse {
+    animation-duration: 32s;
+    animation-direction: reverse;
+  }
+  .hero-float {
+    animation: hero-float 6s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes hero-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-70px);
+  }
+}
+@keyframes hero-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(70px);
+  }
+}
+@keyframes hero-grow {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes hero-tick {
+  0% {
+    transform: rotate(0deg);
+  }
+  8%,
+  25% {
+    transform: rotate(calc(var(--dir) * 90deg));
+  }
+  33%,
+  50% {
+    transform: rotate(calc(var(--dir) * 180deg));
+  }
+  58%,
+  75% {
+    transform: rotate(calc(var(--dir) * 270deg));
+  }
+  83%,
+  100% {
+    transform: rotate(calc(var(--dir) * 360deg));
+  }
+}
+@keyframes hero-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes hero-float {
+  from {
+    transform: translateY(-6px);
+  }
+  to {
+    transform: translateY(8px);
+  }
 }
 
 /* Надзаголовок секции: «ЧТО НАС ОБЪЕДИНЯЕТ». */
@@ -119,10 +194,8 @@
     color: var(--color-text);
   }
 
-  /* Заголовки с засечками; где нужен рубленый (подписи в подвале) — font-sans на месте. */
   h1, h2, h3 {
-    font-family: var(--font-serif);
-    color: inherit;
+    letter-spacing: -0.025em;
   }
 
   /* Длинные слова в заголовках переносятся, а не ломают сетку. */

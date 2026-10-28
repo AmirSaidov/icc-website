@@ -4,6 +4,7 @@ import {Link} from '@/i18n/navigation';
 import type {Locale} from '@/i18n/routing';
 import {getContacts} from '@/lib/api';
 import type {Contacts} from '@/lib/api-types';
+import {Logo} from './Logo';
 import {NAV_ITEMS} from './nav';
 
 /** type из API — ключ соцсети; незнакомый показываем как есть. */
@@ -30,24 +31,21 @@ async function loadContacts(locale: Locale): Promise<Contacts | null> {
 const telHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, '')}`;
 
 export async function Footer({locale}: {locale: Locale}) {
-  const [t, tNav, tHeader, contacts] = await Promise.all([
+  const [t, tNav, contacts] = await Promise.all([
     getTranslations('Footer'),
     getTranslations('Nav'),
-    getTranslations('Header'),
     loadContacts(locale)
   ]);
 
   return (
-    <footer className="mt-auto bg-navy text-white/80">
-      <div aria-hidden className="ornament-band" />
-      <div className="container-page grid gap-10 py-12 md:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr]">
-        <div>
-          <p className="font-serif text-lg font-bold text-white">{tHeader('logoTitle')}</p>
-          <p className="mt-1 text-sm">{tHeader('logoSubtitle')}</p>
+    <footer className="mt-auto bg-navy text-white/75">
+      <div className="container-page grid gap-10 pb-12 pt-14 md:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr]">
+        <div className="max-w-xs">
+          <Logo inverse />
         </div>
 
         <nav aria-labelledby="footer-menu">
-          <h2 id="footer-menu" className="mb-3 font-sans text-sm font-semibold text-white">
+          <h2 id="footer-menu" className="eyebrow mb-4 text-white/45">
             {t('menu')}
           </h2>
           <ul className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm md:grid-cols-1">
@@ -62,7 +60,7 @@ export async function Footer({locale}: {locale: Locale}) {
         </nav>
 
         <section aria-labelledby="footer-contacts">
-          <h2 id="footer-contacts" className="mb-3 font-sans text-sm font-semibold text-white">
+          <h2 id="footer-contacts" className="eyebrow mb-4 text-white/45">
             {t('contacts')}
           </h2>
           {contacts && (
@@ -95,7 +93,7 @@ export async function Footer({locale}: {locale: Locale}) {
                       href={social.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 rounded-sm border border-white/20 px-3 py-1.5 hover:border-white/50 hover:text-white"
+                      className="inline-flex items-center gap-2 rounded-full border border-white/15 px-3.5 py-1.5 transition-colors hover:border-white/40 hover:text-white"
                     >
                       {social.type === 'telegram' ? (
                         <Send aria-hidden className="size-4" />
@@ -112,7 +110,7 @@ export async function Footer({locale}: {locale: Locale}) {
         </section>
       </div>
       <div className="container-page">
-        <p className="border-t border-white/10 py-5 text-xs text-white/60">
+        <p className="border-t border-white/10 py-6 text-xs text-white/50">
           {t('rights', {year: new Date().getFullYear()})}
         </p>
       </div>

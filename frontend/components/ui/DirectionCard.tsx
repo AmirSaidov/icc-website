@@ -7,10 +7,13 @@ import {Icon} from './Icon';
 /** Номер направления на главной: 01, 02, … */
 const numeral = (index: number) => String(index + 1).padStart(2, '0');
 
-/** Квадрат в синей рамке: номер на главной, иконка — в разделе «Направления». */
+/** Полоска над плиткой на главной — по очереди три цвета знака. */
+const ACCENTS = ['bg-seal', 'bg-sun', 'bg-brand-blue'];
+
+/** Иконка направления в разделе «Направления». */
 function Mark({children}: {children: ReactNode}) {
   return (
-    <span className="flex size-10 shrink-0 items-center justify-center rounded-sm border border-primary/70 bg-surface font-serif text-base text-primary transition-colors duration-300 group-has-[a.card-link:hover]:bg-primary group-has-[a.card-link:hover]:text-white">
+    <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary-light text-primary transition-colors duration-300 group-has-[a.card-link:hover]:bg-primary group-has-[a.card-link:hover]:text-white">
       {children}
     </span>
   );
@@ -32,20 +35,25 @@ export function DirectionCard({item, headingLevel = 'h3'}: {item: DirectionListI
   );
 }
 
-/** Строка списка на главной: 01 | Название | →. */
-export function DirectionRow({item, index}: {item: DirectionListItem; index: number}) {
+/** Плитка на главной: цветная полоска, номер, название, стрелка. */
+export function DirectionTile({item, index}: {item: DirectionListItem; index: number}) {
   return (
-    <article className="group relative flex items-center gap-4 border-b border-border py-4">
-      <Mark>
-        <span aria-hidden>{numeral(index)}</span>
-      </Mark>
-      <h3 className="min-w-0 flex-1 font-sans text-sm font-medium leading-snug text-navy md:text-[15px]">
+    <Card className="h-full justify-between gap-10 p-6">
+      <div className="flex items-center justify-between">
+        <span aria-hidden className="flex items-center gap-3 text-sm font-bold tabular-nums text-muted">
+          <span className={`h-1.5 w-8 rounded-full ${ACCENTS[index % ACCENTS.length]}`} />
+          {numeral(index)}
+        </span>
+        <span
+          aria-hidden
+          className="flex size-9 items-center justify-center rounded-full border border-border text-navy transition-[background-color,border-color,color,rotate] duration-300 group-has-[a.card-link:hover]:-rotate-45 group-has-[a.card-link:hover]:border-primary group-has-[a.card-link:hover]:bg-primary group-has-[a.card-link:hover]:text-white"
+        >
+          <ArrowRight className="size-4" />
+        </span>
+      </div>
+      <h3 className="text-lg font-bold leading-snug text-navy">
         <CardLink href={`/directions/${item.slug}`}>{item.title}</CardLink>
       </h3>
-      <ArrowRight
-        aria-hidden
-        className="size-4 shrink-0 text-muted transition-[color,transform] group-has-[a.card-link:hover]:translate-x-1 group-has-[a.card-link:hover]:text-primary"
-      />
-    </article>
+    </Card>
   );
 }

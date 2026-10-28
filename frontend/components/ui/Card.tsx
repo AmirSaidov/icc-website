@@ -8,13 +8,13 @@ type CardProps<T extends ElementType> = {
   children: ReactNode;
 } & Omit<ComponentProps<T>, 'as' | 'className' | 'children'>;
 
-/** Белая карточка с тонкой рамкой и прямыми углами. Если внутри есть CardLink — кликабельна целиком. */
+/** Белая карточка со скруглёнными углами и тонкой рамкой. Если внутри есть CardLink — кликабельна целиком. */
 export function Card<T extends ElementType = 'article'>({as, className, children, ...rest}: CardProps<T>) {
   const Tag = as ?? 'article';
   return (
     <Tag
       className={cn(
-        'group relative flex flex-col overflow-hidden rounded-sm border border-border bg-surface transition-[box-shadow,transform,border-color] duration-300 has-[a.card-link:hover]:-translate-y-0.5 has-[a.card-link:hover]:border-primary/40 has-[a.card-link:hover]:shadow-[0_10px_30px_-12px_rgb(21_40_79/0.25)] has-[a.card-link:focus-visible]:shadow-lg',
+        'group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-[box-shadow,transform,border-color] duration-300 has-[a.card-link:hover]:-translate-y-1 has-[a.card-link:hover]:border-transparent has-[a.card-link:hover]:shadow-[0_24px_48px_-24px_rgb(18_21_30/0.3)] has-[a.card-link:focus-visible]:shadow-lg',
         className
       )}
       {...rest}

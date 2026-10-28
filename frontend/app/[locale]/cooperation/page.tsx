@@ -85,7 +85,7 @@ export default async function CooperationPage({ params, searchParams }: Props) {
                         {projects.results.map((p) => (
                             <li key={p.id} className="flex [&>*]:flex-1">
                                 <article className="group relative flex flex-col gap-3">
-                                    <div className="border border-border bg-surface p-1.5 transition-colors duration-300 group-has-[a.card-link:hover]:border-primary/40">
+                                    <div className="overflow-hidden rounded-2xl">
                                         <div className="relative aspect-[3/2] overflow-hidden bg-primary-light">
                                             {p.cover && (
                                                 <Image

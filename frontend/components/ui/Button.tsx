@@ -10,16 +10,16 @@ const base =
   'inline-flex items-center justify-center gap-2 font-semibold transition-[color,background-color,border-color,transform] duration-200 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-60';
 
 const variants: Record<Variant, string> = {
-  primary: 'rounded-sm bg-primary text-white shadow-[inset_0_-1px_0_rgb(0_0_0/0.15)] hover:bg-primary-hover',
-  secondary: 'rounded-sm border border-navy/80 bg-surface text-navy hover:border-primary hover:text-primary',
+  primary: 'rounded-full bg-primary text-white shadow-[0_8px_20px_-10px_rgb(37_93_240/0.7)] hover:bg-primary-hover',
+  secondary: 'rounded-full border border-navy/15 bg-surface text-navy hover:border-navy/40',
   link: 'text-primary underline-offset-4 hover:underline',
-  inverse: 'rounded-sm bg-white text-navy hover:bg-primary-light',
-  'inverse-outline': 'rounded-sm border border-white/70 text-white hover:bg-white/10'
+  inverse: 'rounded-full bg-white text-navy hover:bg-primary-light',
+  'inverse-outline': 'rounded-full border border-white/30 text-white hover:border-white/60 hover:bg-white/10'
 };
 
 const sizes: Record<Size, string> = {
-  md: 'min-h-10 px-4 text-[13px]',
-  lg: 'min-h-12 px-6 text-sm'
+  md: 'min-h-10 px-5 text-[13px]',
+  lg: 'min-h-12 px-7 text-sm'
 };
 
 export function buttonClass({variant = 'primary', size = 'md', className}: {variant?: Variant; size?: Size; className?: string} = {}) {
