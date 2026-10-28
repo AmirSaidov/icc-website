@@ -1,5 +1,5 @@
 import type {Metadata, Viewport} from 'next';
-import {Inter, Noto_Sans_SC, Noto_Serif, Noto_Serif_SC} from 'next/font/google';
+import {Manrope, Noto_Sans_SC} from 'next/font/google';
 import {notFound} from 'next/navigation';
 import {hasLocale, NextIntlClientProvider} from 'next-intl';
 import {getTranslations, setRequestLocale} from 'next-intl/server';
@@ -12,9 +12,10 @@ import {htmlLang, routing, type Locale} from '@/i18n/routing';
 import {SITE_URL} from '@/lib/seo';
 import '../globals.css';
 
-const inter = Inter({
-  subsets: ['latin', 'cyrillic'],
-  variable: '--font-inter',
+// Гротеск брендбука. cyrillic-ext — для кыргызских ң, ө, ү («Теңир-Тоо»).
+const manrope = Manrope({
+  subsets: ['latin', 'cyrillic', 'cyrillic-ext'],
+  variable: '--font-manrope',
   display: 'swap'
 });
 
@@ -23,22 +24,6 @@ const inter = Inter({
 const notoSansSC = Noto_Sans_SC({
   weight: ['400', '500', '700'],
   variable: '--font-noto-sc',
-  display: 'swap',
-  preload: false
-});
-
-// Заголовки. cyrillic-ext — для кыргызских ң, ө, ү («Теңир-Тоо»).
-const notoSerif = Noto_Serif({
-  subsets: ['latin', 'cyrillic', 'cyrillic-ext'],
-  weight: ['500', '600', '700'],
-  variable: '--font-noto-serif',
-  display: 'swap'
-});
-
-// Иероглифы в заголовках китайской версии. Как и Noto Sans SC, качается кусками.
-const notoSerifSC = Noto_Serif_SC({
-  weight: ['500', '700'],
-  variable: '--font-noto-serif-sc',
   display: 'swap',
   preload: false
 });
@@ -62,7 +47,7 @@ export async function generateMetadata({params}: {params: Promise<{locale: strin
 }
 
 export const viewport: Viewport = {
-  themeColor: '#15284f'
+  themeColor: '#12151e'
 };
 
 export default async function LocaleLayout({
@@ -78,7 +63,7 @@ export default async function LocaleLayout({
 
   return (
     // suppressHydrationWarning: скрипт ниже добавляет класс js до гидрации
-    <html lang={htmlLang[locale]} className={`${inter.variable} ${notoSansSC.variable} ${notoSerif.variable} ${notoSerifSC.variable}`} suppressHydrationWarning>
+    <html lang={htmlLang[locale]} className={`${manrope.variable} ${notoSansSC.variable}`} suppressHydrationWarning>
       <head>
         {/* До первой отрисовки: включает анимации появления (globals.css). Без JS всё видно сразу. */}
         <script dangerouslySetInnerHTML={{__html: "document.documentElement.classList.add('js')"}} />

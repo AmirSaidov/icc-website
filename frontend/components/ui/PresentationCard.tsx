@@ -20,7 +20,7 @@ export function PresentationCard({item, headingLevel = 'h3'}: {item: Presentatio
 
   return (
     <article className="group relative flex flex-col gap-3">
-      <div className="border border-border bg-surface p-1.5 transition-colors duration-300 group-has-[a.card-link:hover]:border-primary/40">
+      <div className="overflow-hidden rounded-2xl">
         <div className="relative flex aspect-[3/2] items-center justify-center overflow-hidden bg-primary-light">
           {item.cover ? (
             <Image

@@ -5,14 +5,14 @@ import {Link, usePathname} from '@/i18n/navigation';
 import {cn} from '@/lib/cn';
 import {isActive, NAV_ITEMS} from './nav';
 
-/** Пункты меню с подсветкой текущего раздела. */
+/** Пункты меню с подсветкой текущего раздела. В шапке без «Главной» — туда ведёт логотип. */
 export function NavLinks({variant, onNavigate}: {variant: 'desktop' | 'mobile'; onNavigate?: () => void}) {
   const t = useTranslations('Nav');
   const pathname = usePathname();
 
   return (
     <ul className={variant === 'desktop' ? 'flex items-center' : 'flex flex-col'}>
-      {NAV_ITEMS.map((item) => {
+      {NAV_ITEMS.filter((item) => variant === 'mobile' || item.key !== 'home').map((item) => {
         const active = isActive(item, pathname);
         return (
           <li key={item.key}>
@@ -21,11 +21,13 @@ export function NavLinks({variant, onNavigate}: {variant: 'desktop' | 'mobile'; 
               aria-current={active ? 'page' : undefined}
               onClick={onNavigate}
               className={cn(
-                'block font-medium transition-colors hover:text-primary',
+                'block transition-colors',
                 variant === 'desktop'
-                  ? 'whitespace-nowrap px-1.5 py-2 text-[13px]'
-                  : 'border-b border-border py-4 font-serif text-lg',
-                active ? 'text-primary' : 'text-navy'
+                  ? cn(
+                      'whitespace-nowrap rounded-full px-2 py-2 text-[13px] font-semibold',
+                      active ? 'bg-navy text-white' : 'text-navy/75 hover:bg-navy/[0.06] hover:text-navy'
+                    )
+                  : cn('border-b border-border py-4 text-lg font-semibold hover:text-primary', active ? 'text-primary' : 'text-navy')
               )}
             >
               {t(item.key)}

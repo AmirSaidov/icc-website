@@ -39,7 +39,7 @@ export function MobileMenu() {
         aria-expanded={open}
         aria-controls="mobile-menu"
         aria-label={open ? t('closeMenu') : t('openMenu')}
-        className="flex size-10 items-center justify-center rounded-sm text-navy hover:bg-primary-light"
+        className="flex size-10 items-center justify-center rounded-full text-navy hover:bg-navy/[0.06]"
       >
         {open ? <X aria-hidden className="size-6" /> : <Menu aria-hidden className="size-6" />}
       </button>

@@ -58,19 +58,19 @@ export default async function EventsPage({ params, searchParams }: Props) {
             <div className="container-page py-12">
                 <div className="mb-8 flex flex-wrap gap-3">
                     <Link
-                        className={`rounded px-4 py-2 ${when === "upcoming" ? "bg-primary text-white" : "border border-border"}`}
+                        className={`rounded-full px-4 py-2 ${when === "upcoming" ? "bg-primary text-white" : "border border-border"}`}
                         href={eventsHref("upcoming", type)}
                     >
                         {t("upcoming")}
                     </Link>
                     <Link
-                        className={`rounded px-4 py-2 ${when === "past" ? "bg-primary text-white" : "border border-border"}`}
+                        className={`rounded-full px-4 py-2 ${when === "past" ? "bg-primary text-white" : "border border-border"}`}
                         href={eventsHref("past", type)}
                     >
                         {t("past")}
                     </Link>
                     <Link
-                        className={`rounded border border-border px-4 py-2 ${!type ? "bg-primary-light" : ""}`}
+                        className={`rounded-full border border-border px-4 py-2 ${!type ? "bg-primary-light" : ""}`}
                         href={eventsHref(when)}
                     >
                         {t("allTypes")}
@@ -78,7 +78,7 @@ export default async function EventsPage({ params, searchParams }: Props) {
                     {eventTypes.map((v) => (
                         <Link
                             key={v.code}
-                            className={`rounded border border-border px-4 py-2 ${type === v.code ? "bg-primary-light" : ""}`}
+                            className={`rounded-full border border-border px-4 py-2 ${type === v.code ? "bg-primary-light" : ""}`}
                             href={eventsHref(when, v.code)}
                         >
                             {v.label}
